@@ -62,6 +62,8 @@ export function loadConfig(): AppConfig {
       timeoutMs: optionalInt('CLAUDE_TIMEOUT_MS', 300000),
       anthropicBaseUrl: process.env.ANTHROPIC_BASE_URL,
       anthropicAuthToken: process.env.ANTHROPIC_AUTH_TOKEN,
+      projectDir: process.env.CLAUDE_PROJECT_DIR,
+      dangerouslySkipPermissions: optionalBool('CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS', false),
     },
     webhook: {
       port: optionalInt('WEBHOOK_PORT', 4567),

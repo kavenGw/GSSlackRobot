@@ -10,10 +10,23 @@ export async function* brainstorm(prompt: string): AsyncGenerator<string> {
   if (cfg.anthropicAuthToken) {
     env.ANTHROPIC_AUTH_TOKEN = cfg.anthropicAuthToken;
   }
-  const proc = spawn(cfg.command, ['-p', prompt, '--output-format', 'stream-json'], {
+
+  // Build command arguments
+  const args = ['-p', prompt, '--output-format', 'stream-json'];
+  if (cfg.dangerouslySkipPermissions) {
+    args.push('--dangerously-skip-permissions');
+  }
+
+  // Build spawn options
+  const spawnOptions: { stdio: ['ignore', 'pipe', 'pipe']; env: Record<string, string>; cwd?: string } = {
     stdio: ['ignore', 'pipe', 'pipe'],
     env,
-  });
+  };
+  if (cfg.projectDir) {
+    spawnOptions.cwd = cfg.projectDir;
+  }
+
+  const proc = spawn(cfg.command, args, spawnOptions);
 
   const timeout = setTimeout(() => {
     proc.kill('SIGTERM');

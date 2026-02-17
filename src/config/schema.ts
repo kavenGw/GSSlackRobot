@@ -21,6 +21,8 @@ export interface ClaudeConfig {
   timeoutMs: number;
   anthropicBaseUrl?: string;
   anthropicAuthToken?: string;
+  projectDir?: string;
+  dangerouslySkipPermissions?: boolean;
 }
 
 export interface WebhookConfig {
