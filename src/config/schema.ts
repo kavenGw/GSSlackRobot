@@ -34,16 +34,10 @@ export interface WebhookConfig {
   };
 }
 
-export interface ChannelOverride {
-  gitlab?: Partial<GitLabConfig>;
-  jenkins?: Partial<JenkinsConfig>;
-}
-
 export interface AppConfig {
   slack: SlackConfig;
   gitlab: GitLabConfig;
   jenkins: JenkinsConfig;
   claude: ClaudeConfig;
   webhook: WebhookConfig;
-  channels?: Record<string, ChannelOverride>;
 }
