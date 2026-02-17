@@ -73,7 +73,7 @@ src/
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
 | `GITLAB_URL` | `https://gitlab.example.com` | GitLab 实例 URL (需有效 HTTP/HTTPS) |
-| `GITLAB_DEFAULT_PROJECT_ID` | `1` | 默认项目 ID (正整数) |
+| `GITLAB_DEFAULT_PROJECT` | `namespace/project` | 默认项目路径 (如 "group/project") |
 | `JENKINS_URL` | `https://jenkins.example.com` | Jenkins 实例 URL (需有效 HTTP/HTTPS) |
 | `JENKINS_JOBS` | 内置默认 | Jenkins Job 映射 JSON |
 | `CLAUDE_COMMAND` | `claude` | Claude CLI 命令路径 |

@@ -128,11 +128,11 @@ export function validateConfig(config: AppConfig): void {
     });
   }
 
-  if (config.gitlab.defaultProjectId <= 0) {
+  if (!isNonEmptyString(config.gitlab.defaultProject)) {
     errors.push({
-      param: 'GITLAB_DEFAULT_PROJECT_ID',
-      message: 'GitLab Default Project ID must be a positive integer',
-      value: String(config.gitlab.defaultProjectId),
+      param: 'GITLAB_DEFAULT_PROJECT',
+      message: 'GitLab Default Project must be a non-empty string (e.g., "namespace/project")',
+      value: config.gitlab.defaultProject,
     });
   }
 

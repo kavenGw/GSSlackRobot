@@ -28,7 +28,7 @@ function api(path: string, init?: RequestInit) {
 }
 
 function projectPath() {
-  return `/projects/${getConfig().gitlab.defaultProjectId}`;
+  return `/projects/${encodeURIComponent(getConfig().gitlab.defaultProject)}`;
 }
 
 export async function createIssue(title: string, description?: string) {

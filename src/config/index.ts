@@ -55,7 +55,7 @@ export function loadConfig(): AppConfig {
     gitlab: {
       url: optional('GITLAB_URL', 'https://gitlab.example.com'),
       token: required('GITLAB_TOKEN'),
-      defaultProjectId: optionalInt('GITLAB_DEFAULT_PROJECT_ID', 1),
+      defaultProject: optional('GITLAB_DEFAULT_PROJECT', 'namespace/project'),
     },
     jenkins: {
       url: optional('JENKINS_URL', 'https://jenkins.example.com'),
