@@ -5,6 +5,7 @@ import { handleIssue } from './issue.js';
 import { handleBrainstorm } from './brainstorm.js';
 import { handleVersionStatus } from './version-status.js';
 import { handleJenkins } from './jenkins.js';
+import { handleDailyReport } from './daily-report.js';
 
 export interface CommandContext {
   text: string;
@@ -26,6 +27,7 @@ const commands: CommandDef[] = [
   { pattern: /^头脑风暴\s+(.+)$/s, handler: handleBrainstorm },
   { pattern: /^当前版本状态[：:]\s*(.+)$/s, handler: handleVersionStatus },
   { pattern: /^jenkins\s+(\w+)$/i, handler: handleJenkins },
+  { pattern: /^每日简报(?:[：:]\s*(.+))?$/s, handler: handleDailyReport },
 ];
 
 export function registerCommands(app: App) {
