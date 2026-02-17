@@ -1,4 +1,7 @@
 import type { AppConfig } from './schema.js';
+import { validateConfig, validateRequiredEnvVars, EnvValidationError } from './env-validator.js';
+
+export { EnvValidationError } from './env-validator.js';
 
 let config: AppConfig;
 
@@ -41,6 +44,9 @@ function parseJenkinsJobs(envValue: string | undefined): Record<string, string> 
 }
 
 export function loadConfig(): AppConfig {
+  // First validate that required environment variables exist
+  validateRequiredEnvVars();
+
   config = {
     slack: {
       botToken: required('SLACK_BOT_TOKEN'),
@@ -78,6 +84,9 @@ export function loadConfig(): AppConfig {
       },
     },
   };
+
+  // Validate all config values for correctness
+  validateConfig(config);
 
   return config;
 }
