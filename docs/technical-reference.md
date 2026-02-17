@@ -184,7 +184,7 @@ export interface SlackConfig {
 export interface GitLabConfig {
   url: string;           // GitLab 实例 URL
   token: string;         // Private Access Token
-  defaultProjectId: number;
+  defaultProject: string;  // 项目路径 (如 "namespace/project")
 }
 
 export interface JenkinsConfig {
@@ -229,7 +229,7 @@ export function loadConfig(): AppConfig {
     gitlab: {
       url: optional('GITLAB_URL', 'https://gitlab.example.com'),
       token: required('GITLAB_TOKEN'),
-      defaultProjectId: optionalInt('GITLAB_DEFAULT_PROJECT_ID', 1),
+      defaultProject: optional('GITLAB_DEFAULT_PROJECT', 'namespace/project'),
     },
     jenkins: {
       url: optional('JENKINS_URL', 'https://jenkins.example.com'),
@@ -397,7 +397,8 @@ const api = (path: string, init?: RequestInit) => {
 // 创建 Issue
 export async function createIssue(title: string, description?: string): Promise<GitLabIssue> {
   const cfg = getConfig().gitlab;
-  const res = await api(`/projects/${cfg.defaultProjectId}/issues`, {
+  const projectPath = encodeURIComponent(cfg.defaultProject);
+  const res = await api(`/projects/${projectPath}/issues`, {
     method: 'POST',
     body: JSON.stringify({ title, description }),
   });
@@ -407,13 +408,14 @@ export async function createIssue(title: string, description?: string): Promise<
 // 查询里程碑下的 Issues
 export async function getMilestoneIssues(milestoneTitle: string): Promise<MilestoneIssues> {
   const cfg = getConfig().gitlab;
+  const projectPath = encodeURIComponent(cfg.defaultProject);
 
   // 1. 查找里程碑
-  const msRes = await api(`/projects/${cfg.defaultProjectId}/milestones?title=${encodeURIComponent(milestoneTitle)}`);
+  const msRes = await api(`/projects/${projectPath}/milestones?title=${encodeURIComponent(milestoneTitle)}`);
   const milestones = await msRes.json();
 
   // 2. 查询 Issues
-  const issuesRes = await api(`/projects/${cfg.defaultProjectId}/issues?milestone=${encodeURIComponent(milestoneTitle)}&per_page=100`);
+  const issuesRes = await api(`/projects/${projectPath}/issues?milestone=${encodeURIComponent(milestoneTitle)}&per_page=100`);
   const issues: GitLabIssue[] = await issuesRes.json();
 
   return {
@@ -426,7 +428,8 @@ export async function getMilestoneIssues(milestoneTitle: string): Promise<Milest
 // 获取活跃里程碑
 export async function getActiveMilestones(): Promise<GitLabMilestone[]> {
   const cfg = getConfig().gitlab;
-  const res = await api(`/projects/${cfg.defaultProjectId}/milestones?state=active`);
+  const projectPath = encodeURIComponent(cfg.defaultProject);
+  const res = await api(`/projects/${projectPath}/milestones?state=active`);
   return res.json();
 }
 ```
@@ -743,7 +746,7 @@ export function formatIssueList(issues: GitLabIssue[], header: string): Block[] 
 | 变量名 | 默认值 | 描述 |
 |--------|--------|------|
 | `GITLAB_URL` | `https://gitlab.example.com` | GitLab 实例 URL |
-| `GITLAB_DEFAULT_PROJECT_ID` | `1` | 默认项目 ID |
+| `GITLAB_DEFAULT_PROJECT` | `namespace/project` | 默认项目路径 |
 | `JENKINS_URL` | `https://jenkins.example.com` | Jenkins 实例 URL |
 | `JENKINS_JOBS` | `{}` | Job 别名映射 (JSON) |
 | `CLAUDE_COMMAND` | `claude` | Claude CLI 命令 |

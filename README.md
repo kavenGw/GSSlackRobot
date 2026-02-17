@@ -74,7 +74,7 @@ SLACK_APP_TOKEN=xapp-...
 # GitLab 配置
 GITLAB_URL=https://your-gitlab.com
 GITLAB_TOKEN=glpat-...
-GITLAB_DEFAULT_PROJECT_ID=42
+GITLAB_DEFAULT_PROJECT=mygroup/myproject
 
 # Jenkins 配置
 JENKINS_URL=https://your-jenkins.com

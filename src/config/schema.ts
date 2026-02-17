@@ -6,7 +6,7 @@ export interface SlackConfig {
 export interface GitLabConfig {
   url: string;
   token: string;
-  defaultProjectId: number;
+  defaultProject: string;
 }
 
 export interface JenkinsConfig {
