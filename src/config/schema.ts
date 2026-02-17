@@ -19,6 +19,8 @@ export interface JenkinsConfig {
 export interface ClaudeConfig {
   command: string;
   timeoutMs: number;
+  anthropicBaseUrl?: string;
+  anthropicAuthToken?: string;
 }
 
 export interface WebhookConfig {
