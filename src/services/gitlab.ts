@@ -66,3 +66,9 @@ export async function getMilestoneIssues(milestoneTitle: string) {
 
   return { milestone, closed, opened, total: issues.length };
 }
+
+export async function getActiveMilestones(): Promise<GitLabMilestone[]> {
+  const msRes = await api(`${projectPath()}/milestones?state=active&per_page=10`);
+  if (!msRes.ok) throw new Error(`GitLab API error: ${msRes.status}`);
+  return (await msRes.json()) as GitLabMilestone[];
+}
