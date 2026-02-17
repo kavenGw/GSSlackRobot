@@ -3,8 +3,16 @@ import { getConfig } from '../config/index.js';
 
 export async function* brainstorm(prompt: string): AsyncGenerator<string> {
   const cfg = getConfig().claude;
+  const env: Record<string, string> = { ...process.env } as Record<string, string>;
+  if (cfg.anthropicBaseUrl) {
+    env.ANTHROPIC_BASE_URL = cfg.anthropicBaseUrl;
+  }
+  if (cfg.anthropicAuthToken) {
+    env.ANTHROPIC_AUTH_TOKEN = cfg.anthropicAuthToken;
+  }
   const proc = spawn(cfg.command, ['-p', prompt, '--output-format', 'stream-json'], {
     stdio: ['ignore', 'pipe', 'pipe'],
+    env,
   });
 
   const timeout = setTimeout(() => {
