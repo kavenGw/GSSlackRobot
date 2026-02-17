@@ -7,6 +7,7 @@ export interface GitLabConfig {
   url: string;
   token: string;
   defaultProject: string;
+  notify: GitLabNotifyConfig;
 }
 
 export interface JenkinsConfig {
@@ -25,13 +26,13 @@ export interface ClaudeConfig {
   dangerouslySkipPermissions?: boolean;
 }
 
-export interface WebhookConfig {
+export interface GitLabNotifyConfig {
   port: number;
-  gitlabSecret: string;
-  notifyChannel: string;
+  secret: string;
+  channel: string;
   events: {
     push: boolean;
-    merge_request: boolean;
+    mr: boolean;
     pipeline: boolean;
     issue: boolean;
     note: boolean;
@@ -43,5 +44,4 @@ export interface AppConfig {
   gitlab: GitLabConfig;
   jenkins: JenkinsConfig;
   claude: ClaudeConfig;
-  webhook: WebhookConfig;
 }

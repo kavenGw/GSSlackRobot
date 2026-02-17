@@ -4,13 +4,13 @@ import { getConfig } from '../config/index.js';
 import { handleGitLabEvent } from './gitlab.js';
 
 export function startWebhookServer(slackApp: App) {
-  const cfg = getConfig().webhook;
+  const cfg = getConfig().gitlab.notify;
   const server = express();
   server.use(express.json());
 
   server.post('/gitlab', (req, res) => {
     const token = req.headers['x-gitlab-token'];
-    if (cfg.gitlabSecret && token !== cfg.gitlabSecret) {
+    if (cfg.secret && token !== cfg.secret) {
       res.status(401).send('Unauthorized');
       return;
     }

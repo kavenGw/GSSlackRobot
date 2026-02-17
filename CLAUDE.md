@@ -82,14 +82,14 @@ src/
 | `ANTHROPIC_AUTH_TOKEN` | 无 | Anthropic Auth Token (若设置不可为占位符) |
 | `CLAUDE_PROJECT_DIR` | 无 | Claude 项目目录 |
 | `CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS` | `false` | 跳过 Claude 权限检查 |
-| `WEBHOOK_PORT` | `4567` | Webhook 监听端口 (1-65535) |
-| `GITLAB_WEBHOOK_SECRET` | 空 | GitLab Webhook Secret (空则跳过验证) |
-| `WEBHOOK_NOTIFY_CHANNEL` | `#dev-notifications` | Webhook 通知频道 |
-| `WEBHOOK_EVENT_PUSH` | `true` | Push 事件开关 |
-| `WEBHOOK_EVENT_MERGE_REQUEST` | `true` | MR 事件开关 |
-| `WEBHOOK_EVENT_PIPELINE` | `true` | Pipeline 事件开关 |
-| `WEBHOOK_EVENT_ISSUE` | `true` | Issue 事件开关 |
-| `WEBHOOK_EVENT_NOTE` | `false` | Note 事件开关 |
+| `GITLAB_NOTIFY_PORT` | `4567` | GitLab 通知监听端口 (1-65535) |
+| `GITLAB_NOTIFY_SECRET` | 空 | GitLab Webhook Secret (空则跳过验证) |
+| `GITLAB_NOTIFY_CHANNEL` | `#dev-notifications` | GitLab 通知 Slack 频道 |
+| `GITLAB_NOTIFY_PUSH` | `true` | Push 事件通知开关 |
+| `GITLAB_NOTIFY_MR` | `true` | MR 事件通知开关 |
+| `GITLAB_NOTIFY_PIPELINE` | `true` | Pipeline 事件通知开关 |
+| `GITLAB_NOTIFY_ISSUE` | `true` | Issue 事件通知开关 |
+| `GITLAB_NOTIFY_NOTE` | `false` | Note 事件通知开关 |
 
 ### 环境变量验证机制
 

@@ -49,7 +49,7 @@ function formatNote(payload: Record<string, any>): string | null {
 
 const eventMap: Record<string, { key: string; format: EventHandler }> = {
   'Push Hook': { key: 'push', format: formatPush },
-  'Merge Request Hook': { key: 'merge_request', format: formatMergeRequest },
+  'Merge Request Hook': { key: 'mr', format: formatMergeRequest },
   'Pipeline Hook': { key: 'pipeline', format: formatPipeline },
   'Issue Hook': { key: 'issue', format: formatIssue },
   'Note Hook': { key: 'note', format: formatNote },
@@ -60,7 +60,7 @@ export function handleGitLabEvent(
   payload: Record<string, any>,
   client: WebClient
 ) {
-  const cfg = getConfig().webhook;
+  const cfg = getConfig().gitlab.notify;
   const entry = eventMap[eventType];
   if (!entry) return;
 
@@ -71,7 +71,7 @@ export function handleGitLabEvent(
   if (!text) return;
 
   client.chat.postMessage({
-    channel: cfg.notifyChannel,
+    channel: cfg.channel,
     text,
   }).catch(err => console.error('Failed to send webhook notification:', err));
 }

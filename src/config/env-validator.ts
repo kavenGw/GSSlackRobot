@@ -202,12 +202,12 @@ export function validateConfig(config: AppConfig): void {
     });
   }
 
-  // Webhook validation
-  if (!isValidPort(config.webhook.port)) {
+  // GitLab Notify validation
+  if (!isValidPort(config.gitlab.notify.port)) {
     errors.push({
-      param: 'WEBHOOK_PORT',
-      message: 'Webhook port must be a valid port number (1-65535)',
-      value: String(config.webhook.port),
+      param: 'GITLAB_NOTIFY_PORT',
+      message: 'GitLab notify port must be a valid port number (1-65535)',
+      value: String(config.gitlab.notify.port),
     });
   }
 

@@ -56,6 +56,18 @@ export function loadConfig(): AppConfig {
       url: optional('GITLAB_URL', 'https://gitlab.example.com'),
       token: required('GITLAB_TOKEN'),
       defaultProject: optional('GITLAB_DEFAULT_PROJECT', 'namespace/project'),
+      notify: {
+        port: optionalInt('GITLAB_NOTIFY_PORT', 4567),
+        secret: optional('GITLAB_NOTIFY_SECRET', ''),
+        channel: optional('GITLAB_NOTIFY_CHANNEL', '#dev-notifications'),
+        events: {
+          push: optionalBool('GITLAB_NOTIFY_PUSH', true),
+          mr: optionalBool('GITLAB_NOTIFY_MR', true),
+          pipeline: optionalBool('GITLAB_NOTIFY_PIPELINE', true),
+          issue: optionalBool('GITLAB_NOTIFY_ISSUE', true),
+          note: optionalBool('GITLAB_NOTIFY_NOTE', false),
+        },
+      },
     },
     jenkins: {
       url: optional('JENKINS_URL', 'https://jenkins.example.com'),
@@ -70,18 +82,6 @@ export function loadConfig(): AppConfig {
       anthropicAuthToken: process.env.ANTHROPIC_AUTH_TOKEN,
       projectDir: process.env.CLAUDE_PROJECT_DIR,
       dangerouslySkipPermissions: optionalBool('CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS', false),
-    },
-    webhook: {
-      port: optionalInt('WEBHOOK_PORT', 4567),
-      gitlabSecret: optional('GITLAB_WEBHOOK_SECRET', ''),
-      notifyChannel: optional('WEBHOOK_NOTIFY_CHANNEL', '#dev-notifications'),
-      events: {
-        push: optionalBool('WEBHOOK_EVENT_PUSH', true),
-        merge_request: optionalBool('WEBHOOK_EVENT_MERGE_REQUEST', true),
-        pipeline: optionalBool('WEBHOOK_EVENT_PIPELINE', true),
-        issue: optionalBool('WEBHOOK_EVENT_ISSUE', true),
-        note: optionalBool('WEBHOOK_EVENT_NOTE', false),
-      },
     },
   };
 
