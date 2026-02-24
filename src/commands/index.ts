@@ -3,9 +3,14 @@ import type { WebClient } from '@slack/web-api';
 import { v5 as uuidv5 } from 'uuid';
 import { handleHelp } from './help.js';
 import { handleCommands } from './commands.js';
+import { handleListMilestones } from './list-milestones.js';
+import { handleListMilestoneIssues } from './list-milestone-issues.js';
+import { handleCreateMilestone } from './create-milestone.js';
+import { handleDailyReport } from './daily-report.js';
 import { askClaude } from '../services/claude.js';
 import { splitToBlocks } from '../utils/message.js';
 import { log } from '../utils/logger.js';
+import { getConfig } from '../config/index.js';
 
 const SESSION_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
@@ -101,6 +106,18 @@ export function registerCommands(app: App) {
         await handleHelp(ctx);
       } else if (/^commands$/i.test(text)) {
         await handleCommands(ctx);
+      } else if (/^(list-milestones|list-issues|daily-report|create-milestone)\b/i.test(text)) {
+        if (!getConfig().gitlab) {
+          await say({ text: 'GitLab 未配置，请设置 GITLAB_API_URL、GITLAB_TOKEN、GITLAB_PROJECT_ID 环境变量', thread_ts: threadTs });
+        } else if (/^list-milestones$/i.test(text)) {
+          await handleListMilestones(ctx);
+        } else if (/^list-issues\b/i.test(text)) {
+          await handleListMilestoneIssues(ctx);
+        } else if (/^daily-report\b/i.test(text)) {
+          await handleDailyReport(ctx);
+        } else if (/^create-milestone\b/i.test(text)) {
+          await handleCreateMilestone(ctx);
+        }
       } else {
         await handleClaude(ctx);
       }

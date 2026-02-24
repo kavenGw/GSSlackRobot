@@ -3,6 +3,7 @@ import { loadConfig, EnvValidationError } from './config/index.js';
 import { registerCommands } from './commands/index.js';
 import { log } from './utils/logger.js';
 import { startWebhookServer } from './webhooks/server.js';
+import { scheduleDailyReport } from './scheduler/daily-report.js';
 
 let config;
 try {
@@ -25,4 +26,5 @@ registerCommands(app);
 
 await app.start();
 startWebhookServer(app);
+scheduleDailyReport(app);
 log.startup();

@@ -29,9 +29,17 @@ src/
 │   └── env-validator.ts      # 环境变量有效性验证 (格式/范围/占位符检测)
 ├── commands/
 │   ├── index.ts              # app_mention 事件 → help 或 Claude 透传
-│   └── help.ts               # 帮助信息
+│   ├── help.ts               # 帮助信息
+│   ├── daily-report.ts       # 每日简报
+│   ├── list-milestones.ts    # 列出活跃 milestones
+│   ├── list-milestone-issues.ts # 列出 milestone issues
+│   └── create-milestone.ts   # 创建 milestone + 杂项 issue
+├── scheduler/
+│   └── daily-report.ts       # 每日简报定时调度
 ├── services/
-│   └── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
+│   ├── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
+│   ├── gitlab.ts             # GitLab REST API
+│   └── jenkins.ts            # Jenkins Script Console API
 ├── webhooks/
 │   ├── server.ts             # Express Webhook 服务器 (GitLab → Slack)
 │   └── gitlab.ts             # GitLab 事件格式化 (Push/MR/Pipeline/Issue/Note)
@@ -77,6 +85,12 @@ src/
 | `GITLAB_EVENTS_PIPELINE` | `true` | Pipeline 事件通知开关 |
 | `GITLAB_EVENTS_ISSUE` | `true` | Issue 事件通知开关 |
 | `GITLAB_EVENTS_NOTE` | `true` | Note 事件通知开关 |
+| `GITLAB_API_URL` | 无 | GitLab API 基础 URL（三个都设置时启用 GitLab 命令） |
+| `GITLAB_TOKEN` | 无 | GitLab Personal Access Token |
+| `GITLAB_PROJECT_ID` | 无 | GitLab 项目 ID |
+| `JENKINS_URL` | 无 | Jenkins 基础 URL（三个都设置时启用 Jenkins 集成） |
+| `JENKINS_USERNAME` | 无 | Jenkins 用户名 |
+| `JENKINS_API_TOKEN` | 无 | Jenkins API Token |
 
 ### 环境变量验证机制
 
@@ -94,6 +108,6 @@ src/
 ## 关键设计注意事项
 
 - **配置统一使用 env**: 所有配置通过环境变量加载，不使用配置文件，通过 `getConfig()` 获取单例
-- **命令路由**: `help` 显示帮助，其余所有输入直接透传 Claude CLI
+- **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`list-milestones`/`list-issues`/`daily-report`/`create-milestone` 为 GitLab 命令（需配置），其余输入透传 Claude CLI
 - **Claude CLI 集成**: 通过子进程调用，使用 `--output-format stream-json` 参数，输出为 JSON Lines 格式
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道

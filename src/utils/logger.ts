@@ -39,6 +39,10 @@ export const log = {
     console.log(`${ts()} ${chalk.blue('🔗')} Webhook server listening on port ${port}`);
   },
 
+  info(msg: string) {
+    console.log(`${ts()} ${chalk.blue('ℹ')} ${msg}`);
+  },
+
   error(msg: string) {
     const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
     console.error(chalk.red(`[ERROR ${time}] ✘ ${msg}`));
