@@ -12,7 +12,21 @@ export interface ClaudeConfig {
   dangerouslySkipPermissions?: boolean;
 }
 
+export interface GitLabNotifyConfig {
+  port: number;
+  secret: string;
+  channel: string;
+  events: {
+    push: boolean;
+    mr: boolean;
+    pipeline: boolean;
+    issue: boolean;
+    note: boolean;
+  };
+}
+
 export interface AppConfig {
   slack: SlackConfig;
   claude: ClaudeConfig;
+  gitlabNotify?: GitLabNotifyConfig;
 }

@@ -45,6 +45,18 @@ export function loadConfig(): AppConfig {
       projectDir: process.env.CLAUDE_PROJECT_DIR,
       dangerouslySkipPermissions: optionalBool('CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS', false),
     },
+    gitlabNotify: process.env.GITLAB_NOTIFY_CHANNEL ? {
+      port: optionalInt('GITLAB_WEBHOOK_PORT', 3000),
+      secret: optional('GITLAB_WEBHOOK_SECRET', ''),
+      channel: required('GITLAB_NOTIFY_CHANNEL'),
+      events: {
+        push: optionalBool('GITLAB_EVENTS_PUSH', true),
+        mr: optionalBool('GITLAB_EVENTS_MR', true),
+        pipeline: optionalBool('GITLAB_EVENTS_PIPELINE', true),
+        issue: optionalBool('GITLAB_EVENTS_ISSUE', true),
+        note: optionalBool('GITLAB_EVENTS_NOTE', true),
+      },
+    } : undefined,
   };
 
   validateConfig(config);

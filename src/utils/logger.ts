@@ -31,6 +31,14 @@ export const log = {
     console.log(`${ts()} ${chalk.green('→')} 发送帮助信息`);
   },
 
+  webhook(event: string, chars: number) {
+    console.log(`${ts()} ${chalk.magenta('⚡')} GitLab ${event} (${chars} chars) → Slack`);
+  },
+
+  webhookServer(port: number) {
+    console.log(`${ts()} ${chalk.blue('🔗')} Webhook server listening on port ${port}`);
+  },
+
   error(msg: string) {
     const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
     console.error(chalk.red(`[ERROR ${time}] ✘ ${msg}`));
