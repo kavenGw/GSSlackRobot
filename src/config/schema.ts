@@ -25,8 +25,22 @@ export interface GitLabNotifyConfig {
   };
 }
 
+export interface GitLabConfig {
+  apiUrl: string;
+  token: string;
+  projectId: string;
+}
+
+export interface JenkinsConfig {
+  url: string;
+  username: string;
+  apiToken: string;
+}
+
 export interface AppConfig {
   slack: SlackConfig;
   claude: ClaudeConfig;
   gitlabNotify?: GitLabNotifyConfig;
+  gitlab?: GitLabConfig;
+  jenkins?: JenkinsConfig;
 }

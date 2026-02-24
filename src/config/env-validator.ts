@@ -155,6 +155,32 @@ export function validateConfig(config: AppConfig): void {
     }
   }
 
+  if (config.gitlab) {
+    if (!isValidUrl(config.gitlab.apiUrl)) {
+      errors.push({
+        param: 'GITLAB_API_URL',
+        message: 'GitLab API URL must be a valid HTTP/HTTPS URL',
+        value: config.gitlab.apiUrl,
+      });
+    }
+    if (!isValidToken(config.gitlab.token)) {
+      errors.push({
+        param: 'GITLAB_TOKEN',
+        message: 'GitLab Token cannot be a placeholder value',
+      });
+    }
+  }
+
+  if (config.jenkins) {
+    if (!isValidUrl(config.jenkins.url)) {
+      errors.push({
+        param: 'JENKINS_URL',
+        message: 'Jenkins URL must be a valid HTTP/HTTPS URL',
+        value: config.jenkins.url,
+      });
+    }
+  }
+
   if (errors.length > 0) {
     throw new EnvValidationError(errors);
   }

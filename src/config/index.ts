@@ -57,6 +57,16 @@ export function loadConfig(): AppConfig {
         note: optionalBool('GITLAB_EVENTS_NOTE', true),
       },
     } : undefined,
+    gitlab: process.env.GITLAB_API_URL && process.env.GITLAB_TOKEN && process.env.GITLAB_PROJECT_ID ? {
+      apiUrl: process.env.GITLAB_API_URL,
+      token: process.env.GITLAB_TOKEN,
+      projectId: process.env.GITLAB_PROJECT_ID,
+    } : undefined,
+    jenkins: process.env.JENKINS_URL && process.env.JENKINS_USERNAME && process.env.JENKINS_API_TOKEN ? {
+      url: process.env.JENKINS_URL,
+      username: process.env.JENKINS_USERNAME,
+      apiToken: process.env.JENKINS_API_TOKEN,
+    } : undefined,
   };
 
   validateConfig(config);
