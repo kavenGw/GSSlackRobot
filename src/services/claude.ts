@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { getConfig } from '../config/index.js';
 
-export async function* brainstorm(prompt: string): AsyncGenerator<string> {
+export async function* askClaude(prompt: string): AsyncGenerator<string> {
   const cfg = getConfig().claude;
   const env: Record<string, string> = { ...process.env } as Record<string, string>;
   if (cfg.anthropicBaseUrl) {
@@ -27,6 +27,10 @@ export async function* brainstorm(prompt: string): AsyncGenerator<string> {
   }
 
   const proc = spawn(cfg.command, args, spawnOptions);
+
+  proc.stderr?.on('data', (data: Buffer) => {
+    console.error('[claude stderr]', data.toString());
+  });
 
   const timeout = setTimeout(() => {
     proc.kill('SIGTERM');

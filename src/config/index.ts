@@ -29,51 +29,13 @@ function optionalBool(name: string, defaultValue: boolean): boolean {
   return value.toLowerCase() === 'true' || value === '1';
 }
 
-function parseJenkinsJobs(envValue: string | undefined): Record<string, string> {
-  if (!envValue) {
-    return {
-      Patch: 'MyProject/Patch_Build',
-      Release: 'MyProject/Release_Build',
-    };
-  }
-  try {
-    return JSON.parse(envValue);
-  } catch {
-    throw new Error(`Invalid JSON for JENKINS_JOBS: ${envValue}`);
-  }
-}
-
 export function loadConfig(): AppConfig {
-  // First validate that required environment variables exist
   validateRequiredEnvVars();
 
   config = {
     slack: {
       botToken: required('SLACK_BOT_TOKEN'),
       appToken: required('SLACK_APP_TOKEN'),
-    },
-    gitlab: {
-      url: optional('GITLAB_URL', 'https://gitlab.example.com'),
-      token: required('GITLAB_TOKEN'),
-      defaultProject: optional('GITLAB_DEFAULT_PROJECT', 'namespace/project'),
-      notify: {
-        port: optionalInt('GITLAB_NOTIFY_PORT', 4567),
-        secret: optional('GITLAB_NOTIFY_SECRET', ''),
-        channel: optional('GITLAB_NOTIFY_CHANNEL', '#dev-notifications'),
-        events: {
-          push: optionalBool('GITLAB_NOTIFY_PUSH', true),
-          mr: optionalBool('GITLAB_NOTIFY_MR', true),
-          pipeline: optionalBool('GITLAB_NOTIFY_PIPELINE', true),
-          issue: optionalBool('GITLAB_NOTIFY_ISSUE', true),
-          note: optionalBool('GITLAB_NOTIFY_NOTE', false),
-        },
-      },
-    },
-    jenkins: {
-      url: optional('JENKINS_URL', 'https://jenkins.example.com'),
-      user: required('JENKINS_USER'),
-      token: required('JENKINS_TOKEN'),
-      jobs: parseJenkinsJobs(process.env.JENKINS_JOBS),
     },
     claude: {
       command: optional('CLAUDE_COMMAND', 'claude'),
@@ -85,7 +47,6 @@ export function loadConfig(): AppConfig {
     },
   };
 
-  // Validate all config values for correctness
   validateConfig(config);
 
   return config;

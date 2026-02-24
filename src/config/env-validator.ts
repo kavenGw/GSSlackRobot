@@ -55,17 +55,8 @@ function isValidUrl(url: string): boolean {
   }
 }
 
-function isNonEmptyString(value: string | undefined): value is string {
-  return typeof value === 'string' && value.trim().length > 0;
-}
-
-function isValidPort(port: number): boolean {
-  return Number.isInteger(port) && port >= 1 && port <= 65535;
-}
-
 function isValidToken(token: string): boolean {
-  // Token should not be empty, whitespace-only, or contain obvious placeholders
-  if (!isNonEmptyString(token)) return false;
+  if (typeof token !== 'string' || token.trim().length === 0) return false;
 
   const placeholders = [
     'your_token_here',
@@ -86,7 +77,7 @@ export function validateConfig(config: AppConfig): void {
   const errors: ValidationError[] = [];
 
   // Slack validation
-  if (!isNonEmptyString(config.slack.botToken)) {
+  if (!config.slack.botToken || !config.slack.botToken.trim()) {
     errors.push({
       param: 'SLACK_BOT_TOKEN',
       message: 'Slack Bot Token is required and cannot be empty',
@@ -99,7 +90,7 @@ export function validateConfig(config: AppConfig): void {
     });
   }
 
-  if (!isNonEmptyString(config.slack.appToken)) {
+  if (!config.slack.appToken || !config.slack.appToken.trim()) {
     errors.push({
       param: 'SLACK_APP_TOKEN',
       message: 'Slack App Token is required and cannot be empty',
@@ -112,61 +103,7 @@ export function validateConfig(config: AppConfig): void {
     });
   }
 
-  // GitLab validation
-  if (!isValidUrl(config.gitlab.url)) {
-    errors.push({
-      param: 'GITLAB_URL',
-      message: 'GitLab URL must be a valid HTTP/HTTPS URL',
-      value: config.gitlab.url,
-    });
-  }
-
-  if (!isValidToken(config.gitlab.token)) {
-    errors.push({
-      param: 'GITLAB_TOKEN',
-      message: 'GitLab Token is required and cannot be a placeholder value',
-    });
-  }
-
-  if (!isNonEmptyString(config.gitlab.defaultProject)) {
-    errors.push({
-      param: 'GITLAB_DEFAULT_PROJECT',
-      message: 'GitLab Default Project must be a non-empty string (e.g., "namespace/project")',
-      value: config.gitlab.defaultProject,
-    });
-  }
-
-  // Jenkins validation
-  if (!isValidUrl(config.jenkins.url)) {
-    errors.push({
-      param: 'JENKINS_URL',
-      message: 'Jenkins URL must be a valid HTTP/HTTPS URL',
-      value: config.jenkins.url,
-    });
-  }
-
-  if (!isNonEmptyString(config.jenkins.user)) {
-    errors.push({
-      param: 'JENKINS_USER',
-      message: 'Jenkins User is required and cannot be empty',
-    });
-  }
-
-  if (!isValidToken(config.jenkins.token)) {
-    errors.push({
-      param: 'JENKINS_TOKEN',
-      message: 'Jenkins Token is required and cannot be a placeholder value',
-    });
-  }
-
-  if (Object.keys(config.jenkins.jobs).length === 0) {
-    errors.push({
-      param: 'JENKINS_JOBS',
-      message: 'At least one Jenkins job must be configured',
-    });
-  }
-
-  // Claude validation (optional but if provided, must be valid)
+  // Claude validation
   if (config.claude.anthropicBaseUrl !== undefined &&
       config.claude.anthropicBaseUrl !== '' &&
       !isValidUrl(config.claude.anthropicBaseUrl)) {
@@ -202,16 +139,6 @@ export function validateConfig(config: AppConfig): void {
     });
   }
 
-  // GitLab Notify validation
-  if (!isValidPort(config.gitlab.notify.port)) {
-    errors.push({
-      param: 'GITLAB_NOTIFY_PORT',
-      message: 'GitLab notify port must be a valid port number (1-65535)',
-      value: String(config.gitlab.notify.port),
-    });
-  }
-
-  // If any errors found, throw exception
   if (errors.length > 0) {
     throw new EnvValidationError(errors);
   }
@@ -221,9 +148,6 @@ export function validateRequiredEnvVars(): void {
   const requiredVars = [
     'SLACK_BOT_TOKEN',
     'SLACK_APP_TOKEN',
-    'GITLAB_TOKEN',
-    'JENKINS_USER',
-    'JENKINS_TOKEN',
   ];
 
   const missing = requiredVars.filter(v => !process.env[v]);
