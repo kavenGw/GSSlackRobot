@@ -13,6 +13,7 @@ import { log } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
 
 const SESSION_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+const activeSessions = new Set<string>();
 
 export interface CommandContext {
   text: string;
@@ -33,6 +34,17 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
   const startTime = Date.now();
   log.claudeStart(text.length);
   const sessionId = threadToSessionId(threadTs);
+
+  if (activeSessions.has(sessionId)) {
+    await client.chat.postMessage({
+      channel,
+      thread_ts: threadTs,
+      text: '上一条消息还在处理中，请稍后再试。',
+    });
+    return;
+  }
+
+  activeSessions.add(sessionId);
   const initial = await client.chat.postMessage({
     channel,
     thread_ts: threadTs,
@@ -89,6 +101,8 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
       ts: msgTs,
       text: content ? `${content}\n\n_（出错: ${errMsg}）_` : `出错: ${errMsg}`,
     });
+  } finally {
+    activeSessions.delete(sessionId);
   }
 }
 
