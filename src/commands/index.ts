@@ -1,6 +1,7 @@
 import type { App, SayFn } from '@slack/bolt';
 import type { WebClient } from '@slack/web-api';
 import { handleHelp } from './help.js';
+import { handleCommands } from './commands.js';
 import { askClaude } from '../services/claude.js';
 import { splitToBlocks } from '../utils/message.js';
 
@@ -82,6 +83,8 @@ export function registerCommands(app: App) {
     try {
       if (/^help$/i.test(text)) {
         await handleHelp(ctx);
+      } else if (/^commands$/i.test(text)) {
+        await handleCommands(ctx);
       } else {
         await handleClaude(ctx);
       }
