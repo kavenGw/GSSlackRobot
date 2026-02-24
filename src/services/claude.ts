@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { getConfig } from '../config/index.js';
 
-export async function* askClaude(prompt: string): AsyncGenerator<string> {
+export async function* askClaude(prompt: string, sessionId?: string): AsyncGenerator<string> {
   const cfg = getConfig().claude;
   const env: Record<string, string> = { ...process.env } as Record<string, string>;
   if (cfg.anthropicBaseUrl) {
@@ -13,6 +13,9 @@ export async function* askClaude(prompt: string): AsyncGenerator<string> {
 
   // Build command arguments
   const args = ['-p', prompt, '--output-format', 'stream-json'];
+  if (sessionId) {
+    args.push('--session-id', sessionId);
+  }
   if (cfg.dangerouslySkipPermissions) {
     args.push('--dangerously-skip-permissions');
   }

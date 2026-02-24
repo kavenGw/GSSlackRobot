@@ -1,9 +1,13 @@
 import type { App, SayFn } from '@slack/bolt';
 import type { WebClient } from '@slack/web-api';
+import { v5 as uuidv5 } from 'uuid';
 import { handleHelp } from './help.js';
 import { handleCommands } from './commands.js';
 import { askClaude } from '../services/claude.js';
 import { splitToBlocks } from '../utils/message.js';
+import { log } from '../utils/logger.js';
+
+const SESSION_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
 export interface CommandContext {
   text: string;
@@ -16,7 +20,12 @@ export interface CommandContext {
 const THROTTLE_MS = 500;
 const MAX_MSG_LEN = 3800;
 
+function threadToSessionId(threadTs: string): string {
+  return uuidv5(threadTs, SESSION_NAMESPACE);
+}
+
 async function handleClaude({ text, channel, threadTs, client }: CommandContext) {
+  const sessionId = threadToSessionId(threadTs);
   const initial = await client.chat.postMessage({
     channel,
     thread_ts: threadTs,
@@ -58,7 +67,7 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
   };
 
   try {
-    for await (const chunk of askClaude(text)) {
+    for await (const chunk of askClaude(text, sessionId)) {
       content += chunk;
       await flush();
     }
