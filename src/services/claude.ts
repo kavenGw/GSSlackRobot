@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process';
 import { getConfig } from '../config/index.js';
+import { log } from '../utils/logger.js';
 
 export async function* askClaude(prompt: string, sessionId?: string): AsyncGenerator<string> {
   const cfg = getConfig().claude;
@@ -32,7 +33,7 @@ export async function* askClaude(prompt: string, sessionId?: string): AsyncGener
   const proc = spawn(cfg.command, args, spawnOptions);
 
   proc.stderr?.on('data', (data: Buffer) => {
-    console.error('[claude stderr]', data.toString());
+    log.error(data.toString().trim());
   });
 
   const timeout = setTimeout(() => {

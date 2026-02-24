@@ -1,6 +1,7 @@
 import { App } from '@slack/bolt';
 import { loadConfig, EnvValidationError } from './config/index.js';
 import { registerCommands } from './commands/index.js';
+import { log } from './utils/logger.js';
 
 let config;
 try {
@@ -22,4 +23,4 @@ const app = new App({
 registerCommands(app);
 
 await app.start();
-console.log('GSSlackRobot is running');
+log.startup();

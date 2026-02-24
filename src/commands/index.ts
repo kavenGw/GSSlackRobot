@@ -25,6 +25,8 @@ function threadToSessionId(threadTs: string): string {
 }
 
 async function handleClaude({ text, channel, threadTs, client }: CommandContext) {
+  const startTime = Date.now();
+  log.claudeStart(text.length);
   const sessionId = threadToSessionId(threadTs);
   const initial = await client.chat.postMessage({
     channel,
@@ -72,6 +74,9 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
       await flush();
     }
     await flush(true);
+    log.claudeDone(Date.now() - startTime, content.length);
+    const segments = content.length <= MAX_MSG_LEN ? 1 : splitToBlocks(content).length;
+    log.reply(segments);
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     await client.chat.update({
@@ -86,11 +91,13 @@ export function registerCommands(app: App) {
   app.event('app_mention', async ({ event, say, client }) => {
     const text = event.text.replace(/<@[A-Z0-9]+>\s*/g, '').trim();
     const threadTs = event.thread_ts ?? event.ts;
+    log.incoming(event.user ?? 'unknown', text);
 
     const ctx: CommandContext = { text, channel: event.channel, threadTs, say, client };
 
     try {
       if (/^help$/i.test(text)) {
+        log.help();
         await handleHelp(ctx);
       } else if (/^commands$/i.test(text)) {
         await handleCommands(ctx);
@@ -98,7 +105,7 @@ export function registerCommands(app: App) {
         await handleClaude(ctx);
       }
     } catch (err) {
-      console.error('Command error:', err);
+      log.error(err instanceof Error ? err.message : String(err));
       await say({
         text: `执行出错: ${err instanceof Error ? err.message : String(err)}`,
         thread_ts: threadTs,
