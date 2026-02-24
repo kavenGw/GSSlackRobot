@@ -139,6 +139,22 @@ export function validateConfig(config: AppConfig): void {
     });
   }
 
+  if (config.gitlabNotify) {
+    if (config.gitlabNotify.port < 1 || config.gitlabNotify.port > 65535) {
+      errors.push({
+        param: 'GITLAB_WEBHOOK_PORT',
+        message: 'Webhook port must be between 1 and 65535',
+        value: String(config.gitlabNotify.port),
+      });
+    }
+    if (!config.gitlabNotify.channel.trim()) {
+      errors.push({
+        param: 'GITLAB_NOTIFY_CHANNEL',
+        message: 'GitLab notify channel cannot be empty',
+      });
+    }
+  }
+
   if (errors.length > 0) {
     throw new EnvValidationError(errors);
   }

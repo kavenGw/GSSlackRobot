@@ -2,6 +2,7 @@ import { App } from '@slack/bolt';
 import { loadConfig, EnvValidationError } from './config/index.js';
 import { registerCommands } from './commands/index.js';
 import { log } from './utils/logger.js';
+import { startWebhookServer } from './webhooks/server.js';
 
 let config;
 try {
@@ -23,4 +24,5 @@ const app = new App({
 registerCommands(app);
 
 await app.start();
+startWebhookServer(app);
 log.startup();

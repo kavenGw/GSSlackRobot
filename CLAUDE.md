@@ -32,7 +32,11 @@ src/
 │   └── help.ts               # 帮助信息
 ├── services/
 │   └── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
+├── webhooks/
+│   ├── server.ts             # Express Webhook 服务器 (GitLab → Slack)
+│   └── gitlab.ts             # GitLab 事件格式化 (Push/MR/Pipeline/Issue/Note)
 └── utils/
+    ├── logger.ts             # 彩色控制台日志
     └── message.ts            # 文本截断/分段
 ```
 
@@ -65,6 +69,14 @@ src/
 | `ANTHROPIC_AUTH_TOKEN` | 无 | Anthropic Auth Token (若设置不可为占位符) |
 | `CLAUDE_PROJECT_DIR` | 无 | Claude 项目目录 |
 | `CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS` | `false` | 跳过 Claude 权限检查 |
+| `GITLAB_NOTIFY_CHANNEL` | 无 | GitLab 通知 Slack 频道 ID（设置后启用 Webhook） |
+| `GITLAB_WEBHOOK_PORT` | `3000` | Webhook 监听端口 |
+| `GITLAB_WEBHOOK_SECRET` | 无 | GitLab Webhook Secret Token |
+| `GITLAB_EVENTS_PUSH` | `true` | Push 事件通知开关 |
+| `GITLAB_EVENTS_MR` | `true` | MR 事件通知开关 |
+| `GITLAB_EVENTS_PIPELINE` | `true` | Pipeline 事件通知开关 |
+| `GITLAB_EVENTS_ISSUE` | `true` | Issue 事件通知开关 |
+| `GITLAB_EVENTS_NOTE` | `true` | Note 事件通知开关 |
 
 ### 环境变量验证机制
 
@@ -84,3 +96,4 @@ src/
 - **配置统一使用 env**: 所有配置通过环境变量加载，不使用配置文件，通过 `getConfig()` 获取单例
 - **命令路由**: `help` 显示帮助，其余所有输入直接透传 Claude CLI
 - **Claude CLI 集成**: 通过子进程调用，使用 `--output-format stream-json` 参数，输出为 JSON Lines 格式
+- **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
