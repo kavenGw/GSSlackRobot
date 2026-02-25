@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir, access } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { getIssues, getLatestActiveMilestoneTitle } from '../services/gitlab.js';
 import type { GitLabIssue } from '../services/gitlab.js';
@@ -33,15 +33,6 @@ function yesterdayStr() {
 
 function snapshotPath(title: string, date: string) {
   return join(DATA_DIR, `${title}-${date}.json`);
-}
-
-export async function hasTodaySnapshot(title: string): Promise<boolean> {
-  try {
-    await access(snapshotPath(title, todayStr()));
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 function toSnapshot(issue: GitLabIssue): IssueSnapshot {

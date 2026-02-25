@@ -31,5 +31,5 @@ registerCommands(app);
 await app.start();
 startWebhookServer(app);
 scheduleDailyReport(app);
-scheduleJenkinsCronJobs();
+await scheduleJenkinsCronJobs();
 log.startup();

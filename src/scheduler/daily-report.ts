@@ -1,7 +1,8 @@
 import type { App } from '@slack/bolt';
 import { getConfig } from '../config/index.js';
-import { generateDailyReport, hasTodaySnapshot } from '../commands/daily-report.js';
+import { generateDailyReport } from '../commands/daily-report.js';
 import { getLatestActiveMilestoneTitle } from '../services/gitlab.js';
+import { hasRunToday, markRunToday } from '../utils/scheduler-guard.js';
 import { log } from '../utils/logger.js';
 
 export function scheduleDailyReport(slackApp: App) {
@@ -11,13 +12,14 @@ export function scheduleDailyReport(slackApp: App) {
 
   async function execute() {
     try {
-      const title = await getLatestActiveMilestoneTitle();
-      if (await hasTodaySnapshot(title)) {
+      if (await hasRunToday('daily-report')) {
         log.info('daily-report 今天已执行，跳过');
         return;
       }
+      const title = await getLatestActiveMilestoneTitle();
       const report = await generateDailyReport(title);
       await slackApp.client.chat.postMessage({ channel, text: report });
+      await markRunToday('daily-report');
       log.info('daily-report 已发送');
     } catch (err) {
       log.error(`daily-report 调度失败: ${err instanceof Error ? err.message : String(err)}`);
