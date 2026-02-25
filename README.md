@@ -46,13 +46,66 @@ Socket Mode（Bolt）和 Webhook HTTP（Express）在同一进程并行运行，
 - **Event Subscriptions**: 订阅 `app_mention`
 - 开启 **Socket Mode**
 
-### 2. 环境变量
+### 2. GitLab 配置
+
+#### API 访问
+
+在 GitLab 中获取以下凭证：
+
+1. **Personal access token**: 进入 User Settings > Access Tokens，创建 token 并勾选 `api` scope
+2. **Project ID**: 项目首页右侧或 Settings > General 中查看
+3. **GitLab URL**: 你的 GitLab 实例地址，如 `https://gitlab.example.com`
+
+| 变量 | 说明 |
+|------|------|
+| `GITLAB_API_URL` | GitLab API 地址，如 `https://gitlab.example.com/api/v4` |
+| `GITLAB_TOKEN` | Personal access token（`glpat-` 开头） |
+| `GITLAB_PROJECT_ID` | 项目 ID |
+
+三项都设置后启用 GitLab 命令（`list-milestones`、`list-issues`、`daily-report`、`create-milestone`）。
+
+#### Webhook 通知
+
+在 GitLab 项目 Settings > Webhooks 中添加：
+
+1. **URL**: `http://<你的IP>:3000/gitlab`
+2. **Secret token**: 自定义密钥，与 `GITLAB_WEBHOOK_SECRET` 保持一致
+3. **Trigger**: 勾选 Push events / Merge request events / Pipeline events / Issues events / Comments
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `GITLAB_NOTIFY_CHANNEL` | Slack 频道 ID（设置后启用 Webhook） | — |
+| `GITLAB_WEBHOOK_PORT` | 监听端口 | `3000` |
+| `GITLAB_WEBHOOK_SECRET` | Secret token | — |
+| `GITLAB_EVENTS_PUSH` | Push events 开关 | `true` |
+| `GITLAB_EVENTS_MR` | Merge request events 开关 | `true` |
+| `GITLAB_EVENTS_PIPELINE` | Pipeline events 开关 | `true` |
+| `GITLAB_EVENTS_ISSUE` | Issues events 开关 | `true` |
+| `GITLAB_EVENTS_NOTE` | Comments 开关 | `true` |
+
+### 3. Jenkins 配置
+
+#### 获取凭证
+
+1. **Jenkins URL**: Jenkins 服务器地址，如 `https://jenkins.example.com`
+2. **Username**: Jenkins 登录用户名
+3. **API Token**: 进入 User icon > Configure > API Token，点击 Add new Token 生成
+
+| 变量 | 说明 |
+|------|------|
+| `JENKINS_URL` | Jenkins 基础 URL |
+| `JENKINS_USERNAME` | 用户名 |
+| `JENKINS_API_TOKEN` | API Token |
+
+三项都设置后启用 Jenkins 集成。
+
+### 4. 环境变量
 
 ```bash
 cp .env.example .env
 ```
 
-编辑 `.env` 填入真实值：
+编辑 `.env` 填入 Slack 和 Claude 配置（GitLab / Jenkins 见上方各自章节）：
 
 ```bash
 # Slack 配置 (必填)
@@ -62,19 +115,9 @@ SLACK_APP_TOKEN=xapp-...
 # Claude 配置 (可选)
 CLAUDE_COMMAND=claude
 CLAUDE_TIMEOUT_MS=300000
-
-# GitLab Webhook (可选，设置 GITLAB_NOTIFY_CHANNEL 后启用)
-GITLAB_NOTIFY_CHANNEL=C0123456789
-GITLAB_WEBHOOK_PORT=3000
-GITLAB_WEBHOOK_SECRET=your-secret
-GITLAB_EVENTS_PUSH=true
-GITLAB_EVENTS_MR=true
-GITLAB_EVENTS_PIPELINE=true
-GITLAB_EVENTS_ISSUE=true
-GITLAB_EVENTS_NOTE=true
 ```
 
-### 3. 安装并运行
+### 5. 安装并运行
 
 ```bash
 npm install
@@ -82,14 +125,6 @@ npm run dev      # 开发模式（热重载）
 npm run build    # 编译
 npm start        # 生产模式
 ```
-
-### 4. GitLab Webhook
-
-在 GitLab 项目 Settings > Webhooks 中添加：
-
-- **URL**: `http://<你的IP>:3000/gitlab`
-- **Secret Token**: 与 `GITLAB_WEBHOOK_SECRET` 一致
-- **Triggers**: Push / Merge Request / Pipeline / Issues / Comments
 
 ## 项目结构
 
