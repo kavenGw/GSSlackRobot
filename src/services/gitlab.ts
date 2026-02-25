@@ -5,6 +5,8 @@ interface GitLabMilestone {
   iid: number;
   title: string;
   created_at: string;
+  start_date: string | null;
+  due_date: string | null;
   web_url: string;
   state: string;
 }
@@ -59,10 +61,10 @@ export async function getIssues(milestone: string, state: 'opened' | 'closed'): 
   );
 }
 
-export async function createMilestone(title: string): Promise<GitLabMilestone> {
+export async function createMilestone(title: string, startDate: string, dueDate: string): Promise<GitLabMilestone> {
   return gitlabFetch<GitLabMilestone>('milestones', {
     method: 'POST',
-    body: JSON.stringify({ title }),
+    body: JSON.stringify({ title, start_date: startDate, due_date: dueDate }),
   });
 }
 

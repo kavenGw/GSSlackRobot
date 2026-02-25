@@ -25,17 +25,29 @@ const MISC_ISSUE_DESCRIPTION = `# 正式包
 2. steam id
 3. 主界面愿望单按钮`;
 
+function formatDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 export async function handleCreateMilestone({ text, say, threadTs }: CommandContext) {
-  const version = text.replace(/^create-milestone\s*/i, '').trim();
+  const args = text.replace(/^create-milestone\s*/i, '').trim().split(/\s+/);
+  const version = args[0];
   if (!version) {
-    await say({ text: '用法: `create-milestone <版本号>`，例如: `create-milestone 10.32`', thread_ts: threadTs });
+    await say({ text: '用法: `create-milestone <版本号> [结束日期YYYY-MM-DD]`，例如: `create-milestone 10.32` 或 `create-milestone 10.32 2026-03-11`', thread_ts: threadTs });
     return;
   }
 
+  const today = new Date();
+  const startDate = formatDate(today);
+  const dueDate = args[1] || formatDate(new Date(today.getTime() + 14 * 86400000));
+
   const results: string[] = [];
 
-  const milestone = await createMilestone(version);
-  results.push(`Milestone: *${version}* (已创建)`);
+  const milestone = await createMilestone(version, startDate, dueDate);
+  results.push(`Milestone: *${version}* (已创建, 起止: ${startDate} ~ ${dueDate})`);
 
   const issueTitle = `${version}杂项`;
   const issue = await createIssue(issueTitle, MISC_ISSUE_DESCRIPTION, milestone.id);
