@@ -24,6 +24,23 @@ export interface CommandContext {
   client: WebClient;
 }
 
+const COMMAND_ALIASES: Record<string, string> = {
+  h: 'help',
+  command: 'commands',
+  milestones: 'list-milestones',
+  issues: 'list-issues',
+  report: 'daily-report',
+  create: 'create-milestone',
+  gem: 'gemini',
+};
+
+function resolveAlias(input: string): string {
+  const spaceIdx = input.indexOf(' ');
+  const cmd = (spaceIdx === -1 ? input : input.slice(0, spaceIdx)).toLowerCase();
+  const rest = spaceIdx === -1 ? '' : input.slice(spaceIdx);
+  return COMMAND_ALIASES[cmd] ? COMMAND_ALIASES[cmd] + rest : input;
+}
+
 const THROTTLE_MS = 500;
 const MAX_MSG_LEN = 3800;
 
@@ -109,7 +126,7 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
 
 export function registerCommands(app: App) {
   app.event('app_mention', async ({ event, say, client }) => {
-    const text = event.text.replace(/<@[A-Z0-9]+>\s*/g, '').trim();
+    const text = resolveAlias(event.text.replace(/<@[A-Z0-9]+>\s*/g, '').trim());
     const threadTs = event.thread_ts ?? event.ts;
     log.incoming(event.user ?? 'unknown', text);
 
