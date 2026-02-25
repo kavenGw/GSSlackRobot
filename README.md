@@ -89,7 +89,7 @@ Socket Mode（Bolt）和 Webhook HTTP（Express）在同一进程并行运行，
 
 1. **Jenkins URL**: Jenkins 服务器地址，如 `https://jenkins.example.com`
 2. **Username**: Jenkins 登录用户名
-3. **API Token**: 进入 User icon > Configure > API Token，点击 Add new Token 生成
+3. **API Token**: 进入 User icon > Security > API Token，点击 Add new Token 生成
 
 | 变量 | 说明 |
 |------|------|
