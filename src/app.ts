@@ -5,6 +5,9 @@ import { log } from './utils/logger.js';
 import { startWebhookServer } from './webhooks/server.js';
 import { scheduleDailyReport } from './scheduler/daily-report.js';
 import { scheduleJenkinsCronJobs } from './scheduler/jenkins-cron.js';
+import { ensureSingleInstance } from './utils/singleton.js';
+
+await ensureSingleInstance();
 
 let config;
 try {

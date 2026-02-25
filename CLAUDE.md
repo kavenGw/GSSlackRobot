@@ -93,6 +93,7 @@ src/
 | `JENKINS_USERNAME` | 无 | Jenkins 用户名 |
 | `JENKINS_API_TOKEN` | 无 | Jenkins API Token |
 | `JENKINS_CRON_JOBS` | 无 | Jenkins 定时任务（格式：`JobName HH:MM[,...]`） |
+| `SINGLETON_PORT` | `19280` | 单实例检测端口 |
 
 ### 环境变量验证机制
 
