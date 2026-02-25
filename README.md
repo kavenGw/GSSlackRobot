@@ -6,6 +6,8 @@
 
 - **Claude AI 对话**: `@bot` 任意文字即可透传给 Claude AI，流式输出回答
 - **帮助**: `@bot help` 显示可用命令
+- **Gemini AI 对话**: `@bot gemini <问题>` 使用 Gemini 模型回答问题
+- **Gemini 画图**: `@bot gemini-draw <描述>` 用 Gemini 画图模型生成图像
 - **GitLab Webhook 通知**: 接收 GitLab 事件推送（Push / MR / Pipeline / Issue / Note），自动发送到指定 Slack 频道
 
 ## 架构
@@ -83,7 +85,25 @@ Socket Mode（Bolt）和 Webhook HTTP（Express）在同一进程并行运行，
 | `GITLAB_EVENTS_ISSUE` | Issues events 开关 | `true` |
 | `GITLAB_EVENTS_NOTE` | Comments 开关 | `true` |
 
-### 3. Jenkins 配置
+### 3. Gemini 配置
+
+#### API 访问
+
+在 Google AI Studio 中获取以下凭证：
+
+1. **API Key**: 进入 [ai.google.dev](https://ai.google.dev)，创建或获取 API Key
+2. **Model**: 默认使用 `gemini-2.0-flash` 用于对话，可通过 `GEMINI_MODEL` 自定义
+3. **Image Model**: 默认使用 `gemini-3-pro-image-preview` 用于画图，可通过 `GEMINI_IMAGE_MODEL` 自定义
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `GEMINI_API_KEY` | Google AI Studio API Key | — |
+| `GEMINI_MODEL` | Gemini 对话模型名 | `gemini-2.0-flash` |
+| `GEMINI_IMAGE_MODEL` | Gemini 画图模型名 | `gemini-3-pro-image-preview` |
+
+API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
+
+### 4. Jenkins 配置
 
 #### 获取凭证
 
@@ -109,7 +129,7 @@ Socket Mode（Bolt）和 Webhook HTTP（Express）在同一进程并行运行，
 
 启动时自动调度：已过时间点的任务立即执行，未到的等待触发。支持多级 Pipeline（`folder/job` 格式）。
 
-### 4. 环境变量
+### 5. 环境变量
 
 ```bash
 cp .env.example .env
@@ -127,7 +147,7 @@ CLAUDE_COMMAND=claude
 CLAUDE_TIMEOUT_MS=300000
 ```
 
-### 5. 安装并运行
+### 6. 安装并运行
 
 ```bash
 npm install
@@ -147,9 +167,18 @@ src/
 │   └── env-validator.ts      # 环境变量有效性验证
 ├── commands/
 │   ├── index.ts              # app_mention 事件 → help 或 Claude 透传
-│   └── help.ts               # 帮助信息
+│   ├── help.ts               # 帮助信息
+│   ├── gemini.ts             # Gemini AI 对话
+│   ├── gemini-draw.ts        # Gemini 画图生成
+│   ├── daily-report.ts       # 每日简报
+│   ├── list-milestones.ts    # 列出活跃 milestones
+│   ├── list-milestone-issues.ts # 列出 milestone issues
+│   └── create-milestone.ts   # 创建 milestone（含起止日期）+ 杂项 issue
 ├── services/
-│   └── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
+│   ├── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
+│   ├── gitlab.ts             # GitLab REST API
+│   ├── jenkins.ts            # Jenkins Script Console + Build API
+│   └── gemini.ts             # Google Gemini API
 ├── webhooks/
 │   ├── server.ts             # Express Webhook 服务器 (GitLab → Slack)
 │   └── gitlab.ts             # GitLab 事件格式化 (Push/MR/Pipeline/Issue/Note)

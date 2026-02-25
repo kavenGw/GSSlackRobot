@@ -8,6 +8,7 @@ import { handleListMilestoneIssues } from './list-milestone-issues.js';
 import { handleCreateMilestone } from './create-milestone.js';
 import { handleDailyReport } from './daily-report.js';
 import { handleGemini } from './gemini.js';
+import { handleGeminiDraw } from './gemini-draw.js';
 import { askClaude } from '../services/claude.js';
 import { splitToBlocks } from '../utils/message.js';
 import { log } from '../utils/logger.js';
@@ -32,6 +33,7 @@ const COMMAND_ALIASES: Record<string, string> = {
   report: 'daily-report',
   create: 'create-milestone',
   gem: 'gemini',
+  draw: 'gemini-draw',
 };
 
 function resolveAlias(input: string): string {
@@ -149,6 +151,12 @@ export function registerCommands(app: App) {
           await handleDailyReport(ctx);
         } else if (/^create-milestone\b/i.test(text)) {
           await handleCreateMilestone(ctx);
+        }
+      } else if (/^gemini-draw\b/i.test(text)) {
+        if (!getConfig().gemini) {
+          await say({ text: 'Gemini 未配置，请设置 GEMINI_API_KEY 环境变量', thread_ts: threadTs });
+        } else {
+          await handleGeminiDraw(ctx);
         }
       } else if (/^gemini\b/i.test(text)) {
         if (!getConfig().gemini) {

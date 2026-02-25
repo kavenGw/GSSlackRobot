@@ -47,6 +47,7 @@ export interface JenkinsConfig {
 export interface GeminiConfig {
   apiKey: string;
   model: string;
+  imageModel: string;
 }
 
 export interface AppConfig {

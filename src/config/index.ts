@@ -77,6 +77,7 @@ export function loadConfig(): AppConfig {
     gemini: process.env.GEMINI_API_KEY ? {
       apiKey: process.env.GEMINI_API_KEY,
       model: optional('GEMINI_MODEL', 'gemini-2.0-flash'),
+      imageModel: optional('GEMINI_IMAGE_MODEL', 'gemini-3-pro-image-preview'),
     } : undefined,
   };
 
