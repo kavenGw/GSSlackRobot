@@ -42,3 +42,19 @@ println('COMMIT_MSG updated to: ' + newValue)
   }
   return result.trim();
 }
+
+export async function triggerJob(jobName: string): Promise<void> {
+  const cfg = getConfig().jenkins;
+  if (!cfg) throw new Error('Jenkins 未配置');
+
+  const auth = Buffer.from(`${cfg.username}:${cfg.apiToken}`).toString('base64');
+  const jobPath = jobName.split('/').map(encodeURIComponent).join('/job/');
+  const res = await fetch(`${cfg.url}/job/${jobPath}/build`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${auth}`,
+    },
+  });
+
+  if (!res.ok) throw new Error(`Jenkins trigger ${jobName} failed: ${res.status} ${await res.text()}`);
+}

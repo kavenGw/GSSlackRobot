@@ -31,10 +31,17 @@ export interface GitLabConfig {
   projectId: string;
 }
 
+export interface JenkinsCronJob {
+  jobName: string;
+  hour: number;
+  minute: number;
+}
+
 export interface JenkinsConfig {
   url: string;
   username: string;
   apiToken: string;
+  cronJobs?: JenkinsCronJob[];
 }
 
 export interface AppConfig {

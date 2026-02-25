@@ -35,11 +35,12 @@ src/
 │   ├── list-milestone-issues.ts # 列出 milestone issues
 │   └── create-milestone.ts   # 创建 milestone + 杂项 issue
 ├── scheduler/
-│   └── daily-report.ts       # 每日简报定时调度
+│   ├── daily-report.ts       # 每日简报定时调度
+│   └── jenkins-cron.ts       # Jenkins Job 定时触发
 ├── services/
 │   ├── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
 │   ├── gitlab.ts             # GitLab REST API
-│   └── jenkins.ts            # Jenkins Script Console API
+│   └── jenkins.ts            # Jenkins Script Console + Build API
 ├── webhooks/
 │   ├── server.ts             # Express Webhook 服务器 (GitLab → Slack)
 │   └── gitlab.ts             # GitLab 事件格式化 (Push/MR/Pipeline/Issue/Note)
@@ -91,6 +92,7 @@ src/
 | `JENKINS_URL` | 无 | Jenkins 基础 URL（三个都设置时启用 Jenkins 集成） |
 | `JENKINS_USERNAME` | 无 | Jenkins 用户名 |
 | `JENKINS_API_TOKEN` | 无 | Jenkins API Token |
+| `JENKINS_CRON_JOBS` | 无 | Jenkins 定时任务（格式：`JobName HH:MM[,...]`） |
 
 ### 环境变量验证机制
 
@@ -111,3 +113,5 @@ src/
 - **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`list-milestones`/`list-issues`/`daily-report`/`create-milestone` 为 GitLab 命令（需配置），其余输入透传 Claude CLI
 - **Claude CLI 集成**: 通过子进程调用，使用 `--output-format stream-json` 参数，输出为 JSON Lines 格式
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
+- **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
+- **配置变更同步**: 新增/修改环境变量配置时，需同步更新 `CLAUDE.md`、`README.md`、`.env.example` 三处

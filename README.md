@@ -99,6 +99,16 @@ Socket Mode（Bolt）和 Webhook HTTP（Express）在同一进程并行运行，
 
 三项都设置后启用 Jenkins 集成。
 
+#### 定时任务
+
+通过 `JENKINS_CRON_JOBS` 配置定时触发 Jenkins Job，格式为 `JobName HH:MM`，多个任务用逗号分隔：
+
+| 变量 | 说明 |
+|------|------|
+| `JENKINS_CRON_JOBS` | 定时任务列表，如 `FetchAllStatistics 14:00,BuildReport 18:30` |
+
+启动时自动调度：已过时间点的任务立即执行，未到的等待触发。支持多级 Pipeline（`folder/job` 格式）。
+
 ### 4. 环境变量
 
 ```bash

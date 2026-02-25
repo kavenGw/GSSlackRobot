@@ -181,6 +181,26 @@ export function validateConfig(config: AppConfig): void {
     }
   }
 
+  if (config.jenkins?.cronJobs) {
+    for (const job of config.jenkins.cronJobs) {
+      if (!job.jobName || !job.jobName.trim()) {
+        errors.push({
+          param: 'JENKINS_CRON_JOBS',
+          message: 'Job name cannot be empty',
+        });
+        continue;
+      }
+      if (isNaN(job.hour) || job.hour < 0 || job.hour > 23 ||
+          isNaN(job.minute) || job.minute < 0 || job.minute > 59) {
+        errors.push({
+          param: 'JENKINS_CRON_JOBS',
+          message: `Invalid time for job "${job.jobName}": hour must be 0-23, minute must be 0-59`,
+          value: `${job.hour}:${job.minute}`,
+        });
+      }
+    }
+  }
+
   if (errors.length > 0) {
     throw new EnvValidationError(errors);
   }

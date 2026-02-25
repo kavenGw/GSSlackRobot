@@ -4,6 +4,7 @@ import { registerCommands } from './commands/index.js';
 import { log } from './utils/logger.js';
 import { startWebhookServer } from './webhooks/server.js';
 import { scheduleDailyReport } from './scheduler/daily-report.js';
+import { scheduleJenkinsCronJobs } from './scheduler/jenkins-cron.js';
 
 let config;
 try {
@@ -27,4 +28,5 @@ registerCommands(app);
 await app.start();
 startWebhookServer(app);
 scheduleDailyReport(app);
+scheduleJenkinsCronJobs();
 log.startup();

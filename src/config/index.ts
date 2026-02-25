@@ -66,6 +66,13 @@ export function loadConfig(): AppConfig {
       url: process.env.JENKINS_URL,
       username: process.env.JENKINS_USERNAME,
       apiToken: process.env.JENKINS_API_TOKEN,
+      cronJobs: process.env.JENKINS_CRON_JOBS
+        ? process.env.JENKINS_CRON_JOBS.split(',').map(entry => {
+            const match = entry.trim().match(/^(.+)\s+(\d{1,2}):(\d{2})$/);
+            if (!match) throw new Error(`JENKINS_CRON_JOBS 格式无效: "${entry.trim()}"，期望: "JobName HH:MM"`);
+            return { jobName: match[1].trim(), hour: Number(match[2]), minute: Number(match[3]) };
+          })
+        : undefined,
     } : undefined,
   };
 
