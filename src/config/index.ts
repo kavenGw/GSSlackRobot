@@ -74,6 +74,10 @@ export function loadConfig(): AppConfig {
           })
         : undefined,
     } : undefined,
+    gemini: process.env.GEMINI_API_KEY ? {
+      apiKey: process.env.GEMINI_API_KEY,
+      model: optional('GEMINI_MODEL', 'gemini-2.0-flash'),
+    } : undefined,
   };
 
   validateConfig(config);

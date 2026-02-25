@@ -7,6 +7,7 @@ import { handleListMilestones } from './list-milestones.js';
 import { handleListMilestoneIssues } from './list-milestone-issues.js';
 import { handleCreateMilestone } from './create-milestone.js';
 import { handleDailyReport } from './daily-report.js';
+import { handleGemini } from './gemini.js';
 import { askClaude } from '../services/claude.js';
 import { splitToBlocks } from '../utils/message.js';
 import { log } from '../utils/logger.js';
@@ -131,6 +132,12 @@ export function registerCommands(app: App) {
           await handleDailyReport(ctx);
         } else if (/^create-milestone\b/i.test(text)) {
           await handleCreateMilestone(ctx);
+        }
+      } else if (/^gemini\b/i.test(text)) {
+        if (!getConfig().gemini) {
+          await say({ text: 'Gemini 未配置，请设置 GEMINI_API_KEY 环境变量', thread_ts: threadTs });
+        } else {
+          await handleGemini(ctx);
         }
       } else {
         await handleClaude(ctx);

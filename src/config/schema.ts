@@ -44,10 +44,16 @@ export interface JenkinsConfig {
   cronJobs?: JenkinsCronJob[];
 }
 
+export interface GeminiConfig {
+  apiKey: string;
+  model: string;
+}
+
 export interface AppConfig {
   slack: SlackConfig;
   claude: ClaudeConfig;
   gitlabNotify?: GitLabNotifyConfig;
   gitlab?: GitLabConfig;
   jenkins?: JenkinsConfig;
+  gemini?: GeminiConfig;
 }
