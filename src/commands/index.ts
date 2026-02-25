@@ -16,6 +16,7 @@ import { getConfig } from '../config/index.js';
 
 const SESSION_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 const activeSessions = new Set<string>();
+const knownSessions = new Set<string>();
 
 export interface CommandContext {
   text: string;
@@ -106,7 +107,8 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
   };
 
   try {
-    for await (const chunk of askClaude(text, sessionId)) {
+    const resume = knownSessions.has(sessionId);
+    for await (const chunk of askClaude(text, sessionId, resume)) {
       content += chunk;
       await flush();
     }
@@ -122,6 +124,7 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
       text: content ? `${content}\n\n_（出错: ${errMsg}）_` : `出错: ${errMsg}`,
     });
   } finally {
+    knownSessions.add(sessionId);
     activeSessions.delete(sessionId);
   }
 }
