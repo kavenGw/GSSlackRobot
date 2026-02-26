@@ -13,7 +13,8 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
   }
 
   // Build command arguments
-  const args = ['-p', prompt, '--output-format', 'stream-json'];
+  // --verbose is required when using -p with --output-format stream-json
+  const args = ['-p', prompt, '--output-format', 'stream-json', '--verbose'];
   if (sessionId) {
     if (resume) {
       args.push('--resume', sessionId);
