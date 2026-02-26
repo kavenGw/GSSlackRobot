@@ -6,7 +6,7 @@ import { handleCommands } from './commands.js';
 import { handleListMilestones } from './list-milestones.js';
 import { handleListMilestoneIssues } from './list-milestone-issues.js';
 import { handleCreateMilestone } from './create-milestone.js';
-import { handleDailyReport } from './daily-report.js';
+import { handleDailyReport, handleResetDailyReport } from './daily-report.js';
 import { handleGemini } from './gemini.js';
 import { handleGeminiDraw } from './gemini-draw.js';
 import { askClaude } from '../services/claude.js';
@@ -32,6 +32,7 @@ const COMMAND_ALIASES: Record<string, string> = {
   milestones: 'list-milestones',
   issues: 'list-issues',
   report: 'daily-report',
+  'reset-report': 'reset-daily-report',
   create: 'create-milestone',
   gem: 'gemini',
   draw: 'gemini-draw',
@@ -143,13 +144,15 @@ export function registerCommands(app: App) {
         await handleHelp(ctx);
       } else if (/^commands$/i.test(text)) {
         await handleCommands(ctx);
-      } else if (/^(list-milestones|list-issues|daily-report|create-milestone)\b/i.test(text)) {
+      } else if (/^(list-milestones|list-issues|daily-report|reset-daily-report|create-milestone)\b/i.test(text)) {
         if (!getConfig().gitlab) {
           await say({ text: 'GitLab 未配置，请设置 GITLAB_API_URL、GITLAB_TOKEN、GITLAB_PROJECT_ID 环境变量', thread_ts: threadTs });
         } else if (/^list-milestones$/i.test(text)) {
           await handleListMilestones(ctx);
         } else if (/^list-issues\b/i.test(text)) {
           await handleListMilestoneIssues(ctx);
+        } else if (/^reset-daily-report$/i.test(text)) {
+          await handleResetDailyReport(ctx);
         } else if (/^daily-report\b/i.test(text)) {
           await handleDailyReport(ctx);
         } else if (/^create-milestone\b/i.test(text)) {

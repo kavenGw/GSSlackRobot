@@ -16,6 +16,13 @@ export async function hasRunToday(taskKey: string): Promise<boolean> {
   return state[taskKey] === new Date().toISOString().slice(0, 10);
 }
 
+export async function clearRunToday(taskKey: string): Promise<void> {
+  const state = await loadState();
+  delete state[taskKey];
+  await mkdir(join(process.cwd(), 'data'), { recursive: true });
+  await writeFile(STATE_FILE, JSON.stringify(state, null, 2), 'utf-8');
+}
+
 export async function markRunToday(taskKey: string): Promise<void> {
   const state = await loadState();
   state[taskKey] = new Date().toISOString().slice(0, 10);

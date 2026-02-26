@@ -2,6 +2,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { getIssues, getLatestActiveMilestoneTitle } from '../services/gitlab.js';
 import type { GitLabIssue } from '../services/gitlab.js';
+import { clearRunToday } from '../utils/scheduler-guard.js';
 import type { CommandContext } from './index.js';
 
 const TESTING_LABELS = new Set(['待审核', '待审核未打包']);
@@ -90,10 +91,19 @@ export async function generateDailyReport(title: string): Promise<string> {
     ]);
     const newIssues = [...todayAllIids].filter(id => !yesterdayAllIids.has(id));
 
-    lines.push('*== 今日进度 ==*');
-    lines.push(`新完成: ${Math.max(0, tc.completed - yc.completed)}`);
-    lines.push(`新增待测试: ${Math.max(0, tc.testing - yc.testing)}`);
-    lines.push(`新增 issue: ${newIssues.length}`);
+    const yesterdayTestingIids = new Set(yesterdayData.testing.map(i => i.iid));
+    const newlyTesting = testing.filter(i => !yesterdayTestingIids.has(i.iid));
+    const yesterdayCompletedIids0 = new Set(yesterdayData.completed.map(i => i.iid));
+    const newlyCompleted0 = closed.filter(i => !yesterdayCompletedIids0.has(i.iid));
+    const newIssueItems = [...incomplete, ...testing, ...closed].filter(i => newIssues.includes(i.iid));
+
+    lines.push('*== 昨日进度 ==*');
+    lines.push(`新完成: ${newlyCompleted0.length}`);
+    for (const i of newlyCompleted0) lines.push(`  #${i.iid} ${i.title}`);
+    lines.push(`新增待测试: ${newlyTesting.length}`);
+    for (const i of newlyTesting) lines.push(`  #${i.iid} ${i.title}`);
+    lines.push(`新增 issue: ${newIssueItems.length}`);
+    for (const i of newIssueItems) lines.push(`  #${i.iid} ${i.title}`);
     lines.push('');
 
     lines.push('*== 当前状态 ==*');
@@ -133,33 +143,28 @@ export async function generateDailyReport(title: string): Promise<string> {
     }
   }
 
-  if (yesterdayData) {
-    const yesterdayCompletedIids = new Set(yesterdayData.completed.map(i => i.iid));
-    const newlyCompleted = closed.filter(i => !yesterdayCompletedIids.has(i.iid));
-    const yesterdayAllIids2 = new Set([
-      ...yesterdayData.incomplete.map(i => i.iid),
-      ...yesterdayData.testing.map(i => i.iid),
-      ...yesterdayData.completed.map(i => i.iid),
-    ]);
-    const newlyAdded = [...incomplete, ...testing].filter(i => !yesterdayAllIids2.has(i.iid));
-
-    if (newlyCompleted.length > 0 || newlyAdded.length > 0) {
-      lines.push('*== 昨日变更 ==*');
-      if (newlyCompleted.length > 0) {
-        const items = newlyCompleted.slice(0, 10).map(i => `#${i.iid} ${i.title}`).join(', ');
-        lines.push(`已完成: ${items}`);
-      }
-      if (newlyAdded.length > 0) {
-        const items = newlyAdded.slice(0, 10).map(i => `#${i.iid} ${i.title}`).join(', ');
-        lines.push(`新增: ${items}`);
-      }
-    }
-  }
 
   lines.push('');
   lines.push(`快照已保存: ${snapshotPath(title, today)}`);
 
   return lines.join('\n');
+}
+
+export async function handleResetDailyReport({ say, threadTs }: CommandContext) {
+  const title = await getLatestActiveMilestoneTitle();
+  const today = todayStr();
+  const path = snapshotPath(title, today);
+
+  try {
+    const { unlink } = await import('node:fs/promises');
+    await unlink(path);
+  } catch { /* 文件不存在则忽略 */ }
+
+  await clearRunToday('daily-report');
+  await say({ text: `已清除今日快照，正在重新生成...`, thread_ts: threadTs });
+
+  const report = await generateDailyReport(title);
+  await say({ text: report, thread_ts: threadTs });
 }
 
 export async function handleDailyReport({ text, say, threadTs }: CommandContext) {
