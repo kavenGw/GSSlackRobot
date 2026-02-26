@@ -122,3 +122,8 @@ src/
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
 - **配置变更同步**: 新增/修改环境变量配置时，需同步更新 `CLAUDE.md`、`README.md`、`.env.example` 三处
+- **命令变更同步**: 新增/修改/删除命令时，需同步更新以下位置：
+  1. `src/commands/help.ts` — 帮助文本中的命令列表
+  2. `src/commands/index.ts` — `COMMAND_ALIASES` 别名 + 路由正则 + handler 分支
+  3. `CLAUDE.md` — 命令路由说明
+  4. `README.md` — GitLab 命令列表
