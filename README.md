@@ -64,7 +64,7 @@ Socket Mode（Bolt）和 Webhook HTTP（Express）在同一进程并行运行，
 | `GITLAB_TOKEN` | Personal access token（`glpat-` 开头） |
 | `GITLAB_PROJECT_ID` | 项目 ID |
 
-三项都设置后启用 GitLab 命令（`list-milestones`、`list-issues`、`daily-report`、`create-milestone`）。
+三项都设置后启用 GitLab 命令（`list-milestones`、`list-issues`、`daily-report`、`reset-daily-report`、`create-milestone`）。
 
 #### Webhook 通知
 
