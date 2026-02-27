@@ -4,3 +4,4 @@ dist/
 config/local.yaml
 data/milestone-daily
 data
+logs/
