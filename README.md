@@ -187,6 +187,79 @@ src/
     └── message.ts            # 文本截断/分段
 ```
 
+## 部署
+
+### Windows 本机
+
+使用 `dev.bat`（开发模式）或 `start.bat`（生产模式）启动：
+
+```bash
+dev.bat      # npm run dev（tsx watch 热重载）
+start.bat    # npm run build && npm start
+```
+
+建议配置：
+- 设备管理器 → 网络适配器 → 属性 → 电源管理 → 取消"允许计算机关闭此设备以节约电源"
+- Windows 防火墙放行入站 TCP 3000 端口（GitLab Webhook）
+
+### GitLab Webhook 端口转发（Mac mini）
+
+当 GitLab 部署在 Mac mini（Docker）而 GSSlackRobot 运行在 Windows 时，需要在 Mac mini 上转发 Webhook 请求：
+
+```
+GitLab (Docker) → Mac mini socat :3001 → Windows :3000 (GSSlackRobot)
+```
+
+#### 安装 socat
+
+```bash
+brew install socat
+```
+
+#### 配置 launchd 守护进程
+
+创建 `~/Library/LaunchAgents/com.user.socat-forward.plist`：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.socat-forward</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/socat</string>
+        <string>TCP-LISTEN:3001,reuseaddr,fork</string>
+        <string>TCP:192.168.50.43:3000</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/socat-forward.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/socat-forward.err</string>
+</dict>
+</plist>
+```
+
+> socat 路径可能是 `/opt/homebrew/bin/socat`（Apple Silicon）或 `/usr/local/bin/socat`（Intel），用 `which socat` 确认。
+
+#### 管理命令
+
+```bash
+launchctl load ~/Library/LaunchAgents/com.user.socat-forward.plist      # 启动
+launchctl unload ~/Library/LaunchAgents/com.user.socat-forward.plist    # 停止
+launchctl list | grep socat                                             # 状态
+tail -f /tmp/socat-forward.log /tmp/socat-forward.err                   # 日志
+```
+
+#### 断线恢复
+
+socat `fork` 模式每个 Webhook 请求独立处理。Windows 不可达时单次请求失败，Windows 恢复后新请求自动成功，无需手动干预。
+
 ## 技术栈
 
 - **TypeScript** + ES Modules
