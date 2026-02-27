@@ -11,6 +11,10 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`create-milestone <版本>\` (\`create\`) — 创建 milestone + 杂项 issue
 • \`gemini <问题>\` (\`gem\`) — 与 Google Gemini AI 对话
 • \`gemini-draw <描述>\` (\`draw\`) — 用 Gemini 生成图片
+• \`model\` (\`m\`) — 查看/切换 Claude 模型和 effort
+• \`model <opus|sonnet|haiku> [effort]\` — 切换默认模型
+• \`effort <max|high|medium|low>\` — 切换 effort 级别
+• 对话前缀 \`opus <问题>\` — 单次指定模型（可选加 effort）
 • \`<任意问题>\` — 直接与 Claude AI 对话`;
 
 export async function handleHelp({ say, threadTs }: CommandContext) {

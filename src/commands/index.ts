@@ -9,7 +9,10 @@ import { handleCreateMilestone } from './create-milestone.js';
 import { handleDailyReport, handleResetDailyReport } from './daily-report.js';
 import { handleGemini } from './gemini.js';
 import { handleGeminiDraw } from './gemini-draw.js';
+import { handleModel, handleEffort } from './model.js';
 import { askClaude } from '../services/claude.js';
+import { isValidModel, isValidEffort } from '../services/settings.js';
+import type { ClaudeModel, EffortLevel } from '../services/settings.js';
 import { splitToBlocks } from '../utils/message.js';
 import { log, saveConversationLog } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
@@ -35,6 +38,7 @@ const COMMAND_ALIASES: Record<string, string> = {
   'reset-report': 'reset-daily-report',
   create: 'create-milestone',
   gem: 'gemini',
+  m: 'model',
   draw: 'gemini-draw',
 };
 
@@ -52,9 +56,24 @@ function threadToSessionId(threadTs: string): string {
   return uuidv5(threadTs, SESSION_NAMESPACE);
 }
 
+function parseModelPrefix(text: string): { prompt: string; model?: ClaudeModel; effort?: EffortLevel } {
+  const words = text.split(/\s+/);
+  if (words.length < 2) return { prompt: text };
+
+  const first = words[0].toLowerCase();
+  if (!isValidModel(first)) return { prompt: text };
+
+  const second = words[1].toLowerCase();
+  if (isValidEffort(second)) {
+    return { prompt: words.slice(2).join(' '), model: first as ClaudeModel, effort: second as EffortLevel };
+  }
+  return { prompt: words.slice(1).join(' '), model: first as ClaudeModel };
+}
+
 async function handleClaude({ text, channel, threadTs, client }: CommandContext) {
+  const { prompt, model, effort } = parseModelPrefix(text);
   const startTime = Date.now();
-  log.claudeStart(text.length);
+  log.claudeStart(prompt.length);
   const sessionId = threadToSessionId(threadTs);
 
   if (activeSessions.has(sessionId)) {
@@ -109,7 +128,7 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
 
   try {
     const resume = knownSessions.has(sessionId);
-    for await (const chunk of askClaude(text, sessionId, resume)) {
+    for await (const chunk of askClaude(prompt, sessionId, resume, model, effort)) {
       content += chunk;
       await flush();
     }
@@ -121,7 +140,7 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
     log.claudeDone(durationMs, content.length);
     const segments = content.length <= MAX_MSG_LEN ? 1 : splitToBlocks(content).length;
     log.reply(segments);
-    await saveConversationLog({ prompt: text, reply: content, durationMs, sessionId, resume, segments });
+    await saveConversationLog({ prompt, reply: content, durationMs, sessionId, resume, segments });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     await client.chat.update({
@@ -149,6 +168,10 @@ export function registerCommands(app: App) {
         await handleHelp(ctx);
       } else if (/^commands$/i.test(text)) {
         await handleCommands(ctx);
+      } else if (/^model\b/i.test(text)) {
+        await handleModel(ctx);
+      } else if (/^effort\b/i.test(text)) {
+        await handleEffort(ctx);
       } else if (/^(list-milestones|list-issues|daily-report|reset-daily-report|create-milestone)\b/i.test(text)) {
         if (!getConfig().gitlab) {
           await say({ text: 'GitLab 未配置，请设置 GITLAB_API_URL、GITLAB_TOKEN、GITLAB_PROJECT_ID 环境变量', thread_ts: threadTs });

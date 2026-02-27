@@ -5,6 +5,7 @@
 ## 功能
 
 - **Claude AI 对话**: `@bot` 任意文字即可透传给 Claude AI，流式输出回答
+- **模型切换**: `@bot model opus`/`sonnet`/`haiku` 切换默认模型，`@bot effort` 切换思考深度，支持 `@bot opus <问题>` 单次指定
 - **帮助**: `@bot help` 显示可用命令
 - **Gemini AI 对话**: `@bot gemini <问题>` 使用 Gemini 模型回答问题
 - **Gemini 画图**: `@bot gemini-draw <描述>` 用 Gemini 画图模型生成图像
@@ -170,12 +171,14 @@ src/
 │   ├── help.ts               # 帮助信息
 │   ├── gemini.ts             # Gemini AI 对话
 │   ├── gemini-draw.ts        # Gemini 画图生成
+│   └── model.ts              # 模型/effort 切换命令
 │   ├── daily-report.ts       # 每日简报
 │   ├── list-milestones.ts    # 列出活跃 milestones
 │   ├── list-milestone-issues.ts # 列出 milestone issues
 │   └── create-milestone.ts   # 创建 milestone（含起止日期）+ 杂项 issue
 ├── services/
 │   ├── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
+│   ├── settings.ts           # 运行时设置持久化 (model/effort)
 │   ├── gitlab.ts             # GitLab REST API
 │   ├── jenkins.ts            # Jenkins Script Console + Build API
 │   └── gemini.ts             # Google Gemini API

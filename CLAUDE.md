@@ -35,12 +35,14 @@ src/
 │   ├── list-milestone-issues.ts # 列出 milestone issues
 │   ├── create-milestone.ts   # 创建 milestone（含起止日期）+ 杂项 issue
 │   ├── gemini.ts             # Gemini AI 对话
-│   └── gemini-draw.ts        # Gemini 画图生成
+│   ├── gemini-draw.ts        # Gemini 画图生成
+│   └── model.ts              # 模型/effort 切换命令
 ├── scheduler/
 │   ├── daily-report.ts       # 每日简报定时调度
 │   └── jenkins-cron.ts       # Jenkins Job 定时触发
 ├── services/
 │   ├── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
+│   ├── settings.ts           # 运行时设置持久化 (model/effort → data/settings.json)
 │   ├── gitlab.ts             # GitLab REST API
 │   ├── jenkins.ts            # Jenkins Script Console + Build API
 │   └── gemini.ts             # Google Gemini API
@@ -117,8 +119,9 @@ src/
 ## 关键设计注意事项
 
 - **配置统一使用 env**: 所有配置通过环境变量加载，不使用配置文件，通过 `getConfig()` 获取单例
-- **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`list-milestones`/`list-issues`/`daily-report`/`reset-daily-report`/`create-milestone <版本号> [结束日期]` 为 GitLab 命令（需配置），`gemini <问题>` 和 `gemini-draw <描述>` 为 Gemini 命令（需配置），其余输入透传 Claude CLI
-- **Claude CLI 集成**: 通过子进程调用，使用 `--output-format stream-json` 参数，输出为 JSON Lines 格式
+- **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`model [模型] [effort]`/`effort [级别]` 切换 Claude 模型和 effort（持久化到 `data/settings.json`），`list-milestones`/`list-issues`/`daily-report`/`reset-daily-report`/`create-milestone <版本号> [结束日期]` 为 GitLab 命令（需配置），`gemini <问题>` 和 `gemini-draw <描述>` 为 Gemini 命令（需配置），其余输入透传 Claude CLI（支持 `opus/sonnet/haiku` 前缀单次指定模型）
+- **Claude CLI 集成**: 通过子进程调用，使用 `--output-format stream-json` 参数，输出为 JSON Lines 格式。支持 `--model`（opus/sonnet/haiku）和 `--effort`（max/high/medium/low）参数
+- **运行时设置**: `data/settings.json` 存储 Claude 模型和 effort 偏好，启动时加载，通过 Slack 命令动态修改
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
 - **配置变更同步**: 新增/修改环境变量配置时，需同步更新 `CLAUDE.md`、`README.md`、`.env.example` 三处

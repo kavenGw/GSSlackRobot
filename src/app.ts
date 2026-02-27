@@ -6,6 +6,7 @@ import { startWebhookServer } from './webhooks/server.js';
 import { scheduleDailyReport } from './scheduler/daily-report.js';
 import { scheduleJenkinsCronJobs } from './scheduler/jenkins-cron.js';
 import { ensureSingleInstance } from './utils/singleton.js';
+import { loadSettings } from './services/settings.js';
 
 await ensureSingleInstance();
 
@@ -19,6 +20,8 @@ try {
   }
   throw error;
 }
+
+await loadSettings();
 
 const app = new App({
   token: config.slack.botToken,

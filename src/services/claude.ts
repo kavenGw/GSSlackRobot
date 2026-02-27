@@ -1,8 +1,9 @@
 import { spawn } from 'node:child_process';
 import { getConfig } from '../config/index.js';
 import { log } from '../utils/logger.js';
+import { getClaudeSettings } from './settings.js';
 
-export async function* askClaude(prompt: string, sessionId?: string, resume = false): AsyncGenerator<string> {
+export async function* askClaude(prompt: string, sessionId?: string, resume = false, model?: string, effort?: string): AsyncGenerator<string> {
   const cfg = getConfig().claude;
   const env: Record<string, string> = { ...process.env } as Record<string, string>;
   if (cfg.anthropicBaseUrl) {
@@ -15,6 +16,9 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
   // Build command arguments
   // --verbose is required when using -p with --output-format stream-json
   const args = ['-p', prompt, '--output-format', 'stream-json', '--verbose'];
+  const claudeSettings = getClaudeSettings();
+  args.push('--model', model ?? claudeSettings.model);
+  args.push('--effort', effort ?? claudeSettings.effort);
   if (sessionId) {
     if (resume) {
       args.push('--resume', sessionId);
