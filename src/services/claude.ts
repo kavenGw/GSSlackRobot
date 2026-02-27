@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import { getConfig } from '../config/index.js';
-import { log } from '../utils/logger.js';
+import { log, isDebug, saveRawLog } from '../utils/logger.js';
 import { getClaudeSettings } from './settings.js';
 
 export async function* askClaude(prompt: string, sessionId?: string, resume = false, model?: string, effort?: string): AsyncGenerator<string> {
@@ -41,6 +41,8 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
 
   const proc = spawn(cfg.command, args, spawnOptions);
 
+  const debug = isDebug();
+  let rawStdout = '';
   let stderrOutput = '';
   proc.stderr?.on('data', (data: Buffer) => {
     const text = data.toString().trim();
@@ -61,6 +63,7 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
     let buffer = '';
     for await (const chunk of proc.stdout) {
       buffer += chunk.toString();
+      if (debug) rawStdout += chunk.toString();
       const lines = buffer.split('\n');
       buffer = lines.pop()!;
 
@@ -111,5 +114,10 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
   } finally {
     clearTimeout(timeout);
     if (!proc.killed) proc.kill('SIGTERM');
+    if (debug) {
+      const exitCode = await exitCodePromise;
+      saveRawLog({ args, sessionId, resume, stdout: rawStdout, stderr: stderrOutput, exitCode })
+        .catch(err => log.error(`saveRawLog failed: ${err}`));
+    }
   }
 }

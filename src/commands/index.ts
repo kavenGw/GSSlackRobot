@@ -11,7 +11,7 @@ import { handleGemini } from './gemini.js';
 import { handleGeminiDraw } from './gemini-draw.js';
 import { handleModel, handleEffort } from './model.js';
 import { askClaude } from '../services/claude.js';
-import { isValidModel, isValidEffort } from '../services/settings.js';
+import { isValidModel, isValidEffort, getClaudeSettings } from '../services/settings.js';
 import type { ClaudeModel, EffortLevel } from '../services/settings.js';
 import { splitToBlocks } from '../utils/message.js';
 import { log, saveConversationLog } from '../utils/logger.js';
@@ -140,7 +140,8 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
     log.claudeDone(durationMs, content.length);
     const segments = content.length <= MAX_MSG_LEN ? 1 : splitToBlocks(content).length;
     log.reply(segments);
-    await saveConversationLog({ prompt, reply: content, durationMs, sessionId, resume, segments });
+    const settings = getClaudeSettings();
+    await saveConversationLog({ prompt, reply: content, durationMs, sessionId, resume, segments, model: model ?? settings.model, effort: effort ?? settings.effort });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     await client.chat.update({
