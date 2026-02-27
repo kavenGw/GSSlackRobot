@@ -37,14 +37,22 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
 
   const proc = spawn(cfg.command, args, spawnOptions);
 
+  let stderrOutput = '';
   proc.stderr?.on('data', (data: Buffer) => {
-    log.error(data.toString().trim());
+    const text = data.toString().trim();
+    stderrOutput += text + '\n';
+    log.error(text);
+  });
+
+  const exitCodePromise = new Promise<number | null>((resolve) => {
+    proc.on('close', (code) => resolve(code));
   });
 
   const timeout = setTimeout(() => {
     proc.kill('SIGTERM');
   }, cfg.timeoutMs);
 
+  let hasContent = false;
   try {
     let buffer = '';
     for await (const chunk of proc.stdout) {
@@ -56,11 +64,11 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
         if (!line.trim()) continue;
         try {
           const data = JSON.parse(line);
-          // stream-json 输出: {"type":"assistant","content":[{"type":"text","text":"..."}]}
-          // 逐行可能是 {"type":"content_block_delta","delta":{"type":"text_delta","text":"..."}}
           if (data.type === 'content_block_delta' && data.delta?.text) {
+            hasContent = true;
             yield data.delta.text;
           } else if (data.type === 'result' && data.result) {
+            hasContent = true;
             yield data.result;
           }
         } catch {
@@ -74,12 +82,26 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
       try {
         const data = JSON.parse(buffer);
         if (data.type === 'content_block_delta' && data.delta?.text) {
+          hasContent = true;
           yield data.delta.text;
         } else if (data.type === 'result' && data.result) {
+          hasContent = true;
           yield data.result;
         }
       } catch {
         // 忽略
+      }
+    }
+
+    // 空回复检测：检查退出码和 stderr
+    if (!hasContent) {
+      const exitCode = await exitCodePromise;
+      const errInfo = stderrOutput.trim();
+      if (exitCode !== 0 && exitCode !== null) {
+        throw new Error(`Claude CLI 退出码 ${exitCode}${errInfo ? `: ${errInfo}` : ''}`);
+      }
+      if (errInfo) {
+        throw new Error(`Claude 未返回内容: ${errInfo}`);
       }
     }
   } finally {

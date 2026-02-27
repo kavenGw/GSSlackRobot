@@ -11,7 +11,7 @@ import { handleGemini } from './gemini.js';
 import { handleGeminiDraw } from './gemini-draw.js';
 import { askClaude } from '../services/claude.js';
 import { splitToBlocks } from '../utils/message.js';
-import { log } from '../utils/logger.js';
+import { log, saveConversationLog } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
 
 const SESSION_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
@@ -114,9 +114,14 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
       await flush();
     }
     await flush(true);
-    log.claudeDone(Date.now() - startTime, content.length);
+    if (!content) {
+      await client.chat.update({ channel, ts: msgTs, text: 'Claude 未返回内容，请重试。' });
+    }
+    const durationMs = Date.now() - startTime;
+    log.claudeDone(durationMs, content.length);
     const segments = content.length <= MAX_MSG_LEN ? 1 : splitToBlocks(content).length;
     log.reply(segments);
+    await saveConversationLog({ prompt: text, reply: content, durationMs, sessionId, resume, segments });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     await client.chat.update({
