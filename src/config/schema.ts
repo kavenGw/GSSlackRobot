@@ -5,7 +5,6 @@ export interface SlackConfig {
 
 export interface ClaudeConfig {
   command: string;
-  timeoutMs: number;
   anthropicBaseUrl?: string;
   anthropicAuthToken?: string;
   projectDir?: string;

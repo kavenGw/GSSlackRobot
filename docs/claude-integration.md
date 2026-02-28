@@ -152,14 +152,12 @@ sequenceDiagram
 | 变量名 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
 | `CLAUDE_COMMAND` | string | `claude` | Claude CLI 命令名称或完整路径 |
-| `CLAUDE_TIMEOUT_MS` | number | `300000` | 子进程超时时间（毫秒），默认 5 分钟 |
 
 ### 配置示例
 
 ```bash
 # .env 文件
 CLAUDE_COMMAND=claude
-CLAUDE_TIMEOUT_MS=300000
 ```
 
 ### TypeScript 接口
@@ -168,7 +166,6 @@ CLAUDE_TIMEOUT_MS=300000
 // src/config/schema.ts
 export interface ClaudeConfig {
   command: string;    // CLI 命令名
-  timeoutMs: number;  // 超时毫秒数
 }
 ```
 
@@ -178,7 +175,6 @@ export interface ClaudeConfig {
 // src/config/index.ts
 claude: {
   command: optional('CLAUDE_COMMAND', 'claude'),
-  timeoutMs: optionalInt('CLAUDE_TIMEOUT_MS', 300000),
 }
 ```
 
@@ -396,7 +392,6 @@ claude -p "hello" --output-format stream-json
 ```bash
 # 确认环境变量已设置
 echo $CLAUDE_COMMAND
-echo $CLAUDE_TIMEOUT_MS
 ```
 
 ### 3. 常见错误及解决方案
@@ -404,7 +399,6 @@ echo $CLAUDE_TIMEOUT_MS
 | 错误信息 | 原因 | 解决方案 |
 |---------|------|---------|
 | `spawn claude ENOENT` | Claude CLI 未安装或不在 PATH 中 | 安装 Claude Code 或设置完整路径 |
-| `SIGTERM` 超时 | 响应时间过长 | 增加 `CLAUDE_TIMEOUT_MS` 值 |
 | JSON 解析错误 | CLI 输出格式异常 | 检查 Claude Code 版本 |
 | 消息更新失败 | Slack API 限流 | 检查 Bot Token 权限 |
 

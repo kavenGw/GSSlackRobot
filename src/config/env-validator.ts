@@ -123,22 +123,6 @@ export function validateConfig(config: AppConfig): void {
     });
   }
 
-  if (config.claude.timeoutMs <= 0) {
-    errors.push({
-      param: 'CLAUDE_TIMEOUT_MS',
-      message: 'Claude timeout must be a positive number (milliseconds)',
-      value: String(config.claude.timeoutMs),
-    });
-  }
-
-  if (config.claude.timeoutMs > 3600000) {
-    errors.push({
-      param: 'CLAUDE_TIMEOUT_MS',
-      message: 'Claude timeout cannot exceed 1 hour (3600000ms)',
-      value: String(config.claude.timeoutMs),
-    });
-  }
-
   if (config.gitlabNotify) {
     if (config.gitlabNotify.port < 1 || config.gitlabNotify.port > 65535) {
       errors.push({

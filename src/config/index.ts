@@ -39,7 +39,6 @@ export function loadConfig(): AppConfig {
     },
     claude: {
       command: optional('CLAUDE_COMMAND', 'claude'),
-      timeoutMs: optionalInt('CLAUDE_TIMEOUT_MS', 300000),
       anthropicBaseUrl: process.env.ANTHROPIC_BASE_URL,
       anthropicAuthToken: process.env.ANTHROPIC_AUTH_TOKEN,
       projectDir: process.env.CLAUDE_PROJECT_DIR,

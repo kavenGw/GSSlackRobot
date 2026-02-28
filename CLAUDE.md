@@ -78,7 +78,6 @@ src/
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
 | `CLAUDE_COMMAND` | `claude` | Claude CLI 命令路径 |
-| `CLAUDE_TIMEOUT_MS` | `300000` | Claude 超时 (正整数, 上限 3600000ms) |
 | `ANTHROPIC_BASE_URL` | 无 | Anthropic API Base URL (若设置需有效 URL) |
 | `ANTHROPIC_AUTH_TOKEN` | 无 | Anthropic Auth Token (若设置不可为占位符) |
 | `CLAUDE_PROJECT_DIR` | 无 | Claude 项目目录 |
@@ -112,7 +111,6 @@ src/
    - Token 前缀格式验证
    - URL 格式必须为有效的 HTTP/HTTPS（若设置）
    - Token 不能是占位符值
-   - 超时时间正数且不超过 1 小时
 
 验证失败时抛出 `EnvValidationError`，输出所有错误详情后 `process.exit(1)` 退出。
 

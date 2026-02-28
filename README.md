@@ -145,7 +145,6 @@ SLACK_APP_TOKEN=xapp-...
 
 # Claude 配置 (可选)
 CLAUDE_COMMAND=claude
-CLAUDE_TIMEOUT_MS=300000
 ```
 
 ### 6. 安装并运行

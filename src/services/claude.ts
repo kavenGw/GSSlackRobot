@@ -54,10 +54,6 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
     proc.on('close', (code) => resolve(code));
   });
 
-  const timeout = setTimeout(() => {
-    proc.kill('SIGTERM');
-  }, cfg.timeoutMs);
-
   let hasContent = false;
   try {
     let buffer = '';
@@ -112,7 +108,6 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
       }
     }
   } finally {
-    clearTimeout(timeout);
     if (!proc.killed) proc.kill('SIGTERM');
     if (debug) {
       const exitCode = await exitCodePromise;

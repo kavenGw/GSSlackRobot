@@ -239,7 +239,6 @@ export function loadConfig(): AppConfig {
     },
     claude: {
       command: optional('CLAUDE_COMMAND', 'claude'),
-      timeoutMs: optionalInt('CLAUDE_TIMEOUT_MS', 300000),
     },
     webhook: {
       port: optionalInt('WEBHOOK_PORT', 4567),
@@ -750,7 +749,6 @@ export function formatIssueList(issues: GitLabIssue[], header: string): Block[] 
 | `JENKINS_URL` | `https://jenkins.example.com` | Jenkins 实例 URL |
 | `JENKINS_JOBS` | `{}` | Job 别名映射 (JSON) |
 | `CLAUDE_COMMAND` | `claude` | Claude CLI 命令 |
-| `CLAUDE_TIMEOUT_MS` | `300000` | Claude 超时 (5分钟) |
 | `WEBHOOK_PORT` | `4567` | Webhook 服务端口 |
 | `GITLAB_WEBHOOK_SECRET` | `''` | GitLab Webhook 密钥 |
 | `WEBHOOK_NOTIFY_CHANNEL` | `#dev-notifications` | 通知频道 |
