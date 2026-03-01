@@ -15,6 +15,7 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`model <opus|sonnet|haiku> [max|high|medium|low]\` — 切换默认模型
 • \`effort <max|high|medium|low>\` — 切换 effort 级别
 • 对话前缀 \`opus <问题>\` — 单次指定模型（可选加 effort）
+• \`/superpowers:brainstorm <任意问题>\` — 与 Claude 开始头脑风暴
 • \`<任意问题>\` — 直接与 Claude AI 对话`;
 
 export async function handleHelp({ say, threadTs }: CommandContext) {
