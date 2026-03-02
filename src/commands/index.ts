@@ -1,5 +1,6 @@
 import type { App, SayFn } from '@slack/bolt';
 import type { WebClient } from '@slack/web-api';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { v5 as uuidv5 } from 'uuid';
 import { handleHelp } from './help.js';
 import { handleCommands } from './commands.js';
@@ -18,8 +19,27 @@ import { log, saveConversationLog } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
 
 const SESSION_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+const KNOWN_SESSIONS_PATH = 'data/known-sessions.json';
 const activeSessions = new Set<string>();
 const knownSessions = new Set<string>();
+
+export async function loadKnownSessions(): Promise<void> {
+  try {
+    const raw = await readFile(KNOWN_SESSIONS_PATH, 'utf-8');
+    const parsed = JSON.parse(raw) as string[];
+    if (Array.isArray(parsed)) {
+      for (const id of parsed) knownSessions.add(id);
+    }
+    log.info(`Loaded ${knownSessions.size} known sessions`);
+  } catch {
+    // 文件不存在或损坏，从空 Set 开始
+  }
+}
+
+async function saveKnownSessions(): Promise<void> {
+  await mkdir('data', { recursive: true });
+  await writeFile(KNOWN_SESSIONS_PATH, JSON.stringify([...knownSessions]));
+}
 
 export interface CommandContext {
   text: string;
@@ -150,7 +170,10 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
       text: content ? `${content}\n\n_（出错: ${errMsg}）_` : `出错: ${errMsg}`,
     });
   } finally {
-    knownSessions.add(sessionId);
+    if (!knownSessions.has(sessionId)) {
+      knownSessions.add(sessionId);
+      saveKnownSessions().catch(err => log.error(`saveKnownSessions failed: ${err}`));
+    }
     activeSessions.delete(sessionId);
   }
 }

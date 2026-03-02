@@ -1,6 +1,6 @@
 import { App } from '@slack/bolt';
 import { loadConfig, EnvValidationError } from './config/index.js';
-import { registerCommands } from './commands/index.js';
+import { registerCommands, loadKnownSessions } from './commands/index.js';
 import { log } from './utils/logger.js';
 import { startWebhookServer } from './webhooks/server.js';
 import { scheduleDailyReport } from './scheduler/daily-report.js';
@@ -22,6 +22,7 @@ try {
 }
 
 await loadSettings();
+await loadKnownSessions();
 
 const app = new App({
   token: config.slack.botToken,
