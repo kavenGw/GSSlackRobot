@@ -14,7 +14,7 @@ import { handleModel, handleEffort } from './model.js';
 import { askClaude } from '../services/claude.js';
 import { isValidModel, isValidEffort, getClaudeSettings } from '../services/settings.js';
 import type { ClaudeModel, EffortLevel } from '../services/settings.js';
-import { splitToBlocks } from '../utils/message.js';
+import { splitToBlocks, markdownToSlack } from '../utils/message.js';
 import { log, saveConversationLog } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
 
@@ -122,14 +122,16 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
     if (!final && now - lastUpdate < THROTTLE_MS) return;
     lastUpdate = now;
 
-    if (content.length <= MAX_MSG_LEN) {
+    const text = final ? markdownToSlack(content) : content;
+
+    if (text.length <= MAX_MSG_LEN) {
       await client.chat.update({
         channel,
         ts: msgTs,
-        text: content || '思考中...',
+        text: text || '思考中...',
       });
     } else {
-      const chunks = splitToBlocks(content);
+      const chunks = splitToBlocks(text);
       await client.chat.update({
         channel,
         ts: msgTs,

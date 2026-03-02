@@ -1,6 +1,6 @@
 import type { CommandContext } from './index.js';
 import { askGemini } from '../services/gemini.js';
-import { splitToBlocks } from '../utils/message.js';
+import { splitToBlocks, markdownToSlack } from '../utils/message.js';
 
 export async function handleGemini({ text, channel, threadTs, client }: CommandContext) {
   const prompt = text.replace(/^gemini\s+/i, '').trim();
@@ -21,7 +21,7 @@ export async function handleGemini({ text, channel, threadTs, client }: CommandC
 
   try {
     const reply = await askGemini(prompt, threadTs);
-    const blocks = splitToBlocks(reply);
+    const blocks = splitToBlocks(markdownToSlack(reply));
     await client.chat.update({
       channel,
       ts: initial.ts!,
