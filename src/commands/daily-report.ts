@@ -95,7 +95,8 @@ export async function generateDailyReport(title: string): Promise<string> {
     const newlyTesting = testing.filter(i => !yesterdayTestingIids.has(i.iid));
     const yesterdayCompletedIids0 = new Set(yesterdayData.completed.map(i => i.iid));
     const newlyCompleted0 = closed.filter(i => !yesterdayCompletedIids0.has(i.iid));
-    const newIssueItems = [...incomplete, ...testing, ...closed].filter(i => newIssues.includes(i.iid));
+    const shownIids = new Set([...newlyTesting.map(i => i.iid), ...newlyCompleted0.map(i => i.iid)]);
+    const newIssueItems = [...incomplete, ...testing, ...closed].filter(i => newIssues.includes(i.iid) && !shownIids.has(i.iid));
 
     lines.push('*== 昨日进度 ==*');
     lines.push(`新完成: ${newlyCompleted0.length}`);
