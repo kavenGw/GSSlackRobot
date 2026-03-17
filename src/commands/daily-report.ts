@@ -1,7 +1,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { getIssues, getLatestActiveMilestoneTitle } from '../services/gitlab.js';
-import type { GitLabIssue } from '../services/gitlab.js';
+import { getIssues, getLatestActiveMilestone, getMilestoneByTitle } from '../services/gitlab.js';
+import type { GitLabMilestone, GitLabIssue } from '../services/gitlab.js';
 import { clearRunToday } from '../utils/scheduler-guard.js';
 import type { CommandContext } from './index.js';
 
@@ -45,10 +45,10 @@ function toSnapshot(issue: GitLabIssue): IssueSnapshot {
   };
 }
 
-export async function generateDailyReport(title: string): Promise<string> {
+export async function generateDailyReport(milestone: GitLabMilestone): Promise<string> {
   const [opened, closed] = await Promise.all([
-    getIssues(title, 'opened'),
-    getIssues(title, 'closed'),
+    getIssues(milestone.title, 'opened'),
+    getIssues(milestone.title, 'closed'),
   ]);
 
   const incomplete = opened.filter(i => !i.labels.some(l => TESTING_LABELS.has(l)));
@@ -56,7 +56,7 @@ export async function generateDailyReport(title: string): Promise<string> {
 
   const today = todayStr();
   const todayData: DailySnapshot = {
-    milestone: title,
+    milestone: milestone.title,
     date: today,
     incomplete: incomplete.map(toSnapshot),
     testing: testing.map(toSnapshot),
@@ -65,15 +65,24 @@ export async function generateDailyReport(title: string): Promise<string> {
   };
 
   await mkdir(DATA_DIR, { recursive: true });
-  await writeFile(snapshotPath(title, today), JSON.stringify(todayData, null, 2), 'utf-8');
+  await writeFile(snapshotPath(milestone.title, today), JSON.stringify(todayData, null, 2), 'utf-8');
 
   let yesterdayData: DailySnapshot | null = null;
   try {
-    const raw = await readFile(snapshotPath(title, yesterdayStr()), 'utf-8');
+    const raw = await readFile(snapshotPath(milestone.title, yesterdayStr()), 'utf-8');
     yesterdayData = JSON.parse(raw);
   } catch { /* 无昨日数据 */ }
 
-  const lines: string[] = [`*每日简报 ${today} (版本 ${title})*`, ''];
+  const dateRange = milestone.start_date && milestone.due_date
+    ? `${milestone.start_date.slice(5)} ~ ${milestone.due_date.slice(5)}`
+    : '日期: 未设置';
+  const desc = milestone.description || '(未设置)';
+
+  const lines: string[] = [
+    `*每日简报 ${today} (版本 ${milestone.title} | ${dateRange})*`,
+    `描述: ${desc}`,
+    '',
+  ];
 
   const tc = todayData.counts;
 
@@ -146,15 +155,15 @@ export async function generateDailyReport(title: string): Promise<string> {
 
 
   lines.push('');
-  lines.push(`快照已保存: ${snapshotPath(title, today)}`);
+  lines.push(`快照已保存: ${snapshotPath(milestone.title, today)}`);
 
   return lines.join('\n');
 }
 
 export async function handleResetDailyReport({ say, threadTs }: CommandContext) {
-  const title = await getLatestActiveMilestoneTitle();
+  const milestone = await getLatestActiveMilestone();
   const today = todayStr();
-  const path = snapshotPath(title, today);
+  const path = snapshotPath(milestone.title, today);
 
   try {
     const { unlink } = await import('node:fs/promises');
@@ -164,16 +173,16 @@ export async function handleResetDailyReport({ say, threadTs }: CommandContext) 
   await clearRunToday('daily-report');
   await say({ text: `已清除今日快照，正在重新生成...`, thread_ts: threadTs });
 
-  const report = await generateDailyReport(title);
+  const report = await generateDailyReport(milestone);
   await say({ text: report, thread_ts: threadTs });
 }
 
 export async function handleDailyReport({ text, say, threadTs }: CommandContext) {
-  let title = text.replace(/^daily-report\s*/i, '').trim();
-  if (!title) {
-    title = await getLatestActiveMilestoneTitle();
-  }
+  const titleArg = text.replace(/^daily-report\s*/i, '').trim();
+  const milestone = titleArg
+    ? await getMilestoneByTitle(titleArg)
+    : await getLatestActiveMilestone();
 
-  const report = await generateDailyReport(title);
+  const report = await generateDailyReport(milestone);
   await say({ text: report, thread_ts: threadTs });
 }

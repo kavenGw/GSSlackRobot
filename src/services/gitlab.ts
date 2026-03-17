@@ -4,6 +4,7 @@ interface GitLabMilestone {
   id: number;
   iid: number;
   title: string;
+  description: string | null;
   created_at: string;
   start_date: string | null;
   due_date: string | null;
@@ -49,10 +50,17 @@ export async function getActiveMilestones(): Promise<GitLabMilestone[]> {
   return data.sort((a, b) => b.title.localeCompare(a.title));
 }
 
-export async function getLatestActiveMilestoneTitle(): Promise<string> {
+export async function getLatestActiveMilestone(): Promise<GitLabMilestone> {
   const milestones = await getActiveMilestones();
   if (milestones.length === 0) throw new Error('没有活跃的 milestone');
-  return milestones[0].title;
+  return milestones[0];
+}
+
+export async function getMilestoneByTitle(title: string): Promise<GitLabMilestone> {
+  const milestones = await getActiveMilestones();
+  const found = milestones.find(m => m.title === title);
+  if (!found) throw new Error(`未找到活跃的 milestone: ${title}`);
+  return found;
 }
 
 export async function getIssues(milestone: string, state: 'opened' | 'closed'): Promise<GitLabIssue[]> {
