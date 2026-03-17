@@ -58,7 +58,7 @@ if (cfg.httpsProxy) {
 
 - `.env.example` — 增加 `CLAUDE_HTTP_PROXY` / `CLAUDE_HTTPS_PROXY` 注释示例
 - `CLAUDE.md` — 可选参数表增加两行
-- `docs/setup-guide.md` — Claude 配置章节无需变更（该文件未列出 Claude 可选参数明细）
+- `docs/setup-guide.md` — 实现时核查 Claude 配置章节，按实际内容决定是否补充
 
 ### 不涉及的变更
 
