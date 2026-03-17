@@ -60,7 +60,7 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
     date: today,
     incomplete: incomplete.map(toSnapshot),
     testing: testing.map(toSnapshot),
-    completed: closed.map(i => ({ iid: i.iid, title: i.title })),
+    completed: closed.map(toSnapshot),
     counts: { incomplete: incomplete.length, testing: testing.length, completed: closed.length },
   };
 
@@ -85,6 +85,46 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
   ];
 
   const tc = todayData.counts;
+  const total = tc.incomplete + tc.testing + tc.completed;
+
+  if (total > 0) {
+    const doneAndTesting = tc.testing + tc.completed;
+    const doneRate = (doneAndTesting / total * 100).toFixed(1);
+    const pureRate = (tc.completed / total * 100).toFixed(1);
+
+    lines.push('*== 版本进度 ==*');
+    lines.push(`完成+待测试: ${doneAndTesting}/${total} (${doneRate}%) | 纯完成: ${tc.completed}/${total} (${pureRate}%)`);
+
+    if (milestone.start_date && milestone.due_date) {
+      const startMs = new Date(milestone.start_date).getTime();
+      const dueMs = new Date(milestone.due_date).getTime();
+      const todayMs = new Date(today).getTime();
+      const totalDays = Math.round((dueMs - startMs) / 86400000) + 1;
+
+      let elapsedDays: number;
+      let timePercent: number;
+      let status: string;
+
+      if (todayMs < startMs) {
+        elapsedDays = 0;
+        timePercent = 0;
+        status = '📊 未开始';
+      } else if (todayMs > dueMs) {
+        elapsedDays = totalDays;
+        timePercent = 100;
+        status = '⚠️ 已超期';
+      } else {
+        elapsedDays = Math.round((todayMs - startMs) / 86400000) + 1;
+        timePercent = elapsedDays / totalDays * 100;
+        status = doneAndTesting / total >= timePercent / 100 ? '📊 进度正常' : '⚠️ 进度落后';
+      }
+
+      lines.push(`时间进度: 第 ${elapsedDays}/${totalDays} 天 (${timePercent.toFixed(1)}%)`);
+      lines.push(status);
+    }
+
+    lines.push('');
+  }
 
   if (yesterdayData) {
     const yc = yesterdayData.counts;
@@ -134,6 +174,15 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
   lines.push('');
 
   if (incomplete.length > 0) {
+    const memberTotal = new Map<string, { incomplete: number; testing: number; closed: number }>();
+    const initMember = (name: string) => {
+      if (!memberTotal.has(name)) memberTotal.set(name, { incomplete: 0, testing: 0, closed: 0 });
+      return memberTotal.get(name)!;
+    };
+    for (const i of incomplete) initMember(i.assignee?.username ?? '未分配').incomplete++;
+    for (const i of testing) initMember(i.assignee?.username ?? '未分配').testing++;
+    for (const i of closed) initMember(i.assignee?.username ?? '未分配').closed++;
+
     const byAssignee = new Map<string, GitLabIssue[]>();
     for (const i of incomplete) {
       const name = i.assignee?.username ?? '未分配';
@@ -144,7 +193,10 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
     lines.push(`*== 未完成详情 (${incomplete.length}) ==*`, '');
     const sorted = [...byAssignee.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
     for (const [assignee, issues] of sorted) {
-      lines.push(`*${assignee}* (${issues.length}):`);
+      const stats = memberTotal.get(assignee)!;
+      const memberSum = stats.incomplete + stats.testing + stats.closed;
+      const memberRate = (((stats.testing + stats.closed) / memberSum) * 100).toFixed(1);
+      lines.push(`*${assignee}* (未完成 ${stats.incomplete} / 总 ${memberSum}, 完成率 ${memberRate}%):`);
       for (const i of issues) {
         const labels = i.labels.length > 0 ? ` | ${i.labels.join(',')}` : '';
         lines.push(`  #${i.iid} ${i.title}${labels}`);
