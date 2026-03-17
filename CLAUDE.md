@@ -82,6 +82,8 @@ src/
 | `ANTHROPIC_AUTH_TOKEN` | 无 | Anthropic Auth Token (若设置不可为占位符) |
 | `CLAUDE_PROJECT_DIR` | 无 | Claude 项目目录 |
 | `CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS` | `false` | 跳过 Claude 权限检查 |
+| `CLAUDE_HTTP_PROXY` | 无 | Claude CLI HTTP 代理地址 |
+| `CLAUDE_HTTPS_PROXY` | 无 | Claude CLI HTTPS 代理地址 |
 | `GITLAB_NOTIFY_CHANNEL` | 无 | GitLab 通知 Slack 频道 ID（设置后启用 Webhook） |
 | `GITLAB_WEBHOOK_PORT` | `3000` | Webhook 监听端口 |
 | `GITLAB_WEBHOOK_SECRET` | 无 | GitLab Webhook Secret Token |
