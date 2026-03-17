@@ -9,6 +9,8 @@ export interface ClaudeConfig {
   anthropicAuthToken?: string;
   projectDir?: string;
   dangerouslySkipPermissions?: boolean;
+  httpProxy?: string;
+  httpsProxy?: string;
 }
 
 export interface GitLabNotifyConfig {
