@@ -31,7 +31,12 @@
 - 时间进度 = `(今天 - start_date + 1) / (due_date - start_date + 1)`，两端包含
 - 状态判断：`(完成+待测试) / total >= 时间进度比例` → "进度正常"，否则 → "进度落后"
 
-**无日期时：** 不显示时间进度行和状态判断行，只显示完成率。
+**边界处理：**
+
+- **无日期时：** 不显示时间进度行和状态判断行，只显示完成率
+- **total == 0 时：** 跳过整个版本进度区块
+- **今天 < start_date：** 时间进度显示为 `第 0/N 天 (0.0%)`
+- **今天 > due_date：** 时间进度 cap 到 100%，状态显示 "已超期"
 
 ### 2. 成员进度
 
@@ -52,14 +57,17 @@
 
 **计算逻辑：**
 
-- 将 incomplete、testing、closed 三个数组都按 assignee 分组
-- 每人总数 = 该人的 incomplete + testing + completed
-- 每人完成率 = (testing + completed) / 总数
+- 将 incomplete、testing、closed 三个数组都按 assignee 分组（无 assignee 归入"未分配"）
+- 每人总数 = 该人的 incomplete + testing + closed
+- 每人完成率 = (testing + closed) / 总数
 - 排序不变：按未完成数量倒序
+- 只显示有未完成 issue 的成员（100% 完成的成员不出现在此区域）
 
 ### 3. 数据修复
 
 当前 closed issues 的 snapshot 只保存了 `{ iid, title }`，缺少 assignee。需改为也使用 `toSnapshot()` 以保留 assignee 信息，用于按人统计。
+
+成员进度统计使用 API 实时数据（`closed` 数组），不依赖历史快照中的 assignee 字段，因此旧快照无需迁移。
 
 ## 实现要点
 
