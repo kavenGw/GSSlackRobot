@@ -12,6 +12,12 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
   if (cfg.anthropicAuthToken) {
     env.ANTHROPIC_AUTH_TOKEN = cfg.anthropicAuthToken;
   }
+  if (cfg.httpProxy) {
+    env.http_proxy = cfg.httpProxy;
+  }
+  if (cfg.httpsProxy) {
+    env.https_proxy = cfg.httpsProxy;
+  }
 
   // Build command arguments
   // --verbose is required when using -p with --output-format stream-json
