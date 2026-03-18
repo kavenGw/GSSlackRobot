@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { getIssues, getLatestActiveMilestone, getMilestoneByTitle } from '../services/gitlab.js';
 import type { GitLabMilestone, GitLabIssue } from '../services/gitlab.js';
 import { clearRunToday } from '../utils/scheduler-guard.js';
+import { splitToBlocks } from '../utils/message.js';
 import type { CommandContext } from './index.js';
 
 const TESTING_LABELS = new Set(['待审核', '待审核未打包']);
@@ -226,7 +227,10 @@ export async function handleResetDailyReport({ say, threadTs }: CommandContext) 
   await say({ text: `已清除今日快照，正在重新生成...`, thread_ts: threadTs });
 
   const report = await generateDailyReport(milestone);
-  await say({ text: report, thread_ts: threadTs });
+  const blocks = splitToBlocks(report);
+  for (const block of blocks) {
+    await say({ text: block, thread_ts: threadTs });
+  }
 }
 
 export async function handleDailyReport({ text, say, threadTs }: CommandContext) {
@@ -236,5 +240,8 @@ export async function handleDailyReport({ text, say, threadTs }: CommandContext)
     : await getLatestActiveMilestone();
 
   const report = await generateDailyReport(milestone);
-  await say({ text: report, thread_ts: threadTs });
+  const blocks = splitToBlocks(report);
+  for (const block of blocks) {
+    await say({ text: block, thread_ts: threadTs });
+  }
 }
