@@ -151,30 +151,17 @@ sequenceDiagram
 
 | 变量名 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
-| `CLAUDE_COMMAND` | string | `claude` | Claude CLI 命令名称或完整路径 |
-
-### 配置示例
-
-```bash
-# .env 文件
-CLAUDE_COMMAND=claude
-```
-
 ### TypeScript 接口
 
 ```typescript
 // src/config/schema.ts
 export interface ClaudeConfig {
-  command: string;    // CLI 命令名
-}
-```
-
-### 配置加载
-
-```typescript
-// src/config/index.ts
-claude: {
-  command: optional('CLAUDE_COMMAND', 'claude'),
+  anthropicBaseUrl?: string;
+  anthropicAuthToken?: string;
+  projectDir?: string;
+  dangerouslySkipPermissions?: boolean;
+  httpProxy?: string;
+  httpsProxy?: string;
 }
 ```
 
@@ -390,8 +377,8 @@ claude -p "hello" --output-format stream-json
 ### 2. 检查环境变量
 
 ```bash
-# 确认环境变量已设置
-echo $CLAUDE_COMMAND
+# 确认 Claude CLI 可用
+claude --version
 ```
 
 ### 3. 常见错误及解决方案
