@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { getIssues, getLatestActiveMilestone, getMilestoneByTitle } from '../services/gitlab.js';
 import type { GitLabMilestone, GitLabIssue } from '../services/gitlab.js';
 import { clearRunToday } from '../utils/scheduler-guard.js';
-import { splitToBlocks } from '../utils/message.js';
+import { safePost } from '../utils/message.js';
 import type { CommandContext } from './index.js';
 
 const TESTING_LABELS = new Set(['待审核', '待审核未打包']);
@@ -213,7 +213,7 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
   return lines.join('\n');
 }
 
-export async function handleResetDailyReport({ say, threadTs }: CommandContext) {
+export async function handleResetDailyReport({ client, channel, threadTs }: CommandContext) {
   const milestone = await getLatestActiveMilestone();
   const today = todayStr();
   const path = snapshotPath(milestone.title, today);
@@ -224,24 +224,18 @@ export async function handleResetDailyReport({ say, threadTs }: CommandContext) 
   } catch { /* 文件不存在则忽略 */ }
 
   await clearRunToday('daily-report');
-  await say({ text: `已清除今日快照，正在重新生成...`, thread_ts: threadTs });
+  await client.chat.postMessage({ channel, text: '已清除今日快照，正在重新生成...', thread_ts: threadTs });
 
   const report = await generateDailyReport(milestone);
-  const blocks = splitToBlocks(report);
-  for (const block of blocks) {
-    await say({ text: block, thread_ts: threadTs });
-  }
+  await safePost(client, channel, report, threadTs);
 }
 
-export async function handleDailyReport({ text, say, threadTs }: CommandContext) {
+export async function handleDailyReport({ text, client, channel, threadTs }: CommandContext) {
   const titleArg = text.replace(/^daily-report\s*/i, '').trim();
   const milestone = titleArg
     ? await getMilestoneByTitle(titleArg)
     : await getLatestActiveMilestone();
 
   const report = await generateDailyReport(milestone);
-  const blocks = splitToBlocks(report);
-  for (const block of blocks) {
-    await say({ text: block, thread_ts: threadTs });
-  }
+  await safePost(client, channel, report, threadTs);
 }
