@@ -99,7 +99,7 @@ export function markdownToSlack(text: string): string {
 
 const MAX_BLOCK_TEXT = 3000;
 
-export function splitToBlocks(text: string, maxLen: number = MAX_BLOCK_TEXT): string[] {
+function splitToBlocks(text: string, maxLen: number = MAX_BLOCK_TEXT): string[] {
   const chunks: string[] = [];
   let remaining = text;
   while (remaining.length > 0) {
