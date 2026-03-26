@@ -1,12 +1,13 @@
 import { getIssues } from '../services/gitlab.js';
+import { safePost } from '../utils/message.js';
 import type { CommandContext } from './index.js';
 
 const TESTING_LABELS = new Set(['待审核', '待审核未打包']);
 
-export async function handleListMilestoneIssues({ text, say, threadTs }: CommandContext) {
+export async function handleListMilestoneIssues({ text, client, channel, threadTs }: CommandContext) {
   const title = text.replace(/^list-issues\s*/i, '').trim();
   if (!title) {
-    await say({ text: '用法: `list-issues <milestone标题>`，例如: `list-issues 10.32`', thread_ts: threadTs });
+    await client.chat.postMessage({ channel, text: '用法: `list-issues <milestone标题>`，例如: `list-issues 10.32`', thread_ts: threadTs });
     return;
   }
 
@@ -45,5 +46,5 @@ export async function handleListMilestoneIssues({ text, say, threadTs }: Command
   lines.push('*== 统计 ==*');
   lines.push(`未完成: ${incomplete.length} | 待测试: ${testing.length} | 已完成: ${closed.length}`);
 
-  await say({ text: lines.join('\n'), thread_ts: threadTs });
+  await safePost(client, channel, lines.join('\n'), threadTs);
 }

@@ -1,10 +1,11 @@
 import { getActiveMilestones } from '../services/gitlab.js';
+import { safePost } from '../utils/message.js';
 import type { CommandContext } from './index.js';
 
-export async function handleListMilestones({ say, threadTs }: CommandContext) {
+export async function handleListMilestones({ client, channel, threadTs }: CommandContext) {
   const milestones = await getActiveMilestones();
   if (milestones.length === 0) {
-    await say({ text: '当前没有活跃的 milestone', thread_ts: threadTs });
+    await client.chat.postMessage({ channel, text: '当前没有活跃的 milestone', thread_ts: threadTs });
     return;
   }
 
@@ -18,5 +19,5 @@ export async function handleListMilestones({ say, threadTs }: CommandContext) {
     lines.push(`• *${m.title}* (iid: ${m.iid}, ${dateInfo}) — ${m.web_url}`);
   }
 
-  await say({ text: lines.join('\n'), thread_ts: threadTs });
+  await safePost(client, channel, lines.join('\n'), threadTs);
 }
