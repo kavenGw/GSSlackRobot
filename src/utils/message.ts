@@ -1,3 +1,5 @@
+import type { WebClient } from '@slack/web-api';
+
 function strWidth(s: string): number {
   let w = 0;
   for (const ch of s) {
@@ -111,4 +113,37 @@ export function splitToBlocks(text: string, maxLen: number = MAX_BLOCK_TEXT): st
     remaining = remaining.slice(splitAt);
   }
   return chunks;
+}
+
+export async function safePost(
+  client: WebClient,
+  channel: string,
+  text: string,
+  threadTs?: string,
+): Promise<void> {
+  if (!text) return;
+  const chunks = splitToBlocks(text);
+  for (const chunk of chunks) {
+    await client.chat.postMessage({ channel, text: chunk, thread_ts: threadTs });
+  }
+}
+
+export async function safeUpdate(
+  client: WebClient,
+  channel: string,
+  ts: string,
+  text: string,
+  threadTs?: string,
+  lastSegment = 0,
+): Promise<number> {
+  if (!text) {
+    await client.chat.update({ channel, ts, text: '' });
+    return lastSegment;
+  }
+  const chunks = splitToBlocks(text);
+  await client.chat.update({ channel, ts, text: chunks[0] });
+  for (let i = lastSegment + 1; i < chunks.length; i++) {
+    await client.chat.postMessage({ channel, text: chunks[i], thread_ts: threadTs });
+  }
+  return Math.max(lastSegment, chunks.length - 1);
 }
