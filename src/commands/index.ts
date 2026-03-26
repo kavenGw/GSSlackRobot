@@ -14,7 +14,7 @@ import { handleModel, handleEffort } from './model.js';
 import { askClaude } from '../services/claude.js';
 import { isValidModel, isValidEffort, getClaudeSettings } from '../services/settings.js';
 import type { ClaudeModel, EffortLevel } from '../services/settings.js';
-import { splitToBlocks, markdownToSlack } from '../utils/message.js';
+import { markdownToSlack, safePost, safeUpdate } from '../utils/message.js';
 import { log, saveConversationLog } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
 
@@ -70,7 +70,6 @@ function resolveAlias(input: string): string {
 }
 
 const THROTTLE_MS = 500;
-const MAX_MSG_LEN = 3800;
 
 function threadToSessionId(threadTs: string): string {
   return uuidv5(threadTs, SESSION_NAMESPACE);
@@ -115,37 +114,14 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
 
   let content = '';
   let lastUpdate = 0;
-  let segmentIndex = 0;
+  let lastSegment = 0;
 
   const flush = async (final = false) => {
     const now = Date.now();
     if (!final && now - lastUpdate < THROTTLE_MS) return;
     lastUpdate = now;
-
     const text = final ? markdownToSlack(content) : content;
-
-    if (text.length <= MAX_MSG_LEN) {
-      await client.chat.update({
-        channel,
-        ts: msgTs,
-        text: text || '思考中...',
-      });
-    } else {
-      const chunks = splitToBlocks(text);
-      await client.chat.update({
-        channel,
-        ts: msgTs,
-        text: chunks[0],
-      });
-      for (let i = segmentIndex + 1; i < chunks.length; i++) {
-        await client.chat.postMessage({
-          channel,
-          thread_ts: threadTs,
-          text: chunks[i],
-        });
-        segmentIndex = i;
-      }
-    }
+    lastSegment = await safeUpdate(client, channel, msgTs, text || '思考中...', threadTs, lastSegment);
   };
 
   try {
@@ -160,17 +136,17 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
     }
     const durationMs = Date.now() - startTime;
     log.claudeDone(durationMs, content.length);
-    const segments = content.length <= MAX_MSG_LEN ? 1 : splitToBlocks(content).length;
+    const segments = lastSegment + 1;
     log.reply(segments);
     const settings = getClaudeSettings();
     await saveConversationLog({ prompt, reply: content, durationMs, sessionId, resume, segments, model: model ?? settings.model, effort: effort ?? settings.effort });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    await client.chat.update({
-      channel,
-      ts: msgTs,
-      text: content ? `${content}\n\n_（出错: ${errMsg}）_` : `出错: ${errMsg}`,
-    });
+    if (!content) {
+      await client.chat.update({ channel, ts: msgTs, text: `出错: ${errMsg}` });
+    } else {
+      await safePost(client, channel, `_（出错: ${errMsg}）_`, threadTs);
+    }
   } finally {
     if (!knownSessions.has(sessionId)) {
       knownSessions.add(sessionId);
