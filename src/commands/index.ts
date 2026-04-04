@@ -1,6 +1,8 @@
 import type { App, SayFn } from '@slack/bolt';
 import type { WebClient } from '@slack/web-api';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { v5 as uuidv5 } from 'uuid';
 import { handleHelp } from './help.js';
 import { handleCommands } from './commands.js';
@@ -41,12 +43,19 @@ async function saveKnownSessions(): Promise<void> {
   await writeFile(KNOWN_SESSIONS_PATH, JSON.stringify([...knownSessions]));
 }
 
+interface SlackFile {
+  url_private_download?: string;
+  name?: string;
+  mimetype?: string;
+}
+
 export interface CommandContext {
   text: string;
   channel: string;
   threadTs: string;
   say: SayFn;
   client: WebClient;
+  files?: SlackFile[];
 }
 
 const COMMAND_ALIASES: Record<string, string> = {
@@ -89,10 +98,39 @@ function parseModelPrefix(text: string): { prompt: string; model?: ClaudeModel; 
   return { prompt: words.slice(1).join(' '), model: first as ClaudeModel };
 }
 
-async function handleClaude({ text, channel, threadTs, client }: CommandContext) {
+async function downloadSlackImages(files: SlackFile[], token: string): Promise<string[]> {
+  const paths: string[] = [];
+  for (const file of files) {
+    if (!file.url_private_download || !file.mimetype?.startsWith('image/')) continue;
+    try {
+      const resp = await fetch(file.url_private_download, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!resp.ok) continue;
+      const buf = Buffer.from(await resp.arrayBuffer());
+      const p = join(tmpdir(), `slack-${Date.now()}-${file.name || 'image.png'}`);
+      await writeFile(p, buf);
+      paths.push(p);
+    } catch {
+      // 下载失败跳过
+    }
+  }
+  return paths;
+}
+
+async function handleClaude({ text, channel, threadTs, client, files }: CommandContext) {
   const { prompt, model, effort } = parseModelPrefix(text);
+
+  let imagePaths: string[] = [];
+  if (files?.length) {
+    imagePaths = await downloadSlackImages(files, getConfig().slack.botToken);
+  }
+  const finalPrompt = imagePaths.length
+    ? `${prompt || '请查看图片'}\n\n[用户发送了${imagePaths.length}张图片: ${imagePaths.join(', ')}]`
+    : prompt;
+
   const startTime = Date.now();
-  log.claudeStart(prompt.length);
+  log.claudeStart(finalPrompt.length);
   const sessionId = threadToSessionId(threadTs);
 
   if (activeSessions.has(sessionId)) {
@@ -126,7 +164,7 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
 
   try {
     const resume = knownSessions.has(sessionId);
-    for await (const chunk of askClaude(prompt, sessionId, resume, model, effort)) {
+    for await (const chunk of askClaude(finalPrompt, sessionId, resume, model, effort)) {
       content += chunk;
       await flush();
     }
@@ -139,7 +177,7 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
     const segments = lastSegment + 1;
     log.reply(segments);
     const settings = getClaudeSettings();
-    await saveConversationLog({ prompt, reply: content, durationMs, sessionId, resume, segments, model: model ?? settings.model, effort: effort ?? settings.effort });
+    await saveConversationLog({ prompt: finalPrompt, reply: content, durationMs, sessionId, resume, segments, model: model ?? settings.model, effort: effort ?? settings.effort });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     if (!content) {
@@ -153,6 +191,7 @@ async function handleClaude({ text, channel, threadTs, client }: CommandContext)
       saveKnownSessions().catch(err => log.error(`saveKnownSessions failed: ${err}`));
     }
     activeSessions.delete(sessionId);
+    for (const p of imagePaths) unlink(p).catch(() => {});
   }
 }
 
@@ -162,7 +201,8 @@ export function registerCommands(app: App) {
     const threadTs = event.thread_ts ?? event.ts;
     log.incoming(event.user ?? 'unknown', text);
 
-    const ctx: CommandContext = { text, channel: event.channel, threadTs, say, client };
+    const files = (event as any).files as SlackFile[] | undefined;
+    const ctx: CommandContext = { text, channel: event.channel, threadTs, say, client, files };
 
     try {
       if (/^help$/i.test(text)) {

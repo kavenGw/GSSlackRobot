@@ -81,7 +81,7 @@ src/
 | `ANTHROPIC_BASE_URL` | 无 | Anthropic API Base URL (若设置需有效 URL) |
 | `ANTHROPIC_AUTH_TOKEN` | 无 | Anthropic Auth Token (若设置不可为占位符) |
 | `CLAUDE_PROJECT_DIR` | 无 | Claude 项目目录 |
-| `CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS` | `false` | 跳过 Claude 权限检查 |
+| `CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS` | `true` | 跳过 Claude 权限检查 |
 | `CLAUDE_HTTP_PROXY` | 无 | Claude CLI HTTP 代理地址 |
 | `CLAUDE_HTTPS_PROXY` | 无 | Claude CLI HTTPS 代理地址 |
 | `GITLAB_NOTIFY_CHANNEL` | 无 | GitLab 通知 Slack 频道 ID（设置后启用 Webhook） |
@@ -121,6 +121,8 @@ src/
 - **配置统一使用 env**: 所有配置通过环境变量加载，不使用配置文件，通过 `getConfig()` 获取单例
 - **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`model [模型] [effort]`/`effort [级别]` 切换 Claude 模型和 effort（持久化到 `data/settings.json`），`list-milestones`/`list-issues`/`daily-report`/`reset-daily-report`/`create-milestone <版本号> [结束日期]` 为 GitLab 命令（需配置），`gemini <问题>` 和 `gemini-draw <描述>` 为 Gemini 命令（需配置），其余输入透传 Claude CLI（支持 `opus/sonnet/haiku` 前缀单次指定模型）
 - **Claude CLI 集成**: 通过子进程调用，使用 `--output-format stream-json` 参数，输出为 JSON Lines 格式。支持 `--model`（opus/sonnet/haiku）和 `--effort`（max/high/medium/low）参数
+- **Slack 图片附件**: `app_mention` 事件的 `files` 字段未在 Bolt 类型中定义，需用 `(event as any).files` 访问；图片通过 bot token + `url_private_download` 下载
+- **Claude CLI 图片传递**: CLI 无直接 `--image` 参数，方案是下载图片到临时文件，在 prompt 中附带路径让 CLI 通过 Read 工具查看（需 `CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS=true`）
 - **运行时设置**: `data/settings.json` 存储 Claude 模型和 effort 偏好，启动时加载，通过 Slack 命令动态修改
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启

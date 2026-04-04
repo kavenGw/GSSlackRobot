@@ -42,7 +42,7 @@ export function loadConfig(): AppConfig {
       anthropicBaseUrl: process.env.ANTHROPIC_BASE_URL,
       anthropicAuthToken: process.env.ANTHROPIC_AUTH_TOKEN,
       projectDir: process.env.CLAUDE_PROJECT_DIR,
-      dangerouslySkipPermissions: optionalBool('CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS', false),
+      dangerouslySkipPermissions: optionalBool('CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS', true),
       httpProxy: process.env.CLAUDE_HTTP_PROXY,
       httpsProxy: process.env.CLAUDE_HTTPS_PROXY,
     },
