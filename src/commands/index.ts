@@ -3,6 +3,7 @@ import type { WebClient } from '@slack/web-api';
 import { readFile, writeFile, mkdir, unlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import sharp from 'sharp';
 import { v5 as uuidv5 } from 'uuid';
 import { handleHelp } from './help.js';
 import { handleCommands } from './commands.js';
@@ -107,12 +108,16 @@ async function downloadSlackImages(files: SlackFile[], token: string): Promise<s
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!resp.ok) continue;
-      const buf = Buffer.from(await resp.arrayBuffer());
-      const p = join(tmpdir(), `slack-${Date.now()}-${file.name || 'image.png'}`);
+      const raw = Buffer.from(await resp.arrayBuffer());
+      const buf = await sharp(raw)
+        .resize(1568, 1568, { fit: 'inside', withoutEnlargement: true })
+        .png()
+        .toBuffer();
+      const p = join(tmpdir(), `slack-${Date.now()}-${file.name?.replace(/\.[^.]+$/, '') || 'image'}.png`);
       await writeFile(p, buf);
       paths.push(p);
     } catch {
-      // 下载失败跳过
+      // 下载或图片处理失败跳过
     }
   }
   return paths;
