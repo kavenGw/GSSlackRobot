@@ -5,3 +5,4 @@ config/local.yaml
 data/milestone-daily
 data
 logs/
+.claude/settings.local.json
