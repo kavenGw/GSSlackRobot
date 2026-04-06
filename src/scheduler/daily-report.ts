@@ -3,7 +3,7 @@ import { getConfig } from '../config/index.js';
 import { generateDailyReport } from '../commands/daily-report.js';
 import { getLatestActiveMilestone } from '../services/gitlab.js';
 import { hasRunToday, markRunToday } from '../utils/scheduler-guard.js';
-import { safePost } from '../utils/message.js';
+import { postBlocks } from '../utils/message.js';
 import { log } from '../utils/logger.js';
 
 export function scheduleDailyReport(slackApp: App) {
@@ -18,8 +18,8 @@ export function scheduleDailyReport(slackApp: App) {
         return;
       }
       const milestone = await getLatestActiveMilestone();
-      const report = await generateDailyReport(milestone);
-      await safePost(slackApp.client, channel, report);
+      const blocks = await generateDailyReport(milestone);
+      await postBlocks(slackApp.client, channel, blocks);
       await markRunToday('daily-report');
       log.info('daily-report 已发送');
     } catch (err) {

@@ -128,6 +128,20 @@ export async function safePost(
   }
 }
 
+export async function postBlocks(
+  client: WebClient,
+  channel: string,
+  blocks: object[],
+  threadTs?: string,
+): Promise<void> {
+  if (blocks.length === 0) return;
+  const MAX_BLOCKS = 50;
+  for (let i = 0; i < blocks.length; i += MAX_BLOCKS) {
+    const chunk = blocks.slice(i, i + MAX_BLOCKS);
+    await client.chat.postMessage({ channel, text: '每日简报', blocks: chunk as any, thread_ts: threadTs });
+  }
+}
+
 export async function safeUpdate(
   client: WebClient,
   channel: string,

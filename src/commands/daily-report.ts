@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { getIssues, getLatestActiveMilestone, getMilestoneByTitle } from '../services/gitlab.js';
 import type { GitLabMilestone, GitLabIssue } from '../services/gitlab.js';
 import { clearRunToday } from '../utils/scheduler-guard.js';
-import { safePost } from '../utils/message.js';
+import { postBlocks } from '../utils/message.js';
 import type { CommandContext } from './index.js';
 
 const TESTING_LABELS = new Set(['待审核', '待审核未打包']);
@@ -46,7 +46,7 @@ function toSnapshot(issue: GitLabIssue): IssueSnapshot {
   };
 }
 
-export async function generateDailyReport(milestone: GitLabMilestone): Promise<string> {
+export async function generateDailyReport(milestone: GitLabMilestone): Promise<object[]> {
   const [opened, closed] = await Promise.all([
     getIssues(milestone.title, 'opened'),
     getIssues(milestone.title, 'closed'),
@@ -79,22 +79,28 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
     : '日期: 未设置';
   const desc = milestone.description || '(未设置)';
 
-  const lines: string[] = [
-    `*每日简报 ${today} (版本 ${milestone.title} | ${dateRange})*`,
-    `描述: ${desc}`,
-    '',
-  ];
+  const blocks: object[] = [];
+
+  // Header
+  blocks.push({ type: 'header', text: { type: 'plain_text', text: `每日简报 ${today} (版本 ${milestone.title})` } });
+  blocks.push({ type: 'context', elements: [{ type: 'mrkdwn', text: `📅 ${dateRange}  |  ${desc}` }] });
 
   const tc = todayData.counts;
   const total = tc.incomplete + tc.testing + tc.completed;
 
+  // 版本进度
   if (total > 0) {
     const doneAndTesting = tc.testing + tc.completed;
     const doneRate = (doneAndTesting / total * 100).toFixed(1);
     const pureRate = (tc.completed / total * 100).toFixed(1);
 
-    lines.push('*== 版本进度 ==*');
-    lines.push(`完成+待测试: ${doneAndTesting}/${total} (${doneRate}%) | 纯完成: ${tc.completed}/${total} (${pureRate}%)`);
+    blocks.push({ type: 'divider' });
+    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: '*📊 版本进度*' } });
+
+    const progressFields: object[] = [
+      { type: 'mrkdwn', text: `*完成+待测试*\n${doneAndTesting}/${total} (${doneRate}%)` },
+      { type: 'mrkdwn', text: `*纯完成*\n${tc.completed}/${total} (${pureRate}%)` },
+    ];
 
     if (milestone.start_date && milestone.due_date) {
       const startMs = new Date(milestone.start_date).getTime();
@@ -120,13 +126,14 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
         status = doneAndTesting / total >= timePercent / 100 ? '📊 进度正常' : '⚠️ 进度落后';
       }
 
-      lines.push(`时间进度: 第 ${elapsedDays}/${totalDays} 天 (${timePercent.toFixed(1)}%)`);
-      lines.push(status);
+      progressFields.push({ type: 'mrkdwn', text: `*时间进度*\n第 ${elapsedDays}/${totalDays} 天 (${timePercent.toFixed(1)}%)` });
+      progressFields.push({ type: 'mrkdwn', text: `*状态*\n${status}` });
     }
 
-    lines.push('');
+    blocks.push({ type: 'section', fields: progressFields });
   }
 
+  // 昨日进度 & 当前状态
   if (yesterdayData) {
     const yc = yesterdayData.counts;
     const yesterdayAllIids = new Set([
@@ -148,32 +155,44 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
     const shownIids = new Set([...newlyTesting.map(i => i.iid), ...newlyCompleted0.map(i => i.iid)]);
     const newIssueItems = [...incomplete, ...testing, ...closed].filter(i => newIssues.includes(i.iid) && !shownIids.has(i.iid));
 
-    lines.push('*== 昨日进度 ==*');
-    lines.push(`新完成: ${newlyCompleted0.length}`);
-    for (const i of newlyCompleted0) lines.push(`  #${i.iid} ${i.title}`);
-    lines.push(`新增待测试: ${newlyTesting.length}`);
-    for (const i of newlyTesting) lines.push(`  #${i.iid} ${i.title}`);
-    lines.push(`新增 issue: ${newIssueItems.length}`);
-    for (const i of newIssueItems) lines.push(`  #${i.iid} ${i.title}`);
-    lines.push('');
+    blocks.push({ type: 'divider' });
+    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: '*📋 昨日进度*' } });
+    blocks.push({ type: 'section', fields: [
+      { type: 'mrkdwn', text: `*新完成*\n${newlyCompleted0.length}` },
+      { type: 'mrkdwn', text: `*新增待测试*\n${newlyTesting.length}` },
+      { type: 'mrkdwn', text: `*新增 Issue*\n${newIssueItems.length}` },
+    ] });
 
-    lines.push('*== 当前状态 ==*');
+    const detailParts: string[] = [];
+    for (const i of newlyCompleted0) detailParts.push(`✅ #${i.iid} ${i.title}`);
+    for (const i of newlyTesting) detailParts.push(`🧪 #${i.iid} ${i.title}`);
+    for (const i of newIssueItems) detailParts.push(`🆕 #${i.iid} ${i.title}`);
+    if (detailParts.length > 0) {
+      blocks.push({ type: 'context', elements: [{ type: 'mrkdwn', text: detailParts.join('\n').slice(0, 3000) }] });
+    }
+
+    // 当前状态
+    blocks.push({ type: 'divider' });
+    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: '*📈 当前状态*' } });
+    const statusFields: object[] = [];
     for (const [key, label] of [['incomplete', '未完成'], ['testing', '待测试'], ['completed', '已完成']] as const) {
       const diff = tc[key] - yc[key];
       const sign = diff >= 0 ? '+' : '';
-      lines.push(`${label}: ${tc[key]} (昨日: ${yc[key]}, ${sign}${diff})`);
+      statusFields.push({ type: 'mrkdwn', text: `*${label}*\n${tc[key]} (昨日: ${yc[key]}, ${sign}${diff})` });
     }
+    blocks.push({ type: 'section', fields: statusFields });
   } else {
-    lines.push('*== 当前状态 ==*');
-    lines.push(`未完成: ${tc.incomplete}`);
-    lines.push(`待测试: ${tc.testing}`);
-    lines.push(`已完成: ${tc.completed}`);
-    lines.push('');
-    lines.push('(首次运行，无昨日数据可对比)');
+    blocks.push({ type: 'divider' });
+    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: '*📈 当前状态*' } });
+    blocks.push({ type: 'section', fields: [
+      { type: 'mrkdwn', text: `*未完成*\n${tc.incomplete}` },
+      { type: 'mrkdwn', text: `*待测试*\n${tc.testing}` },
+      { type: 'mrkdwn', text: `*已完成*\n${tc.completed}` },
+    ] });
+    blocks.push({ type: 'context', elements: [{ type: 'mrkdwn', text: '(首次运行，无昨日数据可对比)' }] });
   }
 
-  lines.push('');
-
+  // 未完成详情
   if (incomplete.length > 0) {
     const memberTotal = new Map<string, { incomplete: number; testing: number; closed: number }>();
     const initMember = (name: string) => {
@@ -191,26 +210,27 @@ export async function generateDailyReport(milestone: GitLabMilestone): Promise<s
       byAssignee.get(name)!.push(i);
     }
 
-    lines.push(`*== 未完成详情 (${incomplete.length}) ==*`, '');
+    blocks.push({ type: 'divider' });
+    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `*🔧 未完成详情 (${incomplete.length})*` } });
+
     const sorted = [...byAssignee.entries()].sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
     for (const [assignee, issues] of sorted) {
       const stats = memberTotal.get(assignee)!;
       const memberSum = stats.incomplete + stats.testing + stats.closed;
       const memberRate = (((stats.testing + stats.closed) / memberSum) * 100).toFixed(1);
-      lines.push(`*${assignee}* (未完成 ${stats.incomplete} / 总 ${memberSum}, 完成率 ${memberRate}%):`);
-      for (const i of issues) {
+      const issueLines = issues.map(i => {
         const labels = i.labels.length > 0 ? ` | ${i.labels.join(',')}` : '';
-        lines.push(`  #${i.iid} ${i.title}${labels}`);
-      }
-      lines.push('');
+        return `• #${i.iid} ${i.title}${labels}`;
+      }).join('\n');
+      const text = `*${assignee}* (未完成 ${stats.incomplete} / 总 ${memberSum}, 完成率 ${memberRate}%)\n${issueLines}`;
+      blocks.push({ type: 'section', text: { type: 'mrkdwn', text: text.slice(0, 3000) } });
     }
   }
 
+  // Footer
+  blocks.push({ type: 'context', elements: [{ type: 'mrkdwn', text: `💾 快照已保存: ${snapshotPath(milestone.title, today)}` }] });
 
-  lines.push('');
-  lines.push(`快照已保存: ${snapshotPath(milestone.title, today)}`);
-
-  return lines.join('\n');
+  return blocks;
 }
 
 export async function handleResetDailyReport({ client, channel, threadTs }: CommandContext) {
@@ -226,8 +246,8 @@ export async function handleResetDailyReport({ client, channel, threadTs }: Comm
   await clearRunToday('daily-report');
   await client.chat.postMessage({ channel, text: '已清除今日快照，正在重新生成...', thread_ts: threadTs });
 
-  const report = await generateDailyReport(milestone);
-  await safePost(client, channel, report, threadTs);
+  const blocks = await generateDailyReport(milestone);
+  await postBlocks(client, channel, blocks, threadTs);
 }
 
 export async function handleDailyReport({ text, client, channel, threadTs }: CommandContext) {
@@ -236,6 +256,6 @@ export async function handleDailyReport({ text, client, channel, threadTs }: Com
     ? await getMilestoneByTitle(titleArg)
     : await getLatestActiveMilestone();
 
-  const report = await generateDailyReport(milestone);
-  await safePost(client, channel, report, threadTs);
+  const blocks = await generateDailyReport(milestone);
+  await postBlocks(client, channel, blocks, threadTs);
 }
