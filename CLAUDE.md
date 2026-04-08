@@ -77,7 +77,6 @@ src/
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
-| `CLAUDE_COMMAND` | `claude` | Claude CLI 命令路径 |
 | `ANTHROPIC_BASE_URL` | 无 | Anthropic API Base URL (若设置需有效 URL) |
 | `ANTHROPIC_AUTH_TOKEN` | 无 | Anthropic Auth Token (若设置不可为占位符) |
 | `CLAUDE_PROJECT_DIR` | 无 | Claude 项目目录 |

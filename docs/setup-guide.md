@@ -106,7 +106,6 @@ SLACK_BOT_TOKEN=xoxb-...
 SLACK_APP_TOKEN=xapp-...
 
 # Claude 配置 (可选)
-CLAUDE_COMMAND=claude
 ```
 
 ## 安装并运行

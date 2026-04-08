@@ -1,11 +1,20 @@
-import { spawn } from 'node:child_process';
+import { query, type Options } from '@anthropic-ai/claude-agent-sdk';
 import { getConfig } from '../config/index.js';
-import { log, isDebug, saveRawLog } from '../utils/logger.js';
 import { getClaudeSettings } from './settings.js';
+
+const MODEL_MAP: Record<string, string> = {
+  opus: 'claude-opus-4-6',
+  sonnet: 'claude-sonnet-4-6',
+  haiku: 'claude-haiku-4-5',
+};
+
+function resolveModel(shortName: string): string {
+  return MODEL_MAP[shortName] ?? shortName;
+}
 
 export async function* askClaude(prompt: string, sessionId?: string, resume = false, model?: string, effort?: string): AsyncGenerator<string> {
   const cfg = getConfig().claude;
-  const env: Record<string, string> = { ...process.env } as Record<string, string>;
+  const env: Record<string, string | undefined> = { ...process.env };
   if (cfg.anthropicBaseUrl) {
     env.ANTHROPIC_BASE_URL = cfg.anthropicBaseUrl;
   }
@@ -19,106 +28,51 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
     env.https_proxy = cfg.httpsProxy;
   }
 
-  // Build command arguments
-  // --verbose is required when using -p with --output-format stream-json
-  const args = ['-p', prompt, '--output-format', 'stream-json', '--verbose'];
   const claudeSettings = getClaudeSettings();
-  args.push('--model', model ?? claudeSettings.model);
-  args.push('--effort', effort ?? claudeSettings.effort);
+  const options: Options = {
+    model: resolveModel(model ?? claudeSettings.model),
+    effort: (effort ?? claudeSettings.effort) as Options['effort'],
+    env,
+    includePartialMessages: true,
+  };
+
+  if (cfg.projectDir) {
+    options.cwd = cfg.projectDir;
+  }
   if (sessionId) {
     if (resume) {
-      args.push('--resume', sessionId);
+      options.resume = sessionId;
     } else {
-      args.push('--session-id', sessionId);
+      options.sessionId = sessionId;
     }
   }
   if (cfg.dangerouslySkipPermissions) {
-    args.push('--dangerously-skip-permissions');
+    options.permissionMode = 'bypassPermissions';
+    options.allowDangerouslySkipPermissions = true;
   }
 
-  // Build spawn options
-  const spawnOptions: { stdio: ['ignore', 'pipe', 'pipe']; env: Record<string, string>; cwd?: string } = {
-    stdio: ['ignore', 'pipe', 'pipe'],
-    env,
-  };
-  if (cfg.projectDir) {
-    spawnOptions.cwd = cfg.projectDir;
-  }
-
-  const proc = spawn(cfg.command, args, spawnOptions);
-
-  const debug = isDebug();
-  let rawStdout = '';
-  let stderrOutput = '';
-  proc.stderr?.on('data', (data: Buffer) => {
-    const text = data.toString().trim();
-    stderrOutput += text + '\n';
-    log.error(text);
-  });
-
-  const exitCodePromise = new Promise<number | null>((resolve) => {
-    proc.on('close', (code) => resolve(code));
-  });
-
+  const conversation = query({ prompt, options });
   let hasContent = false;
+
   try {
-    let buffer = '';
-    for await (const chunk of proc.stdout) {
-      buffer += chunk.toString();
-      if (debug) rawStdout += chunk.toString();
-      const lines = buffer.split('\n');
-      buffer = lines.pop()!;
-
-      for (const line of lines) {
-        if (!line.trim()) continue;
-        try {
-          const data = JSON.parse(line);
-          if (data.type === 'content_block_delta' && data.delta?.text) {
-            hasContent = true;
-            yield data.delta.text;
-          } else if (data.type === 'result' && data.result) {
-            hasContent = true;
-            yield data.result;
+    for await (const message of conversation) {
+      if (message.type === 'stream_event' && message.event.type === 'content_block_delta') {
+        const delta = message.event.delta;
+        if (delta.type === 'text_delta') {
+          hasContent = true;
+          yield delta.text;
+        }
+      } else if (message.type === 'result') {
+        if (message.subtype === 'success') {
+          if (!hasContent) {
+            yield message.result;
           }
-        } catch {
-          // 非 JSON 行，跳过
+        } else {
+          throw new Error(message.errors[0] ?? `Claude SDK error: ${message.subtype}`);
         }
-      }
-    }
-
-    // 处理残余
-    if (buffer.trim()) {
-      try {
-        const data = JSON.parse(buffer);
-        if (data.type === 'content_block_delta' && data.delta?.text) {
-          hasContent = true;
-          yield data.delta.text;
-        } else if (data.type === 'result' && data.result) {
-          hasContent = true;
-          yield data.result;
-        }
-      } catch {
-        // 忽略
-      }
-    }
-
-    // 空回复检测：检查退出码和 stderr
-    if (!hasContent) {
-      const exitCode = await exitCodePromise;
-      const errInfo = stderrOutput.trim();
-      if (exitCode !== 0 && exitCode !== null) {
-        throw new Error(`Claude CLI 退出码 ${exitCode}${errInfo ? `: ${errInfo}` : ''}`);
-      }
-      if (errInfo) {
-        throw new Error(`Claude 未返回内容: ${errInfo}`);
       }
     }
   } finally {
-    if (!proc.killed) proc.kill('SIGTERM');
-    if (debug) {
-      const exitCode = await exitCodePromise;
-      saveRawLog({ args, sessionId, resume, stdout: rawStdout, stderr: stderrOutput, exitCode })
-        .catch(err => log.error(`saveRawLog failed: ${err}`));
-    }
+    conversation.close();
   }
 }

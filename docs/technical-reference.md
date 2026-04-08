@@ -237,9 +237,7 @@ export function loadConfig(): AppConfig {
       token: required('JENKINS_TOKEN'),
       jobs: parseJenkinsJobs(),
     },
-    claude: {
-      command: optional('CLAUDE_COMMAND', 'claude'),
-    },
+    claude: {},
     webhook: {
       port: optionalInt('WEBHOOK_PORT', 4567),
       gitlabSecret: optional('GITLAB_WEBHOOK_SECRET', ''),
@@ -748,7 +746,6 @@ export function formatIssueList(issues: GitLabIssue[], header: string): Block[] 
 | `GITLAB_DEFAULT_PROJECT` | `namespace/project` | 默认项目路径 |
 | `JENKINS_URL` | `https://jenkins.example.com` | Jenkins 实例 URL |
 | `JENKINS_JOBS` | `{}` | Job 别名映射 (JSON) |
-| `CLAUDE_COMMAND` | `claude` | Claude CLI 命令 |
 | `WEBHOOK_PORT` | `4567` | Webhook 服务端口 |
 | `GITLAB_WEBHOOK_SECRET` | `''` | GitLab Webhook 密钥 |
 | `WEBHOOK_NOTIFY_CHANNEL` | `#dev-notifications` | 通知频道 |

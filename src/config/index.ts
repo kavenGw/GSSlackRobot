@@ -38,7 +38,6 @@ export function loadConfig(): AppConfig {
       appToken: required('SLACK_APP_TOKEN'),
     },
     claude: {
-      command: optional('CLAUDE_COMMAND', 'claude'),
       anthropicBaseUrl: process.env.ANTHROPIC_BASE_URL,
       anthropicAuthToken: process.env.ANTHROPIC_AUTH_TOKEN,
       projectDir: process.env.CLAUDE_PROJECT_DIR,

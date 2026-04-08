@@ -4,7 +4,6 @@ export interface SlackConfig {
 }
 
 export interface ClaudeConfig {
-  command: string;
   anthropicBaseUrl?: string;
   anthropicAuthToken?: string;
   projectDir?: string;
