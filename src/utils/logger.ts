@@ -154,6 +154,11 @@ export const log = {
     console.log(`${ts()} ${chalk.blue('📄')} 对话日志已保存: logs/${fileName}`);
   },
 
+  warn(msg: string) {
+    const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
+    console.warn(chalk.yellow(`[WARN ${time}] ⚠ ${msg}`));
+  },
+
   error(msg: string) {
     const time = new Date().toLocaleTimeString('en-GB', { hour12: false });
     console.error(chalk.red(`[ERROR ${time}] ✘ ${msg}`));
