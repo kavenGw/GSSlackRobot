@@ -1,6 +1,7 @@
 export interface SlackConfig {
   botToken: string;
   appToken: string;
+  maxBlockText: number;
 }
 
 export interface ClaudeConfig {

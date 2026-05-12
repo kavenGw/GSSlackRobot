@@ -103,6 +103,16 @@ export function validateConfig(config: AppConfig): void {
     });
   }
 
+  if (!Number.isInteger(config.slack.maxBlockText) ||
+      config.slack.maxBlockText < 100 ||
+      config.slack.maxBlockText > 4000) {
+    errors.push({
+      param: 'SLACK_MAX_BLOCK_TEXT',
+      message: 'SLACK_MAX_BLOCK_TEXT must be an integer between 100 and 4000',
+      value: String(config.slack.maxBlockText),
+    });
+  }
+
   // Claude validation
   if (config.claude.anthropicBaseUrl !== undefined &&
       config.claude.anthropicBaseUrl !== '' &&

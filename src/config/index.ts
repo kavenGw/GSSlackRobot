@@ -36,6 +36,7 @@ export function loadConfig(): AppConfig {
     slack: {
       botToken: required('SLACK_BOT_TOKEN'),
       appToken: required('SLACK_APP_TOKEN'),
+      maxBlockText: optionalInt('SLACK_MAX_BLOCK_TEXT', 2000),
     },
     claude: {
       anthropicBaseUrl: process.env.ANTHROPIC_BASE_URL,
