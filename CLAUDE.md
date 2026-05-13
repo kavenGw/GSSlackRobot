@@ -61,7 +61,7 @@ src/
 - **异步模式**: 使用 async/await 和 Promise，不使用回调；流式场景使用 AsyncGenerator + `for await`
 - **错误处理**: Command handler 用 try-catch 包裹，错误消息发送到 Slack thread
 - **Slack 交互**: 所有回复必须包含 `thread_ts` 以保持线程
-- **消息限制**: 单条消息最大 3800 字符，超出使用 `splitToBlocks()` 分段发送
+- **消息限制**: 单段最大字符数由 `SLACK_MAX_BLOCK_TEXT` 控制（默认 2000），超出由 `splitToBlocks()` 分段发送；流式 `safeUpdate` 使用 `SegmentTracker` 跟踪每段 ts/lastContent，所有 Slack API 调用经 `safeChat` 兜底，`msg_too_long` 仅记 warn 不中断
 - **节流更新**: 流式输出场景下，`chat.update()` 最小间隔 500ms
 
 ## 环境变量
@@ -77,6 +77,7 @@ src/
 
 | 变量 | 默认值 | 说明 |
 |------|--------|------|
+| `SLACK_MAX_BLOCK_TEXT` | `2000` | Slack 单段最大字符数（100..4000，过大易触发 `msg_too_long`） |
 | `ANTHROPIC_BASE_URL` | 无 | Anthropic API Base URL (若设置需有效 URL) |
 | `ANTHROPIC_AUTH_TOKEN` | 无 | Anthropic Auth Token (若设置不可为占位符) |
 | `CLAUDE_PROJECT_DIR` | 无 | Claude 项目目录 |

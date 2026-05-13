@@ -11,6 +11,12 @@
 - **Event Subscriptions**: 订阅 `app_mention`
 - 开启 **Socket Mode**
 
+### Slack 行为参数
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `SLACK_MAX_BLOCK_TEXT` | 流式消息单段最大字符数（100..4000）。Slack `chat.update` 在含中文/emoji 时实测对 ~3000+ 字符段会返回 `msg_too_long`，下调到 2000 留余地。 | `2000` |
+
 ## GitLab 配置
 
 ### API 访问
