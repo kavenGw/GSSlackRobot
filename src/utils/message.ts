@@ -185,9 +185,8 @@ export async function safeUpdate(
       const resp = await safeChat(() =>
         client.chat.postMessage({ channel, text: chunks[i], thread_ts: threadTs })
       );
-      if (resp?.ts) {
-        tracker.segments.push({ ts: resp.ts, lastContent: chunks[i] });
-      }
+      if (!resp?.ts) break;
+      tracker.segments.push({ ts: resp.ts, lastContent: chunks[i] });
     }
   }
 }
