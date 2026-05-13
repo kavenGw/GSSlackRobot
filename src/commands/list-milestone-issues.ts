@@ -1,6 +1,7 @@
 import { getIssues } from '../services/gitlab.js';
 import { safePost } from '../utils/message.js';
 import type { CommandContext } from './index.js';
+import { getConfig } from '../config/index.js';
 
 const TESTING_LABELS = new Set(['待审核', '待审核未打包']);
 
@@ -46,5 +47,5 @@ export async function handleListMilestoneIssues({ text, client, channel, threadT
   lines.push('*== 统计 ==*');
   lines.push(`未完成: ${incomplete.length} | 待测试: ${testing.length} | 已完成: ${closed.length}`);
 
-  await safePost(client, channel, lines.join('\n'), threadTs);
+  await safePost(client, channel, lines.join('\n'), threadTs, getConfig().slack.maxBlockText);
 }

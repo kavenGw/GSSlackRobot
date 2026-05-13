@@ -1,6 +1,7 @@
 import type { CommandContext } from './index.js';
 import { askGemini } from '../services/gemini.js';
-import { markdownToSlack, safeUpdate } from '../utils/message.js';
+import { markdownToSlack, safeUpdate, createTracker } from '../utils/message.js';
+import { getConfig } from '../config/index.js';
 
 export async function handleGemini({ text, channel, threadTs, client }: CommandContext) {
   const prompt = text.replace(/^gemini\s+/i, '').trim();
@@ -21,7 +22,8 @@ export async function handleGemini({ text, channel, threadTs, client }: CommandC
 
   try {
     const reply = await askGemini(prompt, threadTs);
-    await safeUpdate(client, channel, initial.ts!, markdownToSlack(reply), threadTs);
+    const tracker = createTracker(initial.ts!, '思考中...');
+    await safeUpdate(client, channel, markdownToSlack(reply), threadTs, tracker, getConfig().slack.maxBlockText);
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     await client.chat.update({

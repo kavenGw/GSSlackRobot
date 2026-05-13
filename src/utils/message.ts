@@ -1,4 +1,5 @@
 import type { WebClient } from '@slack/web-api';
+import { log } from './logger.js';
 
 function strWidth(s: string): number {
   let w = 0;
@@ -97,9 +98,7 @@ export function markdownToSlack(text: string): string {
   return result;
 }
 
-const MAX_BLOCK_TEXT = 3000;
-
-function splitToBlocks(text: string, maxLen: number = MAX_BLOCK_TEXT): string[] {
+function splitToBlocks(text: string, maxLen: number): string[] {
   const chunks: string[] = [];
   let remaining = text;
   while (remaining.length > 0) {
@@ -115,16 +114,39 @@ function splitToBlocks(text: string, maxLen: number = MAX_BLOCK_TEXT): string[] 
   return chunks;
 }
 
+async function safeChat<T>(fn: () => Promise<T>): Promise<T | null> {
+  try {
+    return await fn();
+  } catch (err: any) {
+    const code = err?.data?.error ?? err?.code ?? 'unknown';
+    if (code === 'msg_too_long') {
+      log.warn(`Slack msg_too_long; chunk dropped`);
+    } else {
+      log.error(`Slack API error: ${code}`);
+    }
+    return null;
+  }
+}
+
+export interface SegmentTracker {
+  segments: { ts: string; lastContent: string }[];
+}
+
+export function createTracker(initialTs: string, initialContent: string): SegmentTracker {
+  return { segments: [{ ts: initialTs, lastContent: initialContent }] };
+}
+
 export async function safePost(
   client: WebClient,
   channel: string,
   text: string,
-  threadTs?: string,
+  threadTs: string | undefined,
+  maxBlockText: number,
 ): Promise<void> {
   if (!text) return;
-  const chunks = splitToBlocks(text);
+  const chunks = splitToBlocks(text, maxBlockText);
   for (const chunk of chunks) {
-    await client.chat.postMessage({ channel, text: chunk, thread_ts: threadTs });
+    await safeChat(() => client.chat.postMessage({ channel, text: chunk, thread_ts: threadTs }));
   }
 }
 
@@ -145,19 +167,27 @@ export async function postBlocks(
 export async function safeUpdate(
   client: WebClient,
   channel: string,
-  ts: string,
   text: string,
-  threadTs?: string,
-  lastSegment = 0,
-): Promise<number> {
-  if (!text) {
-    await client.chat.update({ channel, ts, text: '' });
-    return lastSegment;
+  threadTs: string,
+  tracker: SegmentTracker,
+  maxBlockText: number,
+): Promise<void> {
+  const safeText = text || ' ';
+  const chunks = splitToBlocks(safeText, maxBlockText);
+  for (let i = 0; i < chunks.length; i++) {
+    if (i < tracker.segments.length) {
+      const seg = tracker.segments[i];
+      if (seg.lastContent !== chunks[i]) {
+        await safeChat(() => client.chat.update({ channel, ts: seg.ts, text: chunks[i] }));
+        seg.lastContent = chunks[i];
+      }
+    } else {
+      const resp = await safeChat(() =>
+        client.chat.postMessage({ channel, text: chunks[i], thread_ts: threadTs })
+      );
+      if (resp && (resp as any).ts) {
+        tracker.segments.push({ ts: (resp as any).ts as string, lastContent: chunks[i] });
+      }
+    }
   }
-  const chunks = splitToBlocks(text);
-  await client.chat.update({ channel, ts, text: chunks[0] });
-  for (let i = lastSegment + 1; i < chunks.length; i++) {
-    await client.chat.postMessage({ channel, text: chunks[i], thread_ts: threadTs });
-  }
-  return Math.max(lastSegment, chunks.length - 1);
 }

@@ -1,6 +1,7 @@
 import { getActiveMilestones } from '../services/gitlab.js';
 import { safePost } from '../utils/message.js';
 import type { CommandContext } from './index.js';
+import { getConfig } from '../config/index.js';
 
 export async function handleListMilestones({ client, channel, threadTs }: CommandContext) {
   const milestones = await getActiveMilestones();
@@ -19,5 +20,5 @@ export async function handleListMilestones({ client, channel, threadTs }: Comman
     lines.push(`• *${m.title}* (iid: ${m.iid}, ${dateInfo}) — ${m.web_url}`);
   }
 
-  await safePost(client, channel, lines.join('\n'), threadTs);
+  await safePost(client, channel, lines.join('\n'), threadTs, getConfig().slack.maxBlockText);
 }

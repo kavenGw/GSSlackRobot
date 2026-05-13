@@ -17,7 +17,7 @@ import { handleModel, handleEffort } from './model.js';
 import { askClaude } from '../services/claude.js';
 import { isValidModel, isValidEffort, getClaudeSettings } from '../services/settings.js';
 import type { ClaudeModel, EffortLevel } from '../services/settings.js';
-import { markdownToSlack, safePost, safeUpdate } from '../utils/message.js';
+import { markdownToSlack, safePost, safeUpdate, createTracker } from '../utils/message.js';
 import { log, saveConversationLog } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
 
@@ -157,14 +157,15 @@ async function handleClaude({ text, channel, threadTs, client, files }: CommandC
 
   let content = '';
   let lastUpdate = 0;
-  let lastSegment = 0;
+  const maxBlockText = getConfig().slack.maxBlockText;
+  const tracker = createTracker(msgTs, '思考中...');
 
   const flush = async (final = false) => {
     const now = Date.now();
     if (!final && now - lastUpdate < THROTTLE_MS) return;
     lastUpdate = now;
     const text = final ? markdownToSlack(content) : content;
-    lastSegment = await safeUpdate(client, channel, msgTs, text || '思考中...', threadTs, lastSegment);
+    await safeUpdate(client, channel, text || '思考中...', threadTs, tracker, maxBlockText);
   };
 
   try {
@@ -179,7 +180,7 @@ async function handleClaude({ text, channel, threadTs, client, files }: CommandC
     }
     const durationMs = Date.now() - startTime;
     log.claudeDone(durationMs, content.length);
-    const segments = lastSegment + 1;
+    const segments = tracker.segments.length;
     log.reply(segments);
     const settings = getClaudeSettings();
     await saveConversationLog({ prompt: finalPrompt, reply: content, durationMs, sessionId, resume, segments, model: model ?? settings.model, effort: effort ?? settings.effort });
@@ -188,7 +189,7 @@ async function handleClaude({ text, channel, threadTs, client, files }: CommandC
     if (!content) {
       await client.chat.update({ channel, ts: msgTs, text: `出错: ${errMsg}` });
     } else {
-      await safePost(client, channel, `_（出错: ${errMsg}）_`, threadTs);
+      await safePost(client, channel, `_（出错: ${errMsg}）_`, threadTs, getConfig().slack.maxBlockText);
     }
   } finally {
     if (!knownSessions.has(sessionId)) {
