@@ -56,13 +56,16 @@ src/
 
 ## 编码规范
 
+- **测试策略**: 无单元测试套件；验证 = `npm run build`（tsc 通过）+ 必要时 Slack 端到端手动测试
 - **模块导入**: 使用 ES Module，导入路径必须带 `.js` 扩展名（如 `from './schema.js'`）
 - **类型导入**: 纯类型使用 `import type { ... }` 语法
 - **异步模式**: 使用 async/await 和 Promise，不使用回调；流式场景使用 AsyncGenerator + `for await`
 - **错误处理**: Command handler 用 try-catch 包裹，错误消息发送到 Slack thread
 - **Slack 交互**: 所有回复必须包含 `thread_ts` 以保持线程
 - **消息限制**: 单段最大字符数由 `SLACK_MAX_BLOCK_TEXT` 控制（默认 2000），超出由 `splitToBlocks()` 分段发送；流式 `safeUpdate` 使用 `SegmentTracker` 跟踪每段 ts/lastContent，所有 Slack API 调用经 `safeChat` 兜底，`msg_too_long` 仅记 warn 不中断
+- **消息发送函数选择**: 普通文本回复用 `safePost(client, channel, text, threadTs, maxBlockText)`；流式增量更新用 `safeUpdate(..., tracker, maxBlockText)`；Block Kit 结构化消息（每日简报）用 `postBlocks(client, channel, blocks, threadTs)`
 - **节流更新**: 流式输出场景下，`chat.update()` 最小间隔 500ms
+- **日志接口**: `src/utils/logger.ts` 导出 `log` 对象，方法：`info/warn/error/startup/incoming/claudeStart/claudeDone/reply/help/webhook/webhookServer/logSaved`
 
 ## 环境变量
 
@@ -127,6 +130,7 @@ src/
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
 - **配置变更同步**: 新增/修改环境变量配置时，需同步更新 `CLAUDE.md`、`docs/setup-guide.md`、`.env.example` 三处
+- **设计/计划文档**: 非平凡功能走 `docs/superpowers/specs/<YYYY-MM-DD>-<feature>-design.md`（设计） → `docs/superpowers/plans/<YYYY-MM-DD>-<feature>.md`（实现计划）流程
 - **命令变更同步**: 新增/修改/删除命令时，需同步更新以下位置：
   1. `src/commands/help.ts` — 帮助文本中的命令列表
   2. `src/commands/index.ts` — `COMMAND_ALIASES` 别名 + 路由正则 + handler 分支
