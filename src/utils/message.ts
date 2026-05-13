@@ -121,10 +121,10 @@ async function safeChat<T>(fn: () => Promise<T>): Promise<T | null> {
     const code = err?.data?.error ?? err?.code ?? 'unknown';
     if (code === 'msg_too_long') {
       log.warn(`Slack msg_too_long; chunk dropped`);
-    } else {
-      log.error(`Slack API error: ${code}`);
+      return null;
     }
-    return null;
+    log.error(`Slack API error: ${code}`);
+    throw err;
   }
 }
 
@@ -185,8 +185,8 @@ export async function safeUpdate(
       const resp = await safeChat(() =>
         client.chat.postMessage({ channel, text: chunks[i], thread_ts: threadTs })
       );
-      if (resp && (resp as any).ts) {
-        tracker.segments.push({ ts: (resp as any).ts as string, lastContent: chunks[i] });
+      if (resp?.ts) {
+        tracker.segments.push({ ts: resp.ts, lastContent: chunks[i] });
       }
     }
   }
