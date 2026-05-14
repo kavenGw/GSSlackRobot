@@ -131,6 +131,7 @@ src/
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
 - **配置变更同步**: 新增/修改环境变量配置时，需同步更新 `CLAUDE.md`、`docs/setup-guide.md`、`.env.example` 三处
 - **设计/计划文档**: 非平凡功能走 `docs/superpowers/specs/<YYYY-MM-DD>-<feature>-design.md`（设计） → `docs/superpowers/plans/<YYYY-MM-DD>-<feature>.md`（实现计划）流程
+- **Slash 前缀转义**: `handleClaude` 在透传给 Claude Agent SDK 前，对以 `/` 开头的 prompt 前置一个空格，避免 SDK 把 `/foo:bar` 当作 skill 调用返回 `Unknown skill`
 - **命令变更同步**: 新增/修改/删除命令时，需同步更新以下位置：
   1. `src/commands/help.ts` — 帮助文本中的命令列表
   2. `src/commands/index.ts` — `COMMAND_ALIASES` 别名 + 路由正则 + handler 分支

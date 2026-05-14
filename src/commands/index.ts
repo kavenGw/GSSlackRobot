@@ -124,7 +124,8 @@ async function downloadSlackImages(files: SlackFile[], token: string): Promise<s
 }
 
 async function handleClaude({ text, channel, threadTs, client, files }: CommandContext) {
-  const { prompt, model, effort } = parseModelPrefix(text);
+  const { prompt: parsedPrompt, model, effort } = parseModelPrefix(text);
+  const prompt = parsedPrompt.startsWith('/') ? ` ${parsedPrompt}` : parsedPrompt;
 
   let imagePaths: string[] = [];
   if (files?.length) {
