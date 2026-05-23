@@ -106,15 +106,23 @@ async function downloadSlackImages(files: SlackFile[], token: string): Promise<C
       const resp = await fetch(file.url_private_download, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!resp.ok) continue;
+      if (!resp.ok) {
+        log.warn(`Slack image fetch failed: status=${resp.status} ${resp.statusText}`);
+        continue;
+      }
       const raw = Buffer.from(await resp.arrayBuffer());
+      const ctype = resp.headers.get('content-type') ?? '';
+      if (!ctype.startsWith('image/')) {
+        log.warn(`Slack image download returned non-image (ctype=${ctype}) — bot token likely missing files:read scope`);
+        continue;
+      }
       const buf = await sharp(raw)
         .resize(1568, 1568, { fit: 'inside', withoutEnlargement: true })
         .png()
         .toBuffer();
       results.push({ data: buf.toString('base64'), mediaType: 'image/png' });
-    } catch {
-      // 单张失败跳过
+    } catch (e) {
+      log.warn(`Slack image processing failed: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
   return results;

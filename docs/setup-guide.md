@@ -6,7 +6,7 @@
 
 在 [api.slack.com/apps](https://api.slack.com/apps) 创建 App：
 
-- **Bot Token Scopes**: `app_mentions:read`, `chat:write`, `channels:history`
+- **Bot Token Scopes**: `app_mentions:read`, `chat:write`, `channels:history`, `files:read`（下载用户上传的图片附件，多模态透传给 Claude 必需）
 - **App-Level Token**: 勾选 `connections:write`
 - **Event Subscriptions**: 订阅 `app_mention`
 - 开启 **Socket Mode**
