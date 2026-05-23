@@ -204,6 +204,17 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
     } else {
       await safePost(client, channel, `_（出错: ${errMsg}）_`, threadTs, getConfig().slack.maxBlockText);
     }
+    if (userId) {
+      try {
+        await client.chat.postMessage({
+          channel,
+          thread_ts: threadTs,
+          text: `<@${userId}> ❌`,
+        });
+      } catch (notifyErr) {
+        log.warn(`mention sender (error) failed: ${notifyErr instanceof Error ? notifyErr.message : String(notifyErr)}`);
+      }
+    }
   } finally {
     if (!knownSessions.has(sessionId)) {
       knownSessions.add(sessionId);
