@@ -63,7 +63,7 @@ src/
 - **错误处理**: Command handler 用 try-catch 包裹，错误消息发送到 Slack thread
 - **Slack 交互**: 所有回复必须包含 `thread_ts` 以保持线程
 - **消息限制**: 单段最大字符数由 `SLACK_MAX_BLOCK_TEXT` 控制（默认 2000），超出由 `splitToBlocks()` 分段发送；流式 `safeUpdate` 使用 `SegmentTracker` 跟踪每段 ts/lastContent，所有 Slack API 调用经 `safeChat` 兜底，`msg_too_long` 仅记 warn 不中断
-- **消息发送函数选择**: 普通文本回复用 `safePost(client, channel, text, threadTs, maxBlockText)`；流式增量更新用 `safeUpdate(..., tracker, maxBlockText)`；Block Kit 结构化消息（每日简报）用 `postBlocks(client, channel, blocks, threadTs)`
+- **消息发送函数选择**: 普通文本回复用 `safePost(client, channel, text, threadTs, maxBlockText)`；流式增量更新用 `safeUpdate(..., tracker, maxBlockText)`；Block Kit 结构化消息（每日简报）用 `postBlocks(client, channel, blocks, threadTs)`；短固定文本通知（如 `<@user> ✅` 这类不会超长的提示）直接用 `client.chat.postMessage`，无需分段（`chat.update` 推送不可靠，分段对短文本是多余的）
 - **节流更新**: 流式输出场景下，`chat.update()` 最小间隔 500ms
 - **日志接口**: `src/utils/logger.ts` 导出 `log` 对象，方法：`info/warn/error/startup/incoming/claudeStart/claudeDone/reply/help/webhook/webhookServer/logSaved`
 
