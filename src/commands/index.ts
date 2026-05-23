@@ -57,6 +57,7 @@ export interface CommandContext {
   say: SayFn;
   client: WebClient;
   files?: SlackFile[];
+  userId?: string;
 }
 
 const COMMAND_ALIASES: Record<string, string> = {
@@ -209,7 +210,7 @@ export function registerCommands(app: App) {
     log.incoming(event.user ?? 'unknown', text);
 
     const files = (event as any).files as SlackFile[] | undefined;
-    const ctx: CommandContext = { text, channel: event.channel, threadTs, say, client, files };
+    const ctx: CommandContext = { text, channel: event.channel, threadTs, say, client, files, userId: event.user };
 
     try {
       if (/^help$/i.test(text)) {
