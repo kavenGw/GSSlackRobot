@@ -124,12 +124,12 @@ src/
 - **配置统一使用 env**: 所有配置通过环境变量加载，不使用配置文件，通过 `getConfig()` 获取单例
 - **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`model [模型] [effort]`/`effort [级别]` 切换 Claude 模型和 effort（持久化到 `data/settings.json`），`list-milestones`/`list-issues`/`daily-report`/`reset-daily-report`/`create-milestone <版本号> [结束日期]` 为 GitLab 命令（需配置），`gemini <问题>` 和 `gemini-draw <描述>` 为 Gemini 命令（需配置），其余输入透传 Claude CLI（支持 `opus/sonnet/haiku` 前缀单次指定模型）
 - **Claude CLI 集成**: 通过子进程调用，使用 `--output-format stream-json` 参数，输出为 JSON Lines 格式。支持 `--model`（opus/sonnet/haiku）和 `--effort`（max/high/medium/low）参数
-- **Slack 图片附件**: `app_mention` 事件的 `files` 字段未在 Bolt 类型中定义，需用 `(event as any).files` 访问；图片通过 bot token + `url_private_download` 下载到内存，**不落临时文件**
+- **Slack 图片附件**: `app_mention` 事件的 `files` 字段未在 Bolt 类型中定义，需用 `(event as any).files` 访问；图片通过 bot token + `url_private_download` 下载到内存，**不落临时文件**。bot token 必须有 `files:read` scope，否则 Slack 返回 200 OK + `text/html` 登录页（非 401）——`downloadSlackImages` 会校验 `content-type` 并 warn 提示
 - **Slack 图片预处理与多模态透传**: 下载图片后用 `sharp` 归一化（最大 1568px、转 PNG），转 base64 后通过 `askClaude(text, images, ...)` 以 Claude Agent SDK 的多模态 `content block`（`{type:'image', source:{type:'base64', ...}}`）发给 Claude，让模型真正"看到"图片，不依赖 Read 工具
 - **运行时设置**: `data/settings.json` 存储 Claude 模型和 effort 偏好，启动时加载，通过 Slack 命令动态修改
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
-- **配置变更同步**: 新增/修改环境变量配置时，需同步更新 `CLAUDE.md`、`docs/setup-guide.md`、`.env.example` 三处
+- **配置变更同步**: 新增/修改环境变量配置或 Slack OAuth scope 时，需同步更新 `CLAUDE.md`、`docs/setup-guide.md`、`.env.example` 三处
 - **设计/计划文档**: 非平凡功能走 `docs/superpowers/specs/<YYYY-MM-DD>-<feature>-design.md`（设计） → `docs/superpowers/plans/<YYYY-MM-DD>-<feature>.md`（实现计划）流程
 - **Slash 前缀转义**: `handleClaude` 在透传给 Claude Agent SDK 前，对以 `/` 开头的 prompt 前置一个空格，避免 SDK 把 `/foo:bar` 当作 skill 调用返回 `Unknown skill`
 - **Claude 完成通知**: `handleClaude` 透传链路在成功结束（`✅`）或失败（`❌`）后，会在同一 thread 独立 `postMessage` 一条 `<@user> ✅|❌` 消息，用于触发 Slack 推送通知；该行为仅作用于 Claude，不涉及 Gemini 等其他命令；`postMessage` 自身失败仅 `log.warn`，不中断主流程
