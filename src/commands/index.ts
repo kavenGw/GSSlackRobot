@@ -124,7 +124,7 @@ async function downloadSlackImages(files: SlackFile[], token: string): Promise<s
   return paths;
 }
 
-async function handleClaude({ text, channel, threadTs, client, files }: CommandContext) {
+async function handleClaude({ text, channel, threadTs, client, files, userId }: CommandContext) {
   const { prompt: parsedPrompt, model, effort } = parseModelPrefix(text);
   const prompt = parsedPrompt.startsWith('/') ? ` ${parsedPrompt}` : parsedPrompt;
 
@@ -186,6 +186,17 @@ async function handleClaude({ text, channel, threadTs, client, files }: CommandC
     log.reply(segments);
     const settings = getClaudeSettings();
     await saveConversationLog({ prompt: finalPrompt, reply: content, durationMs, sessionId, resume, segments, model: model ?? settings.model, effort: effort ?? settings.effort });
+    if (userId) {
+      try {
+        await client.chat.postMessage({
+          channel,
+          thread_ts: threadTs,
+          text: `<@${userId}> ✅`,
+        });
+      } catch (notifyErr) {
+        log.warn(`mention sender (success) failed: ${notifyErr instanceof Error ? notifyErr.message : String(notifyErr)}`);
+      }
+    }
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     if (!content) {
