@@ -1,4 +1,4 @@
-import { query, type Options } from '@anthropic-ai/claude-agent-sdk';
+import { query, type Options, type SDKUserMessage } from '@anthropic-ai/claude-agent-sdk';
 import { getConfig } from '../config/index.js';
 import { getClaudeSettings } from './settings.js';
 
@@ -23,18 +23,7 @@ async function* buildMultimodalPrompt(
   text: string,
   images: ClaudeImage[],
   sessionId: string,
-): AsyncIterable<{
-  type: 'user';
-  parent_tool_use_id: null;
-  session_id: string;
-  message: {
-    role: 'user';
-    content: Array<
-      | { type: 'text'; text: string }
-      | { type: 'image'; source: { type: 'base64'; media_type: ClaudeImageMediaType; data: string } }
-    >;
-  };
-}> {
+): AsyncIterable<SDKUserMessage> {
   yield {
     type: 'user',
     parent_tool_use_id: null,
@@ -100,7 +89,7 @@ export async function* askClaude(
 
   const prompt =
     images.length && sessionId
-      ? (buildMultimodalPrompt(text, images, sessionId) as Parameters<typeof query>[0]['prompt'])
+      ? buildMultimodalPrompt(text, images, sessionId)
       : text;
 
   const conversation = query({ prompt, options });
