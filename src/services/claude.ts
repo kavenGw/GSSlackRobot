@@ -12,7 +12,54 @@ function resolveModel(shortName: string): string {
   return MODEL_MAP[shortName] ?? shortName;
 }
 
-export async function* askClaude(prompt: string, sessionId?: string, resume = false, model?: string, effort?: string): AsyncGenerator<string> {
+export type ClaudeImageMediaType = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp';
+
+export interface ClaudeImage {
+  data: string;
+  mediaType: ClaudeImageMediaType;
+}
+
+async function* buildMultimodalPrompt(
+  text: string,
+  images: ClaudeImage[],
+  sessionId: string,
+): AsyncIterable<{
+  type: 'user';
+  parent_tool_use_id: null;
+  session_id: string;
+  message: {
+    role: 'user';
+    content: Array<
+      | { type: 'text'; text: string }
+      | { type: 'image'; source: { type: 'base64'; media_type: ClaudeImageMediaType; data: string } }
+    >;
+  };
+}> {
+  yield {
+    type: 'user',
+    parent_tool_use_id: null,
+    session_id: sessionId,
+    message: {
+      role: 'user',
+      content: [
+        { type: 'text', text },
+        ...images.map(img => ({
+          type: 'image' as const,
+          source: { type: 'base64' as const, media_type: img.mediaType, data: img.data },
+        })),
+      ],
+    },
+  };
+}
+
+export async function* askClaude(
+  text: string,
+  images: ClaudeImage[] = [],
+  sessionId?: string,
+  resume = false,
+  model?: string,
+  effort?: string,
+): AsyncGenerator<string> {
   const cfg = getConfig().claude;
   const env: Record<string, string | undefined> = { ...process.env };
   if (cfg.anthropicBaseUrl) {
@@ -50,6 +97,11 @@ export async function* askClaude(prompt: string, sessionId?: string, resume = fa
     options.permissionMode = 'bypassPermissions';
     options.allowDangerouslySkipPermissions = true;
   }
+
+  const prompt =
+    images.length && sessionId
+      ? (buildMultimodalPrompt(text, images, sessionId) as Parameters<typeof query>[0]['prompt'])
+      : text;
 
   const conversation = query({ prompt, options });
   let hasContent = false;
