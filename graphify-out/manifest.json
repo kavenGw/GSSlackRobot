@@ -1,7 +1,7 @@
 {
   "D:\\Git\\GSSlackRobot\\src\\app.ts": {
-    "mtime": 1773748570.810574,
-    "hash": "440cb51dcfa32aefc41eaa7f98e41a05"
+    "mtime": 1779863234.487595,
+    "hash": "c6b3d1d52e027e4aca2ce99362054ccd"
   },
   "D:\\Git\\GSSlackRobot\\src\\commands\\commands.ts": {
     "mtime": 1771936108.8685641,
@@ -44,16 +44,20 @@
     "hash": "0b7215a8533e792f46b5a69311451659"
   },
   "D:\\Git\\GSSlackRobot\\src\\config\\env-validator.ts": {
-    "mtime": 1778629763.5484533,
-    "hash": "ef5a3e0180ea0649b498c05260561283"
+    "mtime": 1779862829.887064,
+    "hash": "5ac7f4e869f04ea6a562b314a4604d3f"
   },
   "D:\\Git\\GSSlackRobot\\src\\config\\index.ts": {
-    "mtime": 1778629758.542982,
-    "hash": "d4013a875f5c74261e97ef4a3e659c90"
+    "mtime": 1779862683.808285,
+    "hash": "1ecc2f07a2625da4aedf43c3016ff644"
   },
   "D:\\Git\\GSSlackRobot\\src\\config\\schema.ts": {
-    "mtime": 1778629754.3346393,
-    "hash": "ca210b1f9ba5bbacd0e662e2c2620cd8"
+    "mtime": 1779862680.0219843,
+    "hash": "df59bfa2046b265509dae6e48909af2a"
+  },
+  "D:\\Git\\GSSlackRobot\\src\\events\\jenkins-mention.ts": {
+    "mtime": 1779863188.8927524,
+    "hash": "ee0b6717bd079276b59da77eb7385c4a"
   },
   "D:\\Git\\GSSlackRobot\\src\\scheduler\\daily-report.ts": {
     "mtime": 1775618204.3318634,
@@ -108,8 +112,8 @@
     "hash": "8783696b25b84dcf65fc3a62c5a1e678"
   },
   "D:\\Git\\GSSlackRobot\\CLAUDE.md": {
-    "mtime": 1779532416.4912431,
-    "hash": "b36cd58cdeadb157d8fe32868050ad13"
+    "mtime": 1779865419.0437393,
+    "hash": "ee597f2f4e47561bebb03c3ce7e419d6"
   },
   "D:\\Git\\GSSlackRobot\\README.md": {
     "mtime": 1772428144.507212,
@@ -128,8 +132,8 @@
     "hash": "0928a23a6eeb4b85202a56b08bfde90e"
   },
   "D:\\Git\\GSSlackRobot\\docs\\setup-guide.md": {
-    "mtime": 1779532275.1505089,
-    "hash": "ffbdb24473e42cd7a3563cd8fad32b0e"
+    "mtime": 1779865301.9019322,
+    "hash": "a320a87f6bf2d12d4e4cf50c87b4d8ec"
   },
   "D:\\Git\\GSSlackRobot\\docs\\technical-reference.md": {
     "mtime": 1775618204.386661,
@@ -263,6 +267,10 @@
     "mtime": 1779530123.6922357,
     "hash": "60d602dc4372f37aaf685ea2a8def04d"
   },
+  "D:\\Git\\GSSlackRobot\\docs\\superpowers\\plans\\2026-05-27-jenkins-mention-channel.md": {
+    "mtime": 1779863684.8231802,
+    "hash": "4c2b4a41da9213305b6eb15ac5f898c7"
+  },
   "D:\\Git\\GSSlackRobot\\docs\\superpowers\\specs\\2026-03-17-claude-cli-proxy-design.md": {
     "mtime": 1773749651.841164,
     "hash": "f90cc94ad447b861890d1ec1b7e6bf35"
@@ -290,5 +298,9 @@
   "D:\\Git\\GSSlackRobot\\docs\\superpowers\\specs\\2026-05-23-slack-image-multimodal-design.md": {
     "mtime": 1779529975.4459507,
     "hash": "5fdc11df5c29acb585f105ba8f2f7a77"
+  },
+  "D:\\Git\\GSSlackRobot\\docs\\superpowers\\specs\\2026-05-27-jenkins-mention-channel-design.md": {
+    "mtime": 1779863680.3656442,
+    "hash": "470dd573e192508335851dd47d70da6b"
   }
 }
