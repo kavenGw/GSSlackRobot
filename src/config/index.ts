@@ -75,6 +75,9 @@ export function loadConfig(): AppConfig {
           })
         : undefined,
     } : undefined,
+    jenkinsMention: process.env.JENKINS_NOTIFY_CHANNEL ? {
+      channel: process.env.JENKINS_NOTIFY_CHANNEL,
+    } : undefined,
     gemini: process.env.GEMINI_API_KEY ? {
       apiKey: process.env.GEMINI_API_KEY,
       model: optional('GEMINI_MODEL', 'gemini-2.0-flash'),

@@ -45,6 +45,10 @@ export interface JenkinsConfig {
   cronJobs?: JenkinsCronJob[];
 }
 
+export interface JenkinsMentionConfig {
+  channel: string;
+}
+
 export interface GeminiConfig {
   apiKey: string;
   model: string;
@@ -57,5 +61,6 @@ export interface AppConfig {
   gitlabNotify?: GitLabNotifyConfig;
   gitlab?: GitLabConfig;
   jenkins?: JenkinsConfig;
+  jenkinsMention?: JenkinsMentionConfig;
   gemini?: GeminiConfig;
 }
