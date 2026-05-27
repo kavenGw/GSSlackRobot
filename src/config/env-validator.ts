@@ -175,6 +175,29 @@ export function validateConfig(config: AppConfig): void {
     }
   }
 
+  if (config.jenkinsMention) {
+    const ch = config.jenkinsMention.channel;
+    const placeholders = ['your-channel-id', 'your_channel_id', 'C0000000000', 'xxx', 'placeholder'];
+    if (!ch.trim()) {
+      errors.push({
+        param: 'JENKINS_NOTIFY_CHANNEL',
+        message: 'JENKINS_NOTIFY_CHANNEL cannot be empty',
+      });
+    } else if (placeholders.includes(ch.trim().toLowerCase()) || placeholders.includes(ch.trim())) {
+      errors.push({
+        param: 'JENKINS_NOTIFY_CHANNEL',
+        message: 'JENKINS_NOTIFY_CHANNEL cannot be a placeholder value',
+        value: ch,
+      });
+    } else if (!/^[CG][A-Z0-9]{8,}$/.test(ch.trim())) {
+      errors.push({
+        param: 'JENKINS_NOTIFY_CHANNEL',
+        message: 'JENKINS_NOTIFY_CHANNEL must be a Slack channel ID starting with "C" (public) or "G" (private), length ≥ 9',
+        value: ch,
+      });
+    }
+  }
+
   if (config.jenkins?.cronJobs) {
     for (const job of config.jenkins.cronJobs) {
       if (!job.jobName || !job.jobName.trim()) {
