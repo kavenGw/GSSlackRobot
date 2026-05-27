@@ -130,6 +130,7 @@ src/
 - **运行时设置**: `data/settings.json` 存储 Claude 模型和 effort 偏好，启动时加载，通过 Slack 命令动态修改
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
 - **Jenkins @channel 补发**: 设置 `JENKINS_NOTIFY_CHANNEL` 后，bot 注册 Slack `message` 事件 handler 监听该频道。频道里出现新的顶层消息（且非 bot 自己发的、非 message_changed/deleted、非 thread 回复）时，自动在同频道独立发一条 `<!channel>` 触发推送提醒。频道纯净度（只用于 Jenkins App 推送）是运维约定，不在代码层校验。需要 Slack App 订阅 `message.channels`（或 `message.groups`）event，并加 `channels:history`（或 `groups:history`）scope，bot 也需 invite 进该频道。
+- **Slack Bolt 事件 / 类型 quirks**: `chat.postMessage` 的 `link_names` 是 `boolean | undefined`（不是 Slack REST 文档里写的 `0|1`，传数字编不过）；`message` 事件**没有** `subtype: 'message_replied'`，thread 回复是带 `thread_ts` 的普通 message，应用 `thread_ts !== ts` 过滤而非 subtype；订阅 `message.channels/groups` 后 bot **必须**被 invite 进目标频道，否则 Slack 静默丢事件且无任何错误信号
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
 - **配置变更同步**: 新增/修改环境变量配置或 Slack OAuth scope 时，需同步更新 `CLAUDE.md`、`docs/setup-guide.md`、`.env.example` 三处
 - **设计/计划文档**: 非平凡功能走 `docs/superpowers/specs/<YYYY-MM-DD>-<feature>-design.md`（设计） → `docs/superpowers/plans/<YYYY-MM-DD>-<feature>.md`（实现计划）流程
