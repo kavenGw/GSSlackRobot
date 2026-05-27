@@ -51,7 +51,7 @@ Jenkins 当前通过 Slack 自带的 Jenkins 应用把构建结果推送到 Slac
 
 1. **频道匹配**：`event.channel === cfg.jenkinsMention.channel`。不匹配直接 ignore。
 2. **跳过自身**：`event.bot_id === <自身 bot_id>` 时跳过。自身 bot_id 在 app 启动后通过 `auth.test` API 一次性查出并缓存。**防无限循环的关键**。
-3. **跳过 message 变更事件**：`event.subtype` 在 `['message_changed', 'message_deleted', 'message_replied']` 中时跳过。Jenkins App 编辑消息（如 In Progress → Success）会触发 `message_changed`，不需要重复 @。
+3. **跳过 message 变更事件**：`event.subtype` 在 `['message_changed', 'message_deleted']` 中时跳过。Jenkins App 编辑消息（如 In Progress → Success）会触发 `message_changed`，不需要重复 @。（注：thread 回复由下一条过滤的 `thread_ts` 处理，Slack 不存在 `message_replied` 这个 subtype。）
 4. **跳过 thread 内回复**：`event.thread_ts && event.thread_ts !== event.ts` 时跳过。只对频道顶层新消息 @，避免别人在 Jenkins 消息下 thread 讨论时被 @。
 5. **兜底：文本即 `<!channel>` 时跳过**。归一化 trim 后若文本就是 `<!channel>`，跳过。防 bot_id 缓存未及时拿到的边角情况下的循环。
 

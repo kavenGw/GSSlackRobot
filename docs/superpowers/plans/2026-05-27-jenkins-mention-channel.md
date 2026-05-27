@@ -169,7 +169,7 @@ import type { App } from '@slack/bolt';
 import { getConfig } from '../config/index.js';
 import { log } from '../utils/logger.js';
 
-const SUBTYPE_BLOCKLIST = new Set(['message_changed', 'message_deleted', 'message_replied']);
+const SUBTYPE_BLOCKLIST = new Set(['message_changed', 'message_deleted']);
 
 export async function registerJenkinsMention(app: App): Promise<void> {
   const cfg = getConfig().jenkinsMention;
@@ -211,7 +211,7 @@ export async function registerJenkinsMention(app: App): Promise<void> {
 ```
 
 **注释意图**（不写进代码里，仅供本任务读者理解）：
-- `SUBTYPE_BLOCKLIST`：屏蔽 Jenkins App 编辑消息（In Progress → Success）触发的 `message_changed`，避免重复 @
+- `SUBTYPE_BLOCKLIST`：屏蔽 Jenkins App 编辑消息（In Progress → Success）触发的 `message_changed` / `message_deleted`，避免重复 @。（Slack 并不存在 `message_replied` 这个 subtype；thread 回复由下一条 `thread_ts` 过滤处理。）
 - `selfBotId` 检查：防 bot 自己补发的 `<!channel>` 又被自己收到造成无限循环
 - `thread_ts !== ts`：只对频道顶层新消息触发，避免有人在 Jenkins 消息下回复也被 @
 - `text === '<!channel>'`：双重防循环（应对 `auth.test` 失败时的兜底；正常路径已被 selfBotId 拦截）
