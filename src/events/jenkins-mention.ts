@@ -2,7 +2,7 @@ import type { App } from '@slack/bolt';
 import { getConfig } from '../config/index.js';
 import { log } from '../utils/logger.js';
 
-const SUBTYPE_BLOCKLIST = new Set(['message_changed', 'message_deleted', 'message_replied']);
+const SUBTYPE_BLOCKLIST = new Set(['message_changed', 'message_deleted']);
 
 export async function registerJenkinsMention(app: App): Promise<void> {
   const cfg = getConfig().jenkinsMention;
