@@ -5,6 +5,7 @@ import { log } from './utils/logger.js';
 import { startWebhookServer } from './webhooks/server.js';
 import { scheduleDailyReport } from './scheduler/daily-report.js';
 import { scheduleJenkinsCronJobs } from './scheduler/jenkins-cron.js';
+import { registerJenkinsMention } from './events/jenkins-mention.js';
 import { ensureSingleInstance } from './utils/singleton.js';
 import { loadSettings } from './services/settings.js';
 
@@ -31,6 +32,7 @@ const app = new App({
 });
 
 registerCommands(app);
+await registerJenkinsMention(app);
 
 await app.start();
 startWebhookServer(app);
