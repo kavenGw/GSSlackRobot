@@ -115,6 +115,12 @@ Jenkins 自带 Slack App 推送构建结果时不会 @channel，容易被错过�
 
 未设置 `JENKINS_NOTIFY_CHANNEL` 时该功能关闭，bot 行为完全不变。
 
+排查（如果 bot 在 Jenkins 推送后没补 @channel）：
+
+- 启动日志缺少 `jenkins-mention: 已启用` → env 没生效或没重启
+- `JENKINS_NOTIFY_CHANNEL` 填的是频道名而非 ID（`C/G` 开头那串）→ 启动会校验失败并退出
+- 启动正常但 bot 没反应，自己在频道发任意文字也不补 → bot 没被 invite 进频道（Slack 不会把 bot 没加入的频道里的 message event 推给它，且无任何报错）；在频道里执行 `/invite @<bot>`，无需重启 bot
+
 ## 环境变量
 
 ```bash
