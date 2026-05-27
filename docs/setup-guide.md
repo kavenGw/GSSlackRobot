@@ -98,6 +98,23 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
 启动时自动调度：已过时间点的任务立即执行，未到的等待触发。支持多级 Pipeline（`folder/job` 格式）。
 
+### Jenkins 通知 @ 提醒
+
+Jenkins 自带 Slack App 推送构建结果时不会 @channel，容易被错过。设置 `JENKINS_NOTIFY_CHANNEL` 为 Jenkins 通知所在的 Slack 频道 ID 后，bot 会监听该频道并在每条新消息后自动补发一条 `<!channel>` 触发推送提醒。
+
+| 变量 | 说明 |
+|------|------|
+| `JENKINS_NOTIFY_CHANNEL` | Jenkins 通知 Slack 频道 ID（如 `C0123456789`） |
+
+启用要求：
+
+- Slack App 后台 **Event Subscriptions** 订阅 `message.channels`（公开频道）或 `message.groups`（私有频道）
+- **Bot Token Scopes** 增加 `channels:history`（公开）或 `groups:history`（私有）
+- Bot 被 invite 进该频道
+- 该频道**只用于 Jenkins 通知**（运维约定）：bot 不区分发送方，频道里出现的任何新顶层消息都会触发 @channel
+
+未设置 `JENKINS_NOTIFY_CHANNEL` 时该功能关闭，bot 行为完全不变。
+
 ## 环境变量
 
 ```bash

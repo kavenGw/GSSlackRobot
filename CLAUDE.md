@@ -102,6 +102,7 @@ src/
 | `JENKINS_USERNAME` | 无 | Jenkins 用户名 |
 | `JENKINS_API_TOKEN` | 无 | Jenkins API Token |
 | `JENKINS_CRON_JOBS` | 无 | Jenkins 定时任务（格式：`JobName HH:MM[,...]`） |
+| `JENKINS_NOTIFY_CHANNEL` | 无 | Jenkins 通知 Slack 频道 ID（设置后启用 bot 自动 @channel 补发功能） |
 | `SINGLETON_PORT` | `19280` | 单实例检测端口 |
 | `GEMINI_API_KEY` | 无 | Google AI Studio API Key（设置后启用 gemini 命令） |
 | `GEMINI_MODEL` | `gemini-2.0-flash` | Gemini 模型名 |
@@ -128,6 +129,7 @@ src/
 - **Slack 图片预处理与多模态透传**: 下载图片后用 `sharp` 归一化（最大 1568px、转 PNG），转 base64 后通过 `askClaude(text, images, ...)` 以 Claude Agent SDK 的多模态 `content block`（`{type:'image', source:{type:'base64', ...}}`）发给 Claude，让模型真正"看到"图片，不依赖 Read 工具
 - **运行时设置**: `data/settings.json` 存储 Claude 模型和 effort 偏好，启动时加载，通过 Slack 命令动态修改
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
+- **Jenkins @channel 补发**: 设置 `JENKINS_NOTIFY_CHANNEL` 后，bot 注册 Slack `message` 事件 handler 监听该频道。频道里出现新的顶层消息（且非 bot 自己发的、非 message_changed/deleted、非 thread 回复）时，自动在同频道独立发一条 `<!channel>` 触发推送提醒。频道纯净度（只用于 Jenkins App 推送）是运维约定，不在代码层校验。需要 Slack App 订阅 `message.channels`（或 `message.groups`）event，并加 `channels:history`（或 `groups:history`）scope，bot 也需 invite 进该频道。
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
 - **配置变更同步**: 新增/修改环境变量配置或 Slack OAuth scope 时，需同步更新 `CLAUDE.md`、`docs/setup-guide.md`、`.env.example` 三处
 - **设计/计划文档**: 非平凡功能走 `docs/superpowers/specs/<YYYY-MM-DD>-<feature>-design.md`（设计） → `docs/superpowers/plans/<YYYY-MM-DD>-<feature>.md`（实现计划）流程
