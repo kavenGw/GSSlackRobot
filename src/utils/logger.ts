@@ -17,8 +17,6 @@ interface ConversationLogParams {
   sessionId: string;
   resume: boolean;
   segments: number;
-  model?: string;
-  effort?: string;
   imageCount?: number;
 }
 
@@ -47,7 +45,7 @@ export async function saveConversationLog(params: ConversationLogParams): Promis
 - 提问长度: ${params.prompt.length} chars
 - 回复长度: ${params.reply.length} chars
 - 回复段数: ${params.segments}
-${params.imageCount ? `- 图片数: ${params.imageCount}\n` : ''}${params.model ? `- 模型: ${params.model}\n` : ''}${params.effort ? `- effort: ${params.effort}\n` : ''}
+${params.imageCount ? `- 图片数: ${params.imageCount}\n` : ''}
 ## 用户提问
 ${params.prompt}
 

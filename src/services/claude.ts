@@ -1,16 +1,5 @@
 import { query, type Options, type SDKUserMessage } from '@anthropic-ai/claude-agent-sdk';
 import { getConfig } from '../config/index.js';
-import { getClaudeSettings } from './settings.js';
-
-const MODEL_MAP: Record<string, string> = {
-  opus: 'claude-opus-4-6',
-  sonnet: 'claude-sonnet-4-6',
-  haiku: 'claude-haiku-4-5',
-};
-
-function resolveModel(shortName: string): string {
-  return MODEL_MAP[shortName] ?? shortName;
-}
 
 export type ClaudeImageMediaType = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp';
 
@@ -46,8 +35,6 @@ export async function* askClaude(
   images: ClaudeImage[] = [],
   sessionId?: string,
   resume = false,
-  model?: string,
-  effort?: string,
 ): AsyncGenerator<string> {
   const cfg = getConfig().claude;
   const env: Record<string, string | undefined> = { ...process.env };
@@ -64,10 +51,7 @@ export async function* askClaude(
     env.https_proxy = cfg.httpsProxy;
   }
 
-  const claudeSettings = getClaudeSettings();
   const options: Options = {
-    model: resolveModel(model ?? claudeSettings.model),
-    effort: (effort ?? claudeSettings.effort) as Options['effort'],
     env,
     includePartialMessages: true,
   };

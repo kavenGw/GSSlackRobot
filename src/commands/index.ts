@@ -11,10 +11,7 @@ import { handleCreateMilestone } from './create-milestone.js';
 import { handleDailyReport, handleResetDailyReport } from './daily-report.js';
 import { handleGemini } from './gemini.js';
 import { handleGeminiDraw } from './gemini-draw.js';
-import { handleModel, handleEffort } from './model.js';
 import { askClaude, type ClaudeImage } from '../services/claude.js';
-import { isValidModel, isValidEffort, getClaudeSettings } from '../services/settings.js';
-import type { ClaudeModel, EffortLevel } from '../services/settings.js';
 import { markdownToSlack, safePost, safeUpdate, createTracker } from '../utils/message.js';
 import { log, saveConversationLog } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
@@ -67,7 +64,6 @@ const COMMAND_ALIASES: Record<string, string> = {
   'reset-report': 'reset-daily-report',
   create: 'create-milestone',
   gem: 'gemini',
-  m: 'model',
   draw: 'gemini-draw',
 };
 
@@ -82,20 +78,6 @@ const THROTTLE_MS = 500;
 
 function threadToSessionId(threadTs: string): string {
   return uuidv5(threadTs, SESSION_NAMESPACE);
-}
-
-function parseModelPrefix(text: string): { prompt: string; model?: ClaudeModel; effort?: EffortLevel } {
-  const words = text.split(/\s+/);
-  if (words.length < 2) return { prompt: text };
-
-  const first = words[0].toLowerCase();
-  if (!isValidModel(first)) return { prompt: text };
-
-  const second = words[1].toLowerCase();
-  if (isValidEffort(second)) {
-    return { prompt: words.slice(2).join(' '), model: first as ClaudeModel, effort: second as EffortLevel };
-  }
-  return { prompt: words.slice(1).join(' '), model: first as ClaudeModel };
 }
 
 async function downloadSlackImages(files: SlackFile[], token: string): Promise<ClaudeImage[]> {
@@ -129,8 +111,7 @@ async function downloadSlackImages(files: SlackFile[], token: string): Promise<C
 }
 
 async function handleClaude({ text, channel, threadTs, client, files, userId }: CommandContext) {
-  const { prompt: parsedPrompt, model, effort } = parseModelPrefix(text);
-  const prompt = parsedPrompt.startsWith('/') ? ` ${parsedPrompt}` : parsedPrompt;
+  const prompt = text.startsWith('/') ? ` ${text}` : text;
 
   let images: ClaudeImage[] = [];
   if (files?.length) {
@@ -177,7 +158,7 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
 
   try {
     const resume = knownSessions.has(sessionId);
-    for await (const chunk of askClaude(finalText, images, sessionId, resume, model, effort)) {
+    for await (const chunk of askClaude(finalText, images, sessionId, resume)) {
       content += chunk;
       await flush();
     }
@@ -189,7 +170,6 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
     log.claudeDone(durationMs, content.length);
     const segments = tracker.segments.length;
     log.reply(segments);
-    const settings = getClaudeSettings();
     await saveConversationLog({
       prompt: finalText,
       reply: content,
@@ -197,8 +177,6 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
       sessionId,
       resume,
       segments,
-      model: model ?? settings.model,
-      effort: effort ?? settings.effort,
       imageCount: images.length,
     });
     if (userId) {
@@ -254,10 +232,6 @@ export function registerCommands(app: App) {
         await handleHelp(ctx);
       } else if (/^commands$/i.test(text)) {
         await handleCommands(ctx);
-      } else if (/^model\b/i.test(text)) {
-        await handleModel(ctx);
-      } else if (/^effort\b/i.test(text)) {
-        await handleEffort(ctx);
       } else if (/^(list-milestones|list-issues|daily-report|reset-daily-report|create-milestone)\b/i.test(text)) {
         if (!getConfig().gitlab) {
           await say({ text: 'GitLab 未配置，请设置 GITLAB_API_URL、GITLAB_TOKEN、GITLAB_PROJECT_ID 环境变量', thread_ts: threadTs });
