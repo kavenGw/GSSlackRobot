@@ -2,7 +2,6 @@ node_modules/
 dist/
 .env
 config/local.yaml
-data/milestone-daily
-data
+data/
 logs/
 .claude/settings.local.json
