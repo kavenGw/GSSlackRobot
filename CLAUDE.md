@@ -35,14 +35,12 @@ src/
 │   ├── list-milestone-issues.ts # 列出 milestone issues
 │   ├── create-milestone.ts   # 创建 milestone（含起止日期）+ 杂项 issue
 │   ├── gemini.ts             # Gemini AI 对话
-│   ├── gemini-draw.ts        # Gemini 画图生成
-│   └── model.ts              # 模型/effort 切换命令
+│   └── gemini-draw.ts        # Gemini 画图生成
 ├── scheduler/
 │   ├── daily-report.ts       # 每日简报定时调度
 │   └── jenkins-cron.ts       # Jenkins Job 定时触发
 ├── services/
-│   ├── claude.ts             # Claude CLI 子进程 (AsyncGenerator + stream-json)
-│   ├── settings.ts           # 运行时设置持久化 (model/effort → data/settings.json)
+│   ├── claude.ts             # Claude Agent SDK query() 流式调用 (AsyncGenerator)
 │   ├── gitlab.ts             # GitLab REST API
 │   ├── jenkins.ts            # Jenkins Script Console + Build API
 │   └── gemini.ts             # Google Gemini API
@@ -123,11 +121,10 @@ src/
 ## 关键设计注意事项
 
 - **配置统一使用 env**: 所有配置通过环境变量加载，不使用配置文件，通过 `getConfig()` 获取单例
-- **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`model [模型] [effort]`/`effort [级别]` 切换 Claude 模型和 effort（持久化到 `data/settings.json`），`list-milestones`/`list-issues`/`daily-report`/`reset-daily-report`/`create-milestone <版本号> [结束日期]` 为 GitLab 命令（需配置），`gemini <问题>` 和 `gemini-draw <描述>` 为 Gemini 命令（需配置），其余输入透传 Claude CLI（支持 `opus/sonnet/haiku` 前缀单次指定模型）
-- **Claude CLI 集成**: 通过子进程调用，使用 `--output-format stream-json` 参数，输出为 JSON Lines 格式。支持 `--model`（opus/sonnet/haiku）和 `--effort`（max/high/medium/low）参数
+- **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`list-milestones`/`list-issues`/`daily-report`/`reset-daily-report`/`create-milestone <版本号> [结束日期]` 为 GitLab 命令（需配置），`gemini <问题>` 和 `gemini-draw <描述>` 为 Gemini 命令（需配置），其余输入透传 Claude
+- **Claude SDK 集成**: 通过 Claude Agent SDK 的 `query()` 流式调用，`includePartialMessages` 增量输出；不显式指定 model/effort，跟随本机 Claude Code 默认配置
 - **Slack 图片附件**: `app_mention` 事件的 `files` 字段未在 Bolt 类型中定义，需用 `(event as any).files` 访问；图片通过 bot token + `url_private_download` 下载到内存，**不落临时文件**。bot token 必须有 `files:read` scope，否则 Slack 返回 200 OK + `text/html` 登录页（非 401）——`downloadSlackImages` 会校验 `content-type` 并 warn 提示
 - **Slack 图片预处理与多模态透传**: 下载图片后用 `sharp` 归一化（最大 1568px、转 PNG），转 base64 后通过 `askClaude(text, images, ...)` 以 Claude Agent SDK 的多模态 `content block`（`{type:'image', source:{type:'base64', ...}}`）发给 Claude，让模型真正"看到"图片，不依赖 Read 工具
-- **运行时设置**: `data/settings.json` 存储 Claude 模型和 effort 偏好，启动时加载，通过 Slack 命令动态修改
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道
 - **Jenkins @channel 补发**: 设置 `JENKINS_NOTIFY_CHANNEL` 后，bot 注册 Slack `message` 事件 handler 监听该频道。频道里出现新的顶层消息（且非 bot 自己发的、非 message_changed/deleted、非 thread 回复）时，自动在同频道独立发一条 `<!channel>` 触发推送提醒。频道纯净度（只用于 Jenkins App 推送）是运维约定，不在代码层校验。需要 Slack App 订阅 `message.channels`（或 `message.groups`）event，并加 `channels:history`（或 `groups:history`）scope，bot 也需 invite 进该频道。
 - **Slack Bolt 事件 / 类型 quirks**: `chat.postMessage` 的 `link_names` 是 `boolean | undefined`（不是 Slack REST 文档里写的 `0|1`，传数字编不过）；`message` 事件**没有** `subtype: 'message_replied'`，thread 回复是带 `thread_ts` 的普通 message，应用 `thread_ts !== ts` 过滤而非 subtype；订阅 `message.channels/groups` 后 bot **必须**被 invite 进目标频道，否则 Slack 静默丢事件且无任何错误信号
