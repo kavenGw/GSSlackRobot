@@ -7,7 +7,6 @@ import { scheduleDailyReport } from './scheduler/daily-report.js';
 import { scheduleJenkinsCronJobs } from './scheduler/jenkins-cron.js';
 import { registerJenkinsMention } from './events/jenkins-mention.js';
 import { ensureSingleInstance } from './utils/singleton.js';
-import { loadSettings } from './services/settings.js';
 
 await ensureSingleInstance();
 
@@ -22,7 +21,6 @@ try {
   throw error;
 }
 
-await loadSettings();
 await loadKnownSessions();
 
 const app = new App({
