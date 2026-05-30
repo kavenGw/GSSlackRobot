@@ -4,48 +4,47 @@
   "graph": {
     "hyperedges": [
       {
-        "id": "jenkins_atchannel_flow",
-        "label": "Jenkins @channel amplifier end-to-end flow",
+        "id": "brainstorm_trigger_flow",
+        "label": "\u5934\u8111\u98ce\u66b4 trigger: spec\u2192plan\u2192code\u2192help+docs",
         "nodes": [
-          "env_JENKINS_NOTIFY_CHANNEL",
-          "config_loadConfig",
-          "envvalidator_jenkinsmention_rule",
-          "jenkinsmention_registerJenkinsMention",
-          "jenkinsmention_filter_pipeline",
-          "jenkinsmention_repost_atchannel"
+          "spec_brainstormTrigger",
+          "plan_brainstormTrigger",
+          "index_brainstormTrigger",
+          "help_handleHelp",
+          "claudemd_slashEscape"
         ],
         "relation": "participate_in",
         "confidence": "EXTRACTED",
-        "confidence_score": 0.95,
-        "source_file": "src/events/jenkins-mention.ts"
+        "confidence_score": 0.85,
+        "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md"
       },
       {
-        "id": "config_validation_pipeline",
-        "label": "Config load + two-stage validation pipeline",
+        "id": "claude_passthrough_pipeline",
+        "label": "Claude passthrough: route\u2192images\u2192askClaude\u2192log",
         "nodes": [
-          "config_loadConfig",
-          "envvalidator_validateRequiredEnvVars",
-          "envvalidator_validateConfig",
-          "envvalidator_EnvValidationError",
-          "schema_AppConfig"
+          "index_registerCommands",
+          "index_handleClaude",
+          "index_downloadSlackImages",
+          "claude_askClaude",
+          "logger_saveConversationLog"
         ],
         "relation": "participate_in",
         "confidence": "EXTRACTED",
         "confidence_score": 0.9,
-        "source_file": "src/config/index.ts"
+        "source_file": "src/commands/index.ts"
       },
       {
-        "id": "spec_plan_impl_triad",
-        "label": "Spec -> Plan -> Implementation triad for jenkins-mention",
+        "id": "model_effort_removal",
+        "label": "Remove model/effort: spec\u2192plan\u2192askClaude",
         "nodes": [
-          "doc_jenkinsmention_design",
-          "doc_jenkinsmention_plan",
-          "jenkinsmention_registerJenkinsMention"
+          "spec_removeModelEffort",
+          "plan_removeModelEffort",
+          "claude_askClaude"
         ],
-        "relation": "form",
+        "relation": "participate_in",
         "confidence": "EXTRACTED",
-        "confidence_score": 0.9,
-        "source_file": "docs/superpowers/plans/2026-05-27-jenkins-mention-channel.md"
+        "confidence_score": 0.85,
+        "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md"
       }
     ]
   },
@@ -55,7 +54,7 @@
       "file_type": "code",
       "source_file": "app.ts",
       "source_location": "L1",
-      "community": 8,
+      "community": 2,
       "norm_label": "app.ts",
       "id": "app_ts"
     },
@@ -100,7 +99,7 @@
       "file_type": "code",
       "source_file": "commands/create-milestone.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 2,
       "norm_label": "create-milestone.ts",
       "id": "commands_create_milestone_ts"
     },
@@ -109,7 +108,7 @@
       "file_type": "code",
       "source_file": "commands/create-milestone.ts",
       "source_location": "L28",
-      "community": 0,
+      "community": 2,
       "norm_label": "formatdate()",
       "id": "commands_create_milestone_formatdate"
     },
@@ -118,7 +117,7 @@
       "file_type": "code",
       "source_file": "commands/create-milestone.ts",
       "source_location": "L35",
-      "community": 0,
+      "community": 2,
       "norm_label": "handlecreatemilestone()",
       "id": "commands_create_milestone_handlecreatemilestone"
     },
@@ -127,7 +126,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 9,
       "norm_label": "daily-report.ts",
       "id": "commands_daily_report_ts"
     },
@@ -136,7 +135,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L28",
-      "community": 0,
+      "community": 9,
       "norm_label": "todaystr()",
       "id": "commands_daily_report_todaystr"
     },
@@ -145,7 +144,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L30",
-      "community": 0,
+      "community": 9,
       "norm_label": "yesterdaystr()",
       "id": "commands_daily_report_yesterdaystr"
     },
@@ -154,7 +153,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L36",
-      "community": 0,
+      "community": 9,
       "norm_label": "snapshotpath()",
       "id": "commands_daily_report_snapshotpath"
     },
@@ -163,7 +162,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L40",
-      "community": 0,
+      "community": 9,
       "norm_label": "tosnapshot()",
       "id": "commands_daily_report_tosnapshot"
     },
@@ -172,7 +171,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L49",
-      "community": 0,
+      "community": 9,
       "norm_label": "generatedailyreport()",
       "id": "commands_daily_report_generatedailyreport"
     },
@@ -181,7 +180,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L236",
-      "community": 0,
+      "community": 9,
       "norm_label": "handleresetdailyreport()",
       "id": "commands_daily_report_handleresetdailyreport"
     },
@@ -190,7 +189,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L253",
-      "community": 0,
+      "community": 9,
       "norm_label": "handledailyreport()",
       "id": "commands_daily_report_handledailyreport"
     },
@@ -199,7 +198,7 @@
       "file_type": "code",
       "source_file": "commands/gemini-draw.ts",
       "source_location": "L1",
-      "community": 10,
+      "community": 5,
       "norm_label": "gemini-draw.ts",
       "id": "commands_gemini_draw_ts"
     },
@@ -208,7 +207,7 @@
       "file_type": "code",
       "source_file": "commands/gemini-draw.ts",
       "source_location": "L4",
-      "community": 10,
+      "community": 5,
       "norm_label": "handlegeminidraw()",
       "id": "commands_gemini_draw_handlegeminidraw"
     },
@@ -217,7 +216,7 @@
       "file_type": "code",
       "source_file": "commands/gemini.ts",
       "source_location": "L1",
-      "community": 10,
+      "community": 5,
       "norm_label": "gemini.ts",
       "id": "commands_gemini_ts"
     },
@@ -226,7 +225,7 @@
       "file_type": "code",
       "source_file": "commands/gemini.ts",
       "source_location": "L6",
-      "community": 10,
+      "community": 5,
       "norm_label": "handlegemini()",
       "id": "commands_gemini_handlegemini"
     },
@@ -243,7 +242,7 @@
       "label": "handleHelp()",
       "file_type": "code",
       "source_file": "commands/help.ts",
-      "source_location": "L21",
+      "source_location": "L17",
       "community": 5,
       "norm_label": "handlehelp()",
       "id": "commands_help_handlehelp"
@@ -261,8 +260,8 @@
       "label": "loadKnownSessions()",
       "file_type": "code",
       "source_file": "commands/index.ts",
-      "source_location": "L27",
-      "community": 8,
+      "source_location": "L24",
+      "community": 2,
       "norm_label": "loadknownsessions()",
       "id": "commands_index_loadknownsessions"
     },
@@ -270,7 +269,7 @@
       "label": "saveKnownSessions()",
       "file_type": "code",
       "source_file": "commands/index.ts",
-      "source_location": "L40",
+      "source_location": "L37",
       "community": 5,
       "norm_label": "saveknownsessions()",
       "id": "commands_index_saveknownsessions"
@@ -279,7 +278,7 @@
       "label": "resolveAlias()",
       "file_type": "code",
       "source_file": "commands/index.ts",
-      "source_location": "L74",
+      "source_location": "L70",
       "community": 5,
       "norm_label": "resolvealias()",
       "id": "commands_index_resolvealias"
@@ -288,7 +287,7 @@
       "label": "threadToSessionId()",
       "file_type": "code",
       "source_file": "commands/index.ts",
-      "source_location": "L83",
+      "source_location": "L81",
       "community": 5,
       "norm_label": "threadtosessionid()",
       "id": "commands_index_threadtosessionid"
@@ -298,7 +297,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L87",
-      "community": 5,
+      "community": 10,
       "norm_label": "parsemodelprefix()",
       "id": "commands_index_parsemodelprefix"
     },
@@ -306,7 +305,7 @@
       "label": "downloadSlackImages()",
       "file_type": "code",
       "source_file": "commands/index.ts",
-      "source_location": "L101",
+      "source_location": "L85",
       "community": 5,
       "norm_label": "downloadslackimages()",
       "id": "commands_index_downloadslackimages"
@@ -315,7 +314,7 @@
       "label": "handleClaude()",
       "file_type": "code",
       "source_file": "commands/index.ts",
-      "source_location": "L131",
+      "source_location": "L115",
       "community": 5,
       "norm_label": "handleclaude()",
       "id": "commands_index_handleclaude"
@@ -324,8 +323,8 @@
       "label": "registerCommands()",
       "file_type": "code",
       "source_file": "commands/index.ts",
-      "source_location": "L242",
-      "community": 8,
+      "source_location": "L228",
+      "community": 2,
       "norm_label": "registercommands()",
       "id": "commands_index_registercommands"
     },
@@ -334,7 +333,7 @@
       "file_type": "code",
       "source_file": "commands/list-milestone-issues.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 2,
       "norm_label": "list-milestone-issues.ts",
       "id": "commands_list_milestone_issues_ts"
     },
@@ -343,7 +342,7 @@
       "file_type": "code",
       "source_file": "commands/list-milestone-issues.ts",
       "source_location": "L8",
-      "community": 0,
+      "community": 2,
       "norm_label": "handlelistmilestoneissues()",
       "id": "commands_list_milestone_issues_handlelistmilestoneissues"
     },
@@ -352,7 +351,7 @@
       "file_type": "code",
       "source_file": "commands/list-milestones.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 5,
       "norm_label": "list-milestones.ts",
       "id": "commands_list_milestones_ts"
     },
@@ -361,7 +360,7 @@
       "file_type": "code",
       "source_file": "commands/list-milestones.ts",
       "source_location": "L6",
-      "community": 0,
+      "community": 5,
       "norm_label": "handlelistmilestones()",
       "id": "commands_list_milestones_handlelistmilestones"
     },
@@ -370,7 +369,7 @@
       "file_type": "code",
       "source_file": "commands/model.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 10,
       "norm_label": "model.ts",
       "id": "commands_model_ts"
     },
@@ -379,7 +378,7 @@
       "file_type": "code",
       "source_file": "commands/model.ts",
       "source_location": "L9",
-      "community": 5,
+      "community": 10,
       "norm_label": "validatemaxeffort()",
       "id": "commands_model_validatemaxeffort"
     },
@@ -388,7 +387,7 @@
       "file_type": "code",
       "source_file": "commands/model.ts",
       "source_location": "L16",
-      "community": 5,
+      "community": 10,
       "norm_label": "handlemodel()",
       "id": "commands_model_handlemodel"
     },
@@ -397,7 +396,7 @@
       "file_type": "code",
       "source_file": "commands/model.ts",
       "source_location": "L50",
-      "community": 5,
+      "community": 10,
       "norm_label": "handleeffort()",
       "id": "commands_model_handleeffort"
     },
@@ -406,7 +405,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L1",
-      "community": 9,
+      "community": 8,
       "norm_label": "env-validator.ts",
       "id": "config_env_validator_ts"
     },
@@ -415,7 +414,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L9",
-      "community": 9,
+      "community": 8,
       "norm_label": "envvalidationerror",
       "id": "config_env_validator_envvalidationerror"
     },
@@ -424,7 +423,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L12",
-      "community": 9,
+      "community": 8,
       "norm_label": ".constructor()",
       "id": "config_env_validator_envvalidationerror_constructor"
     },
@@ -433,7 +432,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L20",
-      "community": 9,
+      "community": 8,
       "norm_label": "formatvalidationerrors()",
       "id": "config_env_validator_formatvalidationerrors"
     },
@@ -442,7 +441,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L49",
-      "community": 9,
+      "community": 8,
       "norm_label": "isvalidurl()",
       "id": "config_env_validator_isvalidurl"
     },
@@ -451,7 +450,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L58",
-      "community": 9,
+      "community": 8,
       "norm_label": "isvalidtoken()",
       "id": "config_env_validator_isvalidtoken"
     },
@@ -460,7 +459,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L76",
-      "community": 9,
+      "community": 8,
       "norm_label": "validateconfig()",
       "id": "config_env_validator_validateconfig"
     },
@@ -469,7 +468,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L226",
-      "community": 9,
+      "community": 8,
       "norm_label": "validaterequiredenvvars()",
       "id": "config_env_validator_validaterequiredenvvars"
     },
@@ -478,7 +477,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L1",
-      "community": 9,
+      "community": 8,
       "norm_label": "index.ts",
       "id": "config_index_ts"
     },
@@ -487,7 +486,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L8",
-      "community": 9,
+      "community": 8,
       "norm_label": "required()",
       "id": "config_index_required"
     },
@@ -496,7 +495,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L14",
-      "community": 9,
+      "community": 8,
       "norm_label": "optional()",
       "id": "config_index_optional"
     },
@@ -505,7 +504,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L18",
-      "community": 9,
+      "community": 8,
       "norm_label": "optionalint()",
       "id": "config_index_optionalint"
     },
@@ -514,7 +513,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L26",
-      "community": 9,
+      "community": 8,
       "norm_label": "optionalbool()",
       "id": "config_index_optionalbool"
     },
@@ -523,7 +522,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L32",
-      "community": 9,
+      "community": 8,
       "norm_label": "loadconfig()",
       "id": "config_index_loadconfig"
     },
@@ -532,7 +531,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L93",
-      "community": 0,
+      "community": 2,
       "norm_label": "getconfig()",
       "id": "config_index_getconfig"
     },
@@ -541,7 +540,7 @@
       "file_type": "code",
       "source_file": "config/schema.ts",
       "source_location": "L1",
-      "community": 9,
+      "community": 8,
       "norm_label": "schema.ts",
       "id": "config_schema_ts"
     },
@@ -550,7 +549,7 @@
       "file_type": "code",
       "source_file": "scheduler/daily-report.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 9,
       "norm_label": "daily-report.ts",
       "id": "scheduler_daily_report_ts"
     },
@@ -559,7 +558,7 @@
       "file_type": "code",
       "source_file": "scheduler/daily-report.ts",
       "source_location": "L9",
-      "community": 8,
+      "community": 2,
       "norm_label": "scheduledailyreport()",
       "id": "scheduler_daily_report_scheduledailyreport"
     },
@@ -568,7 +567,7 @@
       "file_type": "code",
       "source_file": "scheduler/jenkins-cron.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 2,
       "norm_label": "jenkins-cron.ts",
       "id": "scheduler_jenkins_cron_ts"
     },
@@ -577,7 +576,7 @@
       "file_type": "code",
       "source_file": "scheduler/jenkins-cron.ts",
       "source_location": "L6",
-      "community": 0,
+      "community": 2,
       "norm_label": "schedulejenkinscronjobs()",
       "id": "scheduler_jenkins_cron_schedulejenkinscronjobs"
     },
@@ -586,7 +585,7 @@
       "file_type": "code",
       "source_file": "services/claude.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 10,
       "norm_label": "claude.ts",
       "id": "services_claude_ts"
     },
@@ -595,7 +594,7 @@
       "file_type": "code",
       "source_file": "services/claude.ts",
       "source_location": "L11",
-      "community": 5,
+      "community": 10,
       "norm_label": "resolvemodel()",
       "id": "services_claude_resolvemodel"
     },
@@ -604,7 +603,7 @@
       "file_type": "code",
       "source_file": "services/gemini.ts",
       "source_location": "L1",
-      "community": 10,
+      "community": 5,
       "norm_label": "gemini.ts",
       "id": "services_gemini_ts"
     },
@@ -613,7 +612,7 @@
       "file_type": "code",
       "source_file": "services/gemini.ts",
       "source_location": "L7",
-      "community": 10,
+      "community": 5,
       "norm_label": "askgemini()",
       "id": "services_gemini_askgemini"
     },
@@ -622,7 +621,7 @@
       "file_type": "code",
       "source_file": "services/gemini.ts",
       "source_location": "L33",
-      "community": 10,
+      "community": 5,
       "norm_label": "drawgemini()",
       "id": "services_gemini_drawgemini"
     },
@@ -631,7 +630,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 2,
       "norm_label": "gitlab.ts",
       "id": "services_gitlab_ts"
     },
@@ -640,7 +639,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L24",
-      "community": 0,
+      "community": 2,
       "norm_label": "getgitlab()",
       "id": "services_gitlab_getgitlab"
     },
@@ -649,7 +648,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L30",
-      "community": 0,
+      "community": 2,
       "norm_label": "gitlabfetch()",
       "id": "services_gitlab_gitlabfetch"
     },
@@ -658,7 +657,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L48",
-      "community": 0,
+      "community": 5,
       "norm_label": "getactivemilestones()",
       "id": "services_gitlab_getactivemilestones"
     },
@@ -667,7 +666,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L53",
-      "community": 0,
+      "community": 9,
       "norm_label": "getlatestactivemilestone()",
       "id": "services_gitlab_getlatestactivemilestone"
     },
@@ -676,7 +675,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L59",
-      "community": 0,
+      "community": 9,
       "norm_label": "getmilestonebytitle()",
       "id": "services_gitlab_getmilestonebytitle"
     },
@@ -685,7 +684,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L66",
-      "community": 0,
+      "community": 2,
       "norm_label": "getissues()",
       "id": "services_gitlab_getissues"
     },
@@ -694,7 +693,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L72",
-      "community": 0,
+      "community": 2,
       "norm_label": "createmilestone()",
       "id": "services_gitlab_createmilestone"
     },
@@ -703,7 +702,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L79",
-      "community": 0,
+      "community": 2,
       "norm_label": "createissue()",
       "id": "services_gitlab_createissue"
     },
@@ -712,7 +711,7 @@
       "file_type": "code",
       "source_file": "services/jenkins.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 2,
       "norm_label": "jenkins.ts",
       "id": "services_jenkins_ts"
     },
@@ -721,7 +720,7 @@
       "file_type": "code",
       "source_file": "services/jenkins.ts",
       "source_location": "L3",
-      "community": 0,
+      "community": 2,
       "norm_label": "updatecommitmsg()",
       "id": "services_jenkins_updatecommitmsg"
     },
@@ -730,7 +729,7 @@
       "file_type": "code",
       "source_file": "services/jenkins.ts",
       "source_location": "L46",
-      "community": 0,
+      "community": 2,
       "norm_label": "triggerjob()",
       "id": "services_jenkins_triggerjob"
     },
@@ -739,7 +738,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 10,
       "norm_label": "settings.ts",
       "id": "services_settings_ts"
     },
@@ -748,7 +747,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L25",
-      "community": 5,
+      "community": 10,
       "norm_label": "loadsettings()",
       "id": "services_settings_loadsettings"
     },
@@ -757,7 +756,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L39",
-      "community": 5,
+      "community": 10,
       "norm_label": "save()",
       "id": "services_settings_save"
     },
@@ -766,7 +765,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L44",
-      "community": 5,
+      "community": 10,
       "norm_label": "getclaudesettings()",
       "id": "services_settings_getclaudesettings"
     },
@@ -775,7 +774,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L48",
-      "community": 5,
+      "community": 10,
       "norm_label": "updateclaudemodel()",
       "id": "services_settings_updateclaudemodel"
     },
@@ -784,7 +783,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L54",
-      "community": 5,
+      "community": 10,
       "norm_label": "updateclaudeeffort()",
       "id": "services_settings_updateclaudeeffort"
     },
@@ -793,7 +792,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L59",
-      "community": 5,
+      "community": 10,
       "norm_label": "isvalidmodel()",
       "id": "services_settings_isvalidmodel"
     },
@@ -802,7 +801,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L63",
-      "community": 5,
+      "community": 10,
       "norm_label": "isvalideffort()",
       "id": "services_settings_isvalideffort"
     },
@@ -811,7 +810,7 @@
       "file_type": "code",
       "source_file": "utils/logger.ts",
       "source_location": "L9",
-      "community": 8,
+      "community": 2,
       "norm_label": "ts()",
       "id": "utils_logger_ts"
     },
@@ -820,7 +819,7 @@
       "file_type": "code",
       "source_file": "utils/logger.ts",
       "source_location": "L5",
-      "community": 8,
+      "community": 2,
       "norm_label": "isdebug()",
       "id": "utils_logger_isdebug"
     },
@@ -828,7 +827,7 @@
       "label": "saveConversationLog()",
       "file_type": "code",
       "source_file": "utils/logger.ts",
-      "source_location": "L25",
+      "source_location": "L23",
       "community": 5,
       "norm_label": "saveconversationlog()",
       "id": "utils_logger_saveconversationlog"
@@ -838,7 +837,7 @@
       "file_type": "code",
       "source_file": "utils/logger.ts",
       "source_location": "L76",
-      "community": 8,
+      "community": 2,
       "norm_label": "saverawlog()",
       "id": "utils_logger_saverawlog"
     },
@@ -847,7 +846,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L1",
-      "community": 10,
+      "community": 5,
       "norm_label": "message.ts",
       "id": "utils_message_ts"
     },
@@ -856,7 +855,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L4",
-      "community": 10,
+      "community": 5,
       "norm_label": "strwidth()",
       "id": "utils_message_strwidth"
     },
@@ -865,7 +864,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L22",
-      "community": 10,
+      "community": 5,
       "norm_label": "converttables()",
       "id": "utils_message_converttables"
     },
@@ -874,7 +873,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L50",
-      "community": 10,
+      "community": 5,
       "norm_label": "markdowntoslack()",
       "id": "utils_message_markdowntoslack"
     },
@@ -883,7 +882,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L101",
-      "community": 10,
+      "community": 5,
       "norm_label": "splittoblocks()",
       "id": "utils_message_splittoblocks"
     },
@@ -892,7 +891,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L117",
-      "community": 10,
+      "community": 5,
       "norm_label": "safechat()",
       "id": "utils_message_safechat"
     },
@@ -901,7 +900,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L135",
-      "community": 10,
+      "community": 5,
       "norm_label": "createtracker()",
       "id": "utils_message_createtracker"
     },
@@ -910,7 +909,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L139",
-      "community": 10,
+      "community": 5,
       "norm_label": "safepost()",
       "id": "utils_message_safepost"
     },
@@ -919,7 +918,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L153",
-      "community": 0,
+      "community": 9,
       "norm_label": "postblocks()",
       "id": "utils_message_postblocks"
     },
@@ -928,7 +927,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L167",
-      "community": 10,
+      "community": 5,
       "norm_label": "safeupdate()",
       "id": "utils_message_safeupdate"
     },
@@ -937,7 +936,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L1",
-      "community": 0,
+      "community": 9,
       "norm_label": "scheduler-guard.ts",
       "id": "utils_scheduler_guard_ts"
     },
@@ -946,7 +945,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L6",
-      "community": 0,
+      "community": 9,
       "norm_label": "loadstate()",
       "id": "utils_scheduler_guard_loadstate"
     },
@@ -955,7 +954,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L14",
-      "community": 0,
+      "community": 9,
       "norm_label": "hasruntoday()",
       "id": "utils_scheduler_guard_hasruntoday"
     },
@@ -964,7 +963,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L19",
-      "community": 0,
+      "community": 9,
       "norm_label": "clearruntoday()",
       "id": "utils_scheduler_guard_clearruntoday"
     },
@@ -973,7 +972,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L26",
-      "community": 0,
+      "community": 9,
       "norm_label": "markruntoday()",
       "id": "utils_scheduler_guard_markruntoday"
     },
@@ -982,7 +981,7 @@
       "file_type": "code",
       "source_file": "utils/singleton.ts",
       "source_location": "L1",
-      "community": 8,
+      "community": 2,
       "norm_label": "singleton.ts",
       "id": "utils_singleton_ts"
     },
@@ -991,7 +990,7 @@
       "file_type": "code",
       "source_file": "utils/singleton.ts",
       "source_location": "L7",
-      "community": 8,
+      "community": 2,
       "norm_label": "waitforkeypress()",
       "id": "utils_singleton_waitforkeypress"
     },
@@ -1000,7 +999,7 @@
       "file_type": "code",
       "source_file": "utils/singleton.ts",
       "source_location": "L23",
-      "community": 8,
+      "community": 2,
       "norm_label": "ensuresingleinstance()",
       "id": "utils_singleton_ensuresingleinstance"
     },
@@ -1009,7 +1008,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L1",
-      "community": 8,
+      "community": 2,
       "norm_label": "gitlab.ts",
       "id": "webhooks_gitlab_ts"
     },
@@ -1018,7 +1017,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L7",
-      "community": 8,
+      "community": 2,
       "norm_label": "formatpush()",
       "id": "webhooks_gitlab_formatpush"
     },
@@ -1027,7 +1026,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L20",
-      "community": 8,
+      "community": 2,
       "norm_label": "formatmergerequest()",
       "id": "webhooks_gitlab_formatmergerequest"
     },
@@ -1036,7 +1035,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L27",
-      "community": 8,
+      "community": 2,
       "norm_label": "formatpipeline()",
       "id": "webhooks_gitlab_formatpipeline"
     },
@@ -1045,7 +1044,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L36",
-      "community": 8,
+      "community": 2,
       "norm_label": "formatissue()",
       "id": "webhooks_gitlab_formatissue"
     },
@@ -1054,7 +1053,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L43",
-      "community": 8,
+      "community": 2,
       "norm_label": "formatnote()",
       "id": "webhooks_gitlab_formatnote"
     },
@@ -1063,7 +1062,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L58",
-      "community": 8,
+      "community": 2,
       "norm_label": "handlegitlabevent()",
       "id": "webhooks_gitlab_handlegitlabevent"
     },
@@ -1072,7 +1071,7 @@
       "file_type": "code",
       "source_file": "webhooks/server.ts",
       "source_location": "L1",
-      "community": 8,
+      "community": 2,
       "norm_label": "server.ts",
       "id": "webhooks_server_ts"
     },
@@ -1081,12 +1080,12 @@
       "file_type": "code",
       "source_file": "webhooks/server.ts",
       "source_location": "L7",
-      "community": 8,
+      "community": 2,
       "norm_label": "startwebhookserver()",
       "id": "webhooks_server_startwebhookserver"
     },
     {
-      "label": "App Entry Point",
+      "label": "App Entry (app.ts)",
       "file_type": "code",
       "source_file": "src/app.ts",
       "source_location": null,
@@ -1094,8 +1093,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
-      "norm_label": "app entry point",
+      "community": 4,
+      "norm_label": "app entry (app.ts)",
       "id": "app_main"
     },
     {
@@ -1107,7 +1106,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "registercommands (app_mention router)",
       "id": "commands_index_registerCommands"
     },
@@ -1120,7 +1119,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handleclaude (claude passthrough)",
       "id": "commands_index_handleClaude"
     },
@@ -1146,7 +1145,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "command_aliases map",
       "id": "commands_index_COMMAND_ALIASES"
     },
@@ -1159,7 +1158,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "downloadslackimages",
       "id": "commands_index_downloadSlackImages"
     },
@@ -1172,7 +1171,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "threadtosessionid (uuidv5)",
       "id": "commands_index_threadToSessionId"
     },
@@ -1185,7 +1184,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handlehelp",
       "id": "commands_help_handleHelp"
     },
@@ -1198,7 +1197,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handlecommands (list claude slash cmds)",
       "id": "commands_commands_handleCommands"
     },
@@ -1211,7 +1210,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handlecreatemilestone",
       "id": "commands_createmilestone_handleCreateMilestone"
     },
@@ -1224,7 +1223,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handledailyreport",
       "id": "commands_dailyreport_handleDailyReport"
     },
@@ -1237,7 +1236,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handleresetdailyreport",
       "id": "commands_dailyreport_handleResetDailyReport"
     },
@@ -1250,7 +1249,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "generatedailyreport (block builder)",
       "id": "commands_dailyreport_generateDailyReport"
     },
@@ -1263,7 +1262,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "dailysnapshot type",
       "id": "commands_dailyreport_DailySnapshot"
     },
@@ -1276,7 +1275,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handlegeminidraw",
       "id": "commands_geminidraw_handleGeminiDraw"
     },
@@ -1289,7 +1288,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handlegemini",
       "id": "commands_gemini_handleGemini"
     },
@@ -1302,7 +1301,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handlelistmilestones",
       "id": "commands_listmilestones_handleListMilestones"
     },
@@ -1315,7 +1314,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handlelistmilestoneissues",
       "id": "commands_listmilestoneissues_handleListMilestoneIssues"
     },
@@ -1328,7 +1327,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handlemodel",
       "id": "commands_model_handleModel"
     },
@@ -1341,7 +1340,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "handleeffort",
       "id": "commands_model_handleEffort"
     },
@@ -1354,7 +1353,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 9,
+      "community": 8,
       "norm_label": "loadconfig",
       "id": "config_index_loadConfig"
     },
@@ -1367,7 +1366,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "getconfig (singleton)",
       "id": "config_index_getConfig"
     },
@@ -1380,7 +1379,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 9,
+      "community": 8,
       "norm_label": "validateconfig",
       "id": "config_envvalidator_validateConfig"
     },
@@ -1393,7 +1392,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 9,
+      "community": 8,
       "norm_label": "validaterequiredenvvars",
       "id": "config_envvalidator_validateRequiredEnvVars"
     },
@@ -1406,7 +1405,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 9,
+      "community": 8,
       "norm_label": "envvalidationerror class",
       "id": "config_envvalidator_EnvValidationError"
     },
@@ -1419,7 +1418,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 9,
+      "community": 8,
       "norm_label": "appconfig interface",
       "id": "config_schema_AppConfig"
     },
@@ -1432,7 +1431,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "scheduledailyreport",
       "id": "scheduler_dailyreport_scheduleDailyReport"
     },
@@ -1445,7 +1444,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "schedulejenkinscronjobs",
       "id": "scheduler_jenkinscron_scheduleJenkinsCronJobs"
     },
@@ -1458,7 +1457,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "askclaude (agent sdk stream)",
       "id": "services_claude_askClaude"
     },
@@ -1471,7 +1470,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "model_map (short\u2192full model id)",
       "id": "services_claude_MODEL_MAP"
     },
@@ -1484,7 +1483,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "askgemini",
       "id": "services_gemini_askGemini"
     },
@@ -1497,7 +1496,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "drawgemini",
       "id": "services_gemini_drawGemini"
     },
@@ -1510,7 +1509,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "chathistories (per-thread)",
       "id": "services_gemini_chatHistories"
     },
@@ -1523,7 +1522,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "gitlabfetch (rest wrapper)",
       "id": "services_gitlab_gitlabFetch"
     },
@@ -1536,7 +1535,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "getactivemilestones",
       "id": "services_gitlab_getActiveMilestones"
     },
@@ -1549,7 +1548,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "getlatestactivemilestone",
       "id": "services_gitlab_getLatestActiveMilestone"
     },
@@ -1562,7 +1561,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "getmilestonebytitle",
       "id": "services_gitlab_getMilestoneByTitle"
     },
@@ -1575,7 +1574,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "getissues",
       "id": "services_gitlab_getIssues"
     },
@@ -1588,7 +1587,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "createmilestone",
       "id": "services_gitlab_createMilestone"
     },
@@ -1601,7 +1600,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 3,
+      "community": 4,
       "norm_label": "createissue",
       "id": "services_gitlab_createIssue"
     },
@@ -1614,7 +1613,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "jenkinsservice",
       "id": "jenkins_jenkinsservice"
     },
@@ -1627,7 +1626,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "jenkinsservice.runscript",
       "id": "jenkins_runscript"
     },
@@ -1640,7 +1639,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "jenkinsservice.triggerbuild",
       "id": "jenkins_triggerbuild"
     },
@@ -1653,7 +1652,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "loadsettings",
       "id": "settings_loadsettings"
     },
@@ -1666,7 +1665,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "savesettings",
       "id": "settings_savesettings"
     },
@@ -1679,12 +1678,12 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "data/settings.json",
       "id": "settings_datafile"
     },
     {
-      "label": "log object",
+      "label": "log (console logger object)",
       "file_type": "code",
       "source_file": "src/utils/logger.ts",
       "source_location": null,
@@ -1692,8 +1691,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
-      "norm_label": "log object",
+      "community": 6,
+      "norm_label": "log (console logger object)",
       "id": "logger_log"
     },
     {
@@ -1705,7 +1704,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "splittoblocks",
       "id": "message_splittoblocks"
     },
@@ -1718,7 +1717,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "safepost",
       "id": "message_safepost"
     },
@@ -1731,7 +1730,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "safeupdate",
       "id": "message_safeupdate"
     },
@@ -1744,7 +1743,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "safechat",
       "id": "message_safechat"
     },
@@ -1757,7 +1756,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "segmenttracker",
       "id": "message_segmenttracker"
     },
@@ -1770,7 +1769,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "postblocks",
       "id": "message_postblocks"
     },
@@ -1783,7 +1782,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "scheduler-guard",
       "id": "schedulerguard_guard"
     },
@@ -1796,7 +1795,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "singleton acquire",
       "id": "singleton_acquire"
     },
@@ -1809,7 +1808,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "gitlab event formatter",
       "id": "webhooks_gitlab_formatter"
     },
@@ -1822,7 +1821,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "webhook express server",
       "id": "webhooks_server"
     },
@@ -1835,7 +1834,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "claude.md project context",
       "id": "claudemd_projectoverview"
     },
@@ -1848,7 +1847,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "message function selection rationale",
       "id": "claudemd_msgfunctionchoice"
     },
@@ -1861,7 +1860,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "env validation mechanism",
       "id": "claudemd_envvalidation"
     },
@@ -1874,7 +1873,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "claude done notification rationale",
       "id": "claudemd_claudedonenotify"
     },
@@ -1887,7 +1886,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "slash prefix escape rationale",
       "id": "claudemd_slashescape"
     },
@@ -1900,7 +1899,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "command change sync checklist",
       "id": "claudemd_commandsync"
     },
@@ -1913,7 +1912,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "readme overview",
       "id": "readme_overview"
     },
@@ -1926,7 +1925,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "claude integration doc",
       "id": "doc_claudeintegration"
     },
@@ -1939,7 +1938,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "flowchart doc",
       "id": "doc_flowchart"
     },
@@ -1952,7 +1951,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "gitlab ops doc",
       "id": "doc_gitlabops"
     },
@@ -1965,7 +1964,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 3,
       "norm_label": "docs/setup-guide.md",
       "id": "doc_setupguide"
     },
@@ -1978,7 +1977,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "technical reference",
       "id": "doc_technicalreference"
     },
@@ -1991,7 +1990,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "commands design plan",
       "id": "plan_commandsdesign"
     },
@@ -2004,7 +2003,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "session isolation design",
       "id": "plan_sessionisolation"
     },
@@ -2017,7 +2016,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 4,
+      "community": 6,
       "norm_label": "simplify bot design",
       "id": "plan_simplifybot"
     },
@@ -2030,7 +2029,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "simplify bot plan",
       "id": "2026-02-24-simplify-bot-plan_simplify_bot_plan"
     },
@@ -2056,7 +2055,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "simplify appconfig to slack+claude",
       "id": "2026-02-24-simplify-bot-plan_simplify_appconfig"
     },
@@ -2069,7 +2068,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "inline claude passthrough routing",
       "id": "2026-02-24-simplify-bot-plan_inline_claude_passthrough"
     },
@@ -2082,7 +2081,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "gemini command implementation plan",
       "id": "2026-02-25-gemini-command-design_gemini_command_plan"
     },
@@ -2095,7 +2094,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "@google/generative-ai sdk",
       "id": "2026-02-25-gemini-command-design_google_generative_ai_sdk"
     },
@@ -2108,7 +2107,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "thread-scoped gemini chat history",
       "id": "2026-02-25-gemini-command-design_gemini_chat_history"
     },
@@ -2121,7 +2120,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "gemini draw design",
       "id": "2026-02-25-gemini-draw-design_gemini_draw_design"
     },
@@ -2134,7 +2133,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "responsemodalities text+image",
       "id": "2026-02-25-gemini-draw-design_response_modalities"
     },
@@ -2147,7 +2146,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "slack files.uploadv2",
       "id": "2026-02-25-gemini-draw-design_files_upload_v2"
     },
@@ -2160,7 +2159,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "gemini draw implementation plan",
       "id": "2026-02-25-gemini-draw-plan_gemini_draw_plan"
     },
@@ -2173,7 +2172,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "gemini-draw route order rationale",
       "id": "2026-02-25-gemini-draw-plan_route_order_rationale"
     },
@@ -2199,7 +2198,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 13,
+      "community": 14,
       "norm_label": "gitlab rest service layer",
       "id": "2026-02-25-gitlab-commands-design_gitlab_rest_service"
     },
@@ -2212,7 +2211,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 15,
       "norm_label": "jenkins script console service",
       "id": "2026-02-25-gitlab-commands-design_jenkins_script_console"
     },
@@ -2446,7 +2445,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "scheduler guard design",
       "id": "2026-02-25-scheduler-guard-design_scheduler_guard_design"
     },
@@ -2459,7 +2458,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "jenkins-cron duplicate execution problem",
       "id": "2026-02-25-scheduler-guard-design_problem_duplicate_exec"
     },
@@ -2498,7 +2497,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "singleton guard design",
       "id": "2026-02-25-singleton-guard-design_singleton_design"
     },
@@ -2511,7 +2510,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "tcp port eaddrinuse detection",
       "id": "2026-02-25-singleton-guard-design_tcp_port_check"
     },
@@ -2524,7 +2523,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "singleton guard plan",
       "id": "2026-02-25-singleton-guard-plan_singleton_plan"
     },
@@ -2537,7 +2536,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "claude debug log design",
       "id": "2026-02-28-claude-debug-log-design_debug_log_design"
     },
@@ -2550,7 +2549,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "debug_claude env var",
       "id": "2026-02-28-claude-debug-log-design_debug_claude_env"
     },
@@ -2563,7 +2562,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "claude_raw.log file",
       "id": "2026-02-28-claude-debug-log-design_raw_log_file"
     },
@@ -2576,7 +2575,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "claude debug log plan",
       "id": "2026-02-28-claude-debug-log-plan_debug_log_plan"
     },
@@ -2589,7 +2588,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "slack model config design",
       "id": "2026-02-28-slack-model-config-design_model_config_design"
     },
@@ -2602,7 +2601,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "data/settings.json persistence",
       "id": "2026-02-28-slack-model-config-design_settings_json"
     },
@@ -2615,7 +2614,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "inline opus/sonnet/haiku prefix",
       "id": "2026-02-28-slack-model-config-design_inline_model_prefix"
     },
@@ -2628,7 +2627,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "max effort only valid for opus",
       "id": "2026-02-28-slack-model-config-design_max_effort_opus_only"
     },
@@ -2641,7 +2640,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "src/commands/index.ts",
       "id": "src_commands_index"
     },
@@ -2654,7 +2653,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 1,
       "norm_label": "src/services/gemini.ts",
       "id": "src_services_gemini"
     },
@@ -2745,7 +2744,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "src/utils/scheduler-guard.ts",
       "id": "src_utils_scheduler_guard"
     },
@@ -2758,7 +2757,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "src/utils/singleton.ts",
       "id": "src_utils_singleton"
     },
@@ -2771,7 +2770,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "src/services/claude.ts",
       "id": "src_services_claude"
     },
@@ -2784,7 +2783,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 11,
       "norm_label": "src/services/settings.ts",
       "id": "src_services_settings"
     },
@@ -2797,7 +2796,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "src/app.ts",
       "id": "src_app"
     },
@@ -2810,7 +2809,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 15,
+      "community": 16,
       "norm_label": "src/config/schema.ts",
       "id": "src_config_schema"
     },
@@ -2823,7 +2822,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 17,
       "norm_label": "src/config/index.ts",
       "id": "src_config_index"
     },
@@ -2836,7 +2835,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 17,
+      "community": 18,
       "norm_label": "src/config/env-validator.ts",
       "id": "src_config_env_validator"
     },
@@ -2867,16 +2866,16 @@
       "id": "settings_service"
     },
     {
-      "label": "askClaude",
-      "file_type": "document",
+      "label": "askClaude (SDK streaming generator)",
+      "file_type": "code",
       "source_file": "src/services/claude.ts",
       "source_location": null,
       "source_url": null,
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
-      "norm_label": "askclaude",
+      "community": 0,
+      "norm_label": "askclaude (sdk streaming generator)",
       "id": "claude_askClaude"
     },
     {
@@ -3018,7 +3017,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "design: readme github seo",
       "id": "design_readme_seo"
     },
@@ -3031,7 +3030,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "plan: readme github seo",
       "id": "plan_readme_seo"
     },
@@ -3044,7 +3043,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "readme.md",
       "id": "readme"
     },
@@ -3057,7 +3056,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "docs/setup-guide.md",
       "id": "setup_guide"
     },
@@ -3070,7 +3069,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "claude.md",
       "id": "claude_md"
     },
@@ -3083,7 +3082,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "plan: claude cli proxy",
       "id": "plan_claude_cli_proxy"
     },
@@ -3096,7 +3095,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "spec: claude cli proxy design",
       "id": "spec_claude_cli_proxy"
     },
@@ -3109,7 +3108,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "config/schema.ts",
       "id": "config_schema"
     },
@@ -3122,7 +3121,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "config/index.ts",
       "id": "config_index"
     },
@@ -3135,7 +3134,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": ".env.example",
       "id": "env_example"
     },
@@ -3148,7 +3147,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "claude_http_proxy env var",
       "id": "env_var_CLAUDE_HTTP_PROXY"
     },
@@ -3161,7 +3160,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "claude_https_proxy env var",
       "id": "env_var_CLAUDE_HTTPS_PROXY"
     },
@@ -3265,7 +3264,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "plan: claude sdk migration",
       "id": "plan_claude_sdk_migration"
     },
@@ -3278,7 +3277,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "spec: claude sdk migration",
       "id": "spec_claude_sdk_migration"
     },
@@ -3291,7 +3290,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "@anthropic-ai/claude-agent-sdk",
       "id": "claude_agent_sdk"
     },
@@ -3382,7 +3381,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "plan: claude done mention sender",
       "id": "plan_claude_done_mention"
     },
@@ -3395,7 +3394,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "spec: claude done mention sender",
       "id": "spec_claude_done_mention"
     },
@@ -3408,7 +3407,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "handleclaude",
       "id": "commands_handleClaude"
     },
@@ -3421,7 +3420,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "commandcontext interface",
       "id": "CommandContext_interface"
     },
@@ -3434,7 +3433,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "plan: slack image multimodal",
       "id": "plan_slack_image_multimodal"
     },
@@ -3447,7 +3446,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "spec: slack image multimodal",
       "id": "spec_slack_image_multimodal"
     },
@@ -3460,7 +3459,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "claudeimage type",
       "id": "ClaudeImage_type"
     },
@@ -3473,7 +3472,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "downloadslackimages",
       "id": "downloadSlackImages_fn"
     },
@@ -3486,7 +3485,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "sharp library",
       "id": "sharp_lib"
     },
@@ -3499,7 +3498,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "utils/logger.ts",
       "id": "utils_logger"
     },
@@ -3512,7 +3511,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "rationale: chat.update does not push",
       "id": "rationale_chat_update_not_push"
     },
@@ -3525,7 +3524,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "rationale: tmp path not seen by claude",
       "id": "rationale_path_not_visible_to_claude"
     },
@@ -3538,7 +3537,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 6,
+      "community": 0,
       "norm_label": "rationale: cli cold start overhead",
       "id": "rationale_cold_start_overhead"
     },
@@ -3560,18 +3559,18 @@
       "file_type": "code",
       "source_file": "events/jenkins-mention.ts",
       "source_location": "L1",
-      "id": "events_jenkins_mention_ts",
-      "community": 8,
-      "norm_label": "jenkins-mention.ts"
+      "community": 2,
+      "norm_label": "jenkins-mention.ts",
+      "id": "events_jenkins_mention_ts"
     },
     {
       "label": "registerJenkinsMention()",
       "file_type": "code",
       "source_file": "events/jenkins-mention.ts",
       "source_location": "L7",
-      "id": "events_jenkins_mention_registerjenkinsmention",
-      "community": 8,
-      "norm_label": "registerjenkinsmention()"
+      "community": 2,
+      "norm_label": "registerjenkinsmention()",
+      "id": "events_jenkins_mention_registerjenkinsmention"
     },
     {
       "label": "App Bootstrap (app.ts)",
@@ -3582,9 +3581,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "app_bootstrap",
-      "community": 2,
-      "norm_label": "app bootstrap (app.ts)"
+      "community": 3,
+      "norm_label": "app bootstrap (app.ts)",
+      "id": "app_bootstrap"
     },
     {
       "label": "Single Instance Guard at Startup",
@@ -3595,9 +3594,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "app_singleinstance_guard",
-      "community": 2,
-      "norm_label": "single instance guard at startup"
+      "community": 3,
+      "norm_label": "single instance guard at startup",
+      "id": "app_singleinstance_guard"
     },
     {
       "label": "loadConfig() invocation in bootstrap",
@@ -3608,9 +3607,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "app_loadconfig_call",
-      "community": 2,
-      "norm_label": "loadconfig() invocation in bootstrap"
+      "community": 3,
+      "norm_label": "loadconfig() invocation in bootstrap",
+      "id": "app_loadconfig_call"
     },
     {
       "label": "registerJenkinsMention(app) call in bootstrap",
@@ -3621,9 +3620,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "app_registerjenkinsmention_call",
-      "community": 18,
-      "norm_label": "registerjenkinsmention(app) call in bootstrap"
+      "community": 19,
+      "norm_label": "registerjenkinsmention(app) call in bootstrap",
+      "id": "app_registerjenkinsmention_call"
     },
     {
       "label": "loadConfig()",
@@ -3634,9 +3633,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "config_loadConfig",
-      "community": 2,
-      "norm_label": "loadconfig()"
+      "community": 3,
+      "norm_label": "loadconfig()",
+      "id": "config_loadConfig"
     },
     {
       "label": "getConfig()",
@@ -3647,9 +3646,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "config_getConfig",
-      "community": 2,
-      "norm_label": "getconfig()"
+      "community": 3,
+      "norm_label": "getconfig()",
+      "id": "config_getConfig"
     },
     {
       "label": "Config Singleton State",
@@ -3660,9 +3659,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "config_singleton_state",
-      "community": 2,
-      "norm_label": "config singleton state"
+      "community": 3,
+      "norm_label": "config singleton state",
+      "id": "config_singleton_state"
     },
     {
       "label": "validateConfig()",
@@ -3673,9 +3672,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "envvalidator_validateConfig",
-      "community": 2,
-      "norm_label": "validateconfig()"
+      "community": 3,
+      "norm_label": "validateconfig()",
+      "id": "envvalidator_validateConfig"
     },
     {
       "label": "validateRequiredEnvVars()",
@@ -3686,9 +3685,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "envvalidator_validateRequiredEnvVars",
-      "community": 2,
-      "norm_label": "validaterequiredenvvars()"
+      "community": 3,
+      "norm_label": "validaterequiredenvvars()",
+      "id": "envvalidator_validateRequiredEnvVars"
     },
     {
       "label": "EnvValidationError class",
@@ -3699,9 +3698,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "envvalidator_EnvValidationError",
-      "community": 2,
-      "norm_label": "envvalidationerror class"
+      "community": 3,
+      "norm_label": "envvalidationerror class",
+      "id": "envvalidator_EnvValidationError"
     },
     {
       "label": "isValidUrl helper",
@@ -3712,9 +3711,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "envvalidator_isValidUrl",
-      "community": 2,
-      "norm_label": "isvalidurl helper"
+      "community": 3,
+      "norm_label": "isvalidurl helper",
+      "id": "envvalidator_isValidUrl"
     },
     {
       "label": "isValidToken helper",
@@ -3725,9 +3724,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "envvalidator_isValidToken",
-      "community": 2,
-      "norm_label": "isvalidtoken helper"
+      "community": 3,
+      "norm_label": "isvalidtoken helper",
+      "id": "envvalidator_isValidToken"
     },
     {
       "label": "JENKINS_NOTIFY_CHANNEL Validation Rule",
@@ -3738,9 +3737,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "envvalidator_jenkinsmention_rule",
-      "community": 2,
-      "norm_label": "jenkins_notify_channel validation rule"
+      "community": 3,
+      "norm_label": "jenkins_notify_channel validation rule",
+      "id": "envvalidator_jenkinsmention_rule"
     },
     {
       "label": "AppConfig interface",
@@ -3751,9 +3750,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "schema_AppConfig",
-      "community": 2,
-      "norm_label": "appconfig interface"
+      "community": 3,
+      "norm_label": "appconfig interface",
+      "id": "schema_AppConfig"
     },
     {
       "label": "JenkinsMentionConfig interface",
@@ -3764,9 +3763,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "schema_JenkinsMentionConfig",
-      "community": 2,
-      "norm_label": "jenkinsmentionconfig interface"
+      "community": 3,
+      "norm_label": "jenkinsmentionconfig interface",
+      "id": "schema_JenkinsMentionConfig"
     },
     {
       "label": "JenkinsConfig interface",
@@ -3777,9 +3776,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "schema_JenkinsConfig",
-      "community": 2,
-      "norm_label": "jenkinsconfig interface"
+      "community": 3,
+      "norm_label": "jenkinsconfig interface",
+      "id": "schema_JenkinsConfig"
     },
     {
       "label": "GitLabNotifyConfig interface",
@@ -3790,9 +3789,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "schema_GitLabNotifyConfig",
-      "community": 2,
-      "norm_label": "gitlabnotifyconfig interface"
+      "community": 3,
+      "norm_label": "gitlabnotifyconfig interface",
+      "id": "schema_GitLabNotifyConfig"
     },
     {
       "label": "registerJenkinsMention()",
@@ -3803,9 +3802,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "jenkinsmention_registerJenkinsMention",
-      "community": 2,
-      "norm_label": "registerjenkinsmention()"
+      "community": 3,
+      "norm_label": "registerjenkinsmention()",
+      "id": "jenkinsmention_registerJenkinsMention"
     },
     {
       "label": "SUBTYPE_BLOCKLIST set",
@@ -3816,9 +3815,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "jenkinsmention_subtype_blocklist",
-      "community": 2,
-      "norm_label": "subtype_blocklist set"
+      "community": 3,
+      "norm_label": "subtype_blocklist set",
+      "id": "jenkinsmention_subtype_blocklist"
     },
     {
       "label": "Self bot_id cache via auth.test",
@@ -3829,9 +3828,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "jenkinsmention_self_botid_cache",
-      "community": 2,
-      "norm_label": "self bot_id cache via auth.test"
+      "community": 3,
+      "norm_label": "self bot_id cache via auth.test",
+      "id": "jenkinsmention_self_botid_cache"
     },
     {
       "label": "Message filter pipeline (5 short-circuits)",
@@ -3842,9 +3841,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "jenkinsmention_filter_pipeline",
-      "community": 2,
-      "norm_label": "message filter pipeline (5 short-circuits)"
+      "community": 3,
+      "norm_label": "message filter pipeline (5 short-circuits)",
+      "id": "jenkinsmention_filter_pipeline"
     },
     {
       "label": "Repost <!channel> via chat.postMessage",
@@ -3855,9 +3854,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "jenkinsmention_repost_atchannel",
-      "community": 2,
-      "norm_label": "repost <!channel> via chat.postmessage"
+      "community": 3,
+      "norm_label": "repost <!channel> via chat.postmessage",
+      "id": "jenkinsmention_repost_atchannel"
     },
     {
       "label": "JENKINS_NOTIFY_CHANNEL env var",
@@ -3868,9 +3867,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "env_JENKINS_NOTIFY_CHANNEL",
-      "community": 2,
-      "norm_label": "jenkins_notify_channel env var"
+      "community": 3,
+      "norm_label": "jenkins_notify_channel env var",
+      "id": "env_JENKINS_NOTIFY_CHANNEL"
     },
     {
       "label": "GITLAB_NOTIFY_CHANNEL env var",
@@ -3881,9 +3880,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "env_GITLAB_NOTIFY_CHANNEL",
-      "community": 2,
-      "norm_label": "gitlab_notify_channel env var"
+      "community": 3,
+      "norm_label": "gitlab_notify_channel env var",
+      "id": "env_GITLAB_NOTIFY_CHANNEL"
     },
     {
       "label": "CLAUDE.md project doc",
@@ -3894,9 +3893,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "doc_claudemd",
-      "community": 2,
-      "norm_label": "claude.md project doc"
+      "community": 3,
+      "norm_label": "claude.md project doc",
+      "id": "doc_claudemd"
     },
     {
       "label": "Jenkins Mention Implementation Plan",
@@ -3907,9 +3906,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "doc_jenkinsmention_plan",
-      "community": 2,
-      "norm_label": "jenkins mention implementation plan"
+      "community": 3,
+      "norm_label": "jenkins mention implementation plan",
+      "id": "doc_jenkinsmention_plan"
     },
     {
       "label": "Jenkins Mention Design Spec",
@@ -3920,9 +3919,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "doc_jenkinsmention_design",
-      "community": 2,
-      "norm_label": "jenkins mention design spec"
+      "community": 3,
+      "norm_label": "jenkins mention design spec",
+      "id": "doc_jenkinsmention_design"
     },
     {
       "label": "Jenkins @channel Amplifier Pattern",
@@ -3933,9 +3932,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "concept_jenkins_atchannel_amplifier",
-      "community": 2,
-      "norm_label": "jenkins @channel amplifier pattern"
+      "community": 3,
+      "norm_label": "jenkins @channel amplifier pattern",
+      "id": "concept_jenkins_atchannel_amplifier"
     },
     {
       "label": "Channel Purity (ops convention, not code-enforced)",
@@ -3946,9 +3945,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "concept_channel_purity_convention",
-      "community": 2,
-      "norm_label": "channel purity (ops convention, not code-enforced)"
+      "community": 3,
+      "norm_label": "channel purity (ops convention, not code-enforced)",
+      "id": "concept_channel_purity_convention"
     },
     {
       "label": "Slack channels:history / message.channels scope requirement",
@@ -3959,9 +3958,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "concept_slack_scope_requirements",
-      "community": 4,
-      "norm_label": "slack channels:history / message.channels scope requirement"
+      "community": 3,
+      "norm_label": "slack channels:history / message.channels scope requirement",
+      "id": "concept_slack_scope_requirements"
     },
     {
       "label": "Rationale: do not filter by subtype=bot_message",
@@ -3972,9 +3971,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rationale_no_botmessage_filter",
-      "community": 2,
-      "norm_label": "rationale: do not filter by subtype=bot_message"
+      "community": 3,
+      "norm_label": "rationale: do not filter by subtype=bot_message",
+      "id": "rationale_no_botmessage_filter"
     },
     {
       "label": "Rationale: Slack has no message_replied subtype",
@@ -3985,9 +3984,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rationale_no_message_replied_subtype",
-      "community": 2,
-      "norm_label": "rationale: slack has no message_replied subtype"
+      "community": 3,
+      "norm_label": "rationale: slack has no message_replied subtype",
+      "id": "rationale_no_message_replied_subtype"
     },
     {
       "label": "Rationale: JENKINS_NOTIFY_CHANNEL independent of GITLAB_NOTIFY_CHANNEL",
@@ -3998,9 +3997,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rationale_independent_from_gitlab_notify",
-      "community": 2,
-      "norm_label": "rationale: jenkins_notify_channel independent of gitlab_notify_channel"
+      "community": 3,
+      "norm_label": "rationale: jenkins_notify_channel independent of gitlab_notify_channel",
+      "id": "rationale_independent_from_gitlab_notify"
     },
     {
       "label": "Rationale: notify failures must not break main flow",
@@ -4011,9 +4010,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "rationale_notify_failures_noncritical",
-      "community": 2,
-      "norm_label": "rationale: notify failures must not break main flow"
+      "community": 3,
+      "norm_label": "rationale: notify failures must not break main flow",
+      "id": "rationale_notify_failures_noncritical"
     },
     {
       "label": "Two-stage env validation (existence + validity)",
@@ -4024,9 +4023,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "concept_two_stage_env_validation",
-      "community": 2,
-      "norm_label": "two-stage env validation (existence + validity)"
+      "community": 3,
+      "norm_label": "two-stage env validation (existence + validity)",
+      "id": "concept_two_stage_env_validation"
     },
     {
       "label": "Config change sync rule (CLAUDE.md / setup-guide / .env.example)",
@@ -4037,9 +4036,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "concept_config_change_sync_rule",
-      "community": 2,
-      "norm_label": "config change sync rule (claude.md / setup-guide / .env.example)"
+      "community": 3,
+      "norm_label": "config change sync rule (claude.md / setup-guide / .env.example)",
+      "id": "concept_config_change_sync_rule"
     },
     {
       "label": "Design-then-plan docs workflow (specs/ -> plans/)",
@@ -4050,9 +4049,321 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "concept_design_then_plan_workflow",
-      "community": 2,
-      "norm_label": "design-then-plan docs workflow (specs/ -> plans/)"
+      "community": 3,
+      "norm_label": "design-then-plan docs workflow (specs/ -> plans/)",
+      "id": "concept_design_then_plan_workflow"
+    },
+    {
+      "label": "ensureSingleInstance bootstrap",
+      "file_type": "code",
+      "source_file": "src/app.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "app_ensureSingleInstance",
+      "community": 4,
+      "norm_label": "ensuresingleinstance bootstrap"
+    },
+    {
+      "label": "registerCommands (app_mention router)",
+      "file_type": "code",
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_registerCommands",
+      "community": 0,
+      "norm_label": "registercommands (app_mention router)"
+    },
+    {
+      "label": "handleClaude (Claude passthrough)",
+      "file_type": "code",
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_handleClaude",
+      "community": 0,
+      "norm_label": "handleclaude (claude passthrough)"
+    },
+    {
+      "label": "resolveAlias",
+      "file_type": "code",
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_resolveAlias",
+      "community": 0,
+      "norm_label": "resolvealias"
+    },
+    {
+      "label": "downloadSlackImages",
+      "file_type": "code",
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_downloadSlackImages",
+      "community": 0,
+      "norm_label": "downloadslackimages"
+    },
+    {
+      "label": "threadToSessionId (uuidv5)",
+      "file_type": "code",
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_threadToSessionId",
+      "community": 0,
+      "norm_label": "threadtosessionid (uuidv5)"
+    },
+    {
+      "label": "loadKnownSessions / knownSessions",
+      "file_type": "code",
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_loadKnownSessions",
+      "community": 4,
+      "norm_label": "loadknownsessions / knownsessions"
+    },
+    {
+      "label": "\u5934\u8111\u98ce\u66b4 brainstorm trigger branch",
+      "file_type": "code",
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_brainstormTrigger",
+      "community": 0,
+      "norm_label": "\u5934\u8111\u98ce\u66b4 brainstorm trigger branch"
+    },
+    {
+      "label": "COMMAND_ALIASES",
+      "file_type": "code",
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "index_commandAliases",
+      "community": 0,
+      "norm_label": "command_aliases"
+    },
+    {
+      "label": "buildMultimodalPrompt",
+      "file_type": "code",
+      "source_file": "src/services/claude.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claude_buildMultimodalPrompt",
+      "community": 0,
+      "norm_label": "buildmultimodalprompt"
+    },
+    {
+      "label": "ClaudeImage type",
+      "file_type": "code",
+      "source_file": "src/services/claude.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claude_ClaudeImage",
+      "community": 0,
+      "norm_label": "claudeimage type"
+    },
+    {
+      "label": "handleHelp / HELP_TEXT",
+      "file_type": "code",
+      "source_file": "src/commands/help.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "help_handleHelp",
+      "community": 0,
+      "norm_label": "handlehelp / help_text"
+    },
+    {
+      "label": "saveConversationLog",
+      "file_type": "code",
+      "source_file": "src/utils/logger.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "logger_saveConversationLog",
+      "community": 6,
+      "norm_label": "saveconversationlog"
+    },
+    {
+      "label": "CLAUDE.md project context",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_project",
+      "community": 13,
+      "norm_label": "claude.md project context"
+    },
+    {
+      "label": "Slash \u524d\u7f00\u8f6c\u4e49 design rule",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_slashEscape",
+      "community": 0,
+      "norm_label": "slash \u524d\u7f00\u8f6c\u4e49 design rule"
+    },
+    {
+      "label": "Claude \u5b8c\u6210\u901a\u77e5 (@user \u2705/\u274c)",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_completionNotify",
+      "community": 0,
+      "norm_label": "claude \u5b8c\u6210\u901a\u77e5 (@user \u2705/\u274c)"
+    },
+    {
+      "label": "setup-guide.md",
+      "file_type": "document",
+      "source_file": "docs/setup-guide.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "setupguide_doc",
+      "community": 13,
+      "norm_label": "setup-guide.md"
+    },
+    {
+      "label": "files:read scope requirement",
+      "file_type": "document",
+      "source_file": "docs/setup-guide.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "setupguide_filesReadScope",
+      "community": 0,
+      "norm_label": "files:read scope requirement"
+    },
+    {
+      "label": "Plan: remove model/effort switching",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-29-remove-model-effort-switching.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "plan_removeModelEffort",
+      "community": 0,
+      "norm_label": "plan: remove model/effort switching"
+    },
+    {
+      "label": "Spec: remove model/effort switching",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "spec_removeModelEffort",
+      "community": 0,
+      "norm_label": "spec: remove model/effort switching"
+    },
+    {
+      "label": "Rationale: single-point follow local default",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "spec_removeModelEffort_rationale",
+      "community": 0,
+      "norm_label": "rationale: single-point follow local default"
+    },
+    {
+      "label": "Plan: \u5934\u8111\u98ce\u66b4 trigger",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "plan_brainstormTrigger",
+      "community": 0,
+      "norm_label": "plan: \u5934\u8111\u98ce\u66b4 trigger"
+    },
+    {
+      "label": "Spec: \u5934\u8111\u98ce\u66b4 trigger brainstorming skill",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "spec_brainstormTrigger",
+      "community": 0,
+      "norm_label": "spec: \u5934\u8111\u98ce\u66b4 trigger brainstorming skill"
+    },
+    {
+      "label": "Rationale: bypass slash escape to truly trigger skill",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "spec_brainstormTrigger_rationale",
+      "community": 0,
+      "norm_label": "rationale: bypass slash escape to truly trigger skill"
     }
   ],
   "links": [
@@ -4239,9 +4550,9 @@
       "source_file": "app.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_ts",
-      "target": "events_jenkins_mention_ts",
-      "confidence_score": 1.0
+      "target": "events_jenkins_mention_ts"
     },
     {
       "relation": "imports",
@@ -4250,9 +4561,9 @@
       "source_file": "app.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_ts",
-      "target": "events_jenkins_mention_registerjenkinsmention",
-      "confidence_score": 1.0
+      "target": "events_jenkins_mention_registerjenkinsmention"
     },
     {
       "relation": "imports_from",
@@ -5205,8 +5516,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_help_ts",
-      "target": "commands_index_ts"
+      "source": "commands_index_ts",
+      "target": "commands_help_ts"
     },
     {
       "relation": "imports",
@@ -5223,7 +5534,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "commands/help.ts",
-      "source_location": "L21",
+      "source_location": "L17",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_help_ts",
@@ -5237,8 +5548,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_help_handlehelp",
-      "target": "commands_index_ts"
+      "source": "commands_index_ts",
+      "target": "commands_help_handlehelp"
     },
     {
       "relation": "imports_from",
@@ -5322,7 +5633,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5443,7 +5754,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L19",
+      "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5454,7 +5765,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L19",
+      "source_location": "L16",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5486,7 +5797,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L27",
+      "source_location": "L24",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5496,7 +5807,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L40",
+      "source_location": "L37",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5506,7 +5817,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L74",
+      "source_location": "L70",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5516,7 +5827,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L83",
+      "source_location": "L81",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5536,7 +5847,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L101",
+      "source_location": "L85",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5546,7 +5857,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L131",
+      "source_location": "L115",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5556,7 +5867,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L242",
+      "source_location": "L228",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "commands_index_ts",
@@ -5567,22 +5878,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L236",
+      "source_location": "L222",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_index_saveknownsessions",
-      "target": "commands_index_handleclaude"
+      "source": "commands_index_handleclaude",
+      "target": "commands_index_saveknownsessions"
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L146",
+      "source_location": "L135",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_index_threadtosessionid",
-      "target": "commands_index_handleclaude"
+      "source": "commands_index_handleclaude",
+      "target": "commands_index_threadtosessionid"
     },
     {
       "relation": "calls",
@@ -5622,11 +5933,11 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "commands/index.ts",
-      "source_location": "L137",
+      "source_location": "L126",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_index_downloadslackimages",
-      "target": "commands_index_handleclaude"
+      "source": "commands_index_handleclaude",
+      "target": "commands_index_downloadslackimages"
     },
     {
       "relation": "calls",
@@ -5667,7 +5978,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "commands/index.ts",
-      "source_location": "L193",
+      "source_location": "L181",
       "weight": 1.0,
       "source": "commands_index_handleclaude",
       "target": "utils_logger_saveconversationlog"
@@ -6219,8 +6530,8 @@
       "source_location": "L2",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_index_ts",
-      "target": "config_env_validator_ts"
+      "source": "config_env_validator_ts",
+      "target": "config_index_ts"
     },
     {
       "relation": "method",
@@ -6240,8 +6551,8 @@
       "source_location": "L2",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_index_ts",
-      "target": "config_env_validator_envvalidationerror"
+      "source": "config_env_validator_envvalidationerror",
+      "target": "config_index_ts"
     },
     {
       "relation": "calls",
@@ -6262,8 +6573,8 @@
       "source_location": "L119",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_env_validator_validateconfig",
-      "target": "config_env_validator_isvalidurl"
+      "source": "config_env_validator_isvalidurl",
+      "target": "config_env_validator_validateconfig"
     },
     {
       "relation": "calls",
@@ -6273,8 +6584,8 @@
       "source_location": "L129",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_env_validator_validateconfig",
-      "target": "config_env_validator_isvalidtoken"
+      "source": "config_env_validator_isvalidtoken",
+      "target": "config_env_validator_validateconfig"
     },
     {
       "relation": "imports",
@@ -6284,8 +6595,8 @@
       "source_location": "L2",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_index_ts",
-      "target": "config_env_validator_validateconfig"
+      "source": "config_env_validator_validateconfig",
+      "target": "config_index_ts"
     },
     {
       "relation": "calls",
@@ -6295,8 +6606,8 @@
       "source_file": "config/index.ts",
       "source_location": "L88",
       "weight": 1.0,
-      "source": "config_index_loadconfig",
-      "target": "config_env_validator_validateconfig"
+      "source": "config_env_validator_validateconfig",
+      "target": "config_index_loadconfig"
     },
     {
       "relation": "imports",
@@ -6306,8 +6617,8 @@
       "source_location": "L2",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_index_ts",
-      "target": "config_env_validator_validaterequiredenvvars"
+      "source": "config_env_validator_validaterequiredenvvars",
+      "target": "config_index_ts"
     },
     {
       "relation": "calls",
@@ -6317,8 +6628,8 @@
       "source_file": "config/index.ts",
       "source_location": "L33",
       "weight": 1.0,
-      "source": "config_index_loadconfig",
-      "target": "config_env_validator_validaterequiredenvvars"
+      "source": "config_env_validator_validaterequiredenvvars",
+      "target": "config_index_loadconfig"
     },
     {
       "relation": "imports_from",
@@ -6497,9 +6808,9 @@
       "source_file": "events/jenkins-mention.ts",
       "source_location": "L2",
       "weight": 1.0,
-      "source": "events_jenkins_mention_ts",
-      "target": "config_index_ts",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "config_index_ts",
+      "target": "events_jenkins_mention_ts"
     },
     {
       "relation": "calls",
@@ -6509,8 +6820,8 @@
       "source_location": "L37",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_index_loadconfig",
-      "target": "config_index_required"
+      "source": "config_index_required",
+      "target": "config_index_loadconfig"
     },
     {
       "relation": "calls",
@@ -6520,8 +6831,8 @@
       "source_location": "L51",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_index_loadconfig",
-      "target": "config_index_optional"
+      "source": "config_index_optional",
+      "target": "config_index_loadconfig"
     },
     {
       "relation": "calls",
@@ -6531,8 +6842,8 @@
       "source_location": "L39",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_index_loadconfig",
-      "target": "config_index_optionalint"
+      "source": "config_index_optionalint",
+      "target": "config_index_loadconfig"
     },
     {
       "relation": "calls",
@@ -6542,8 +6853,8 @@
       "source_location": "L45",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "config_index_loadconfig",
-      "target": "config_index_optionalbool"
+      "source": "config_index_optionalbool",
+      "target": "config_index_loadconfig"
     },
     {
       "relation": "imports",
@@ -6739,9 +7050,9 @@
       "source_file": "events/jenkins-mention.ts",
       "source_location": "L2",
       "weight": 1.0,
-      "source": "events_jenkins_mention_ts",
-      "target": "config_index_getconfig",
-      "confidence_score": 1.0
+      "confidence_score": 1.0,
+      "source": "config_index_getconfig",
+      "target": "events_jenkins_mention_ts"
     },
     {
       "relation": "calls",
@@ -6751,8 +7062,8 @@
       "source_file": "events/jenkins-mention.ts",
       "source_location": "L8",
       "weight": 1.0,
-      "source": "events_jenkins_mention_registerjenkinsmention",
-      "target": "config_index_getconfig"
+      "source": "config_index_getconfig",
+      "target": "events_jenkins_mention_registerjenkinsmention"
     },
     {
       "relation": "imports_from",
@@ -7306,7 +7617,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "utils/logger.ts",
-      "source_location": "L25",
+      "source_location": "L23",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "utils_logger_ts",
@@ -7735,6 +8046,46 @@
       "weight": 1.0,
       "source": "app_main",
       "target": "scheduler_jenkinscron_scheduleJenkinsCronJobs"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "app_main",
+      "target": "app_ensureSingleInstance"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "app_main",
+      "target": "index_registerCommands"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "app_main",
+      "target": "index_loadKnownSessions"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "app_main",
+      "target": "logger_log"
     },
     {
       "relation": "calls",
@@ -8310,6 +8661,16 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
+      "source_file": "src/utils/logger.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "logger_saveConversationLog",
+      "target": "logger_log"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
       "source_file": "src/utils/message.ts",
       "source_location": null,
       "weight": 1.0,
@@ -8553,8 +8914,8 @@
       "source_file": "CLAUDE.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "doc_claudemd",
-      "target": "doc_setupguide"
+      "source": "doc_setupguide",
+      "target": "doc_claudemd"
     },
     {
       "relation": "references",
@@ -9307,6 +9668,46 @@
       "target": "plan_slack_image_multimodal"
     },
     {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_handleClaude",
+      "target": "claude_askClaude"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/claude.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claude_askClaude",
+      "target": "claude_buildMultimodalPrompt"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-05-29-remove-model-effort-switching.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "plan_removeModelEffort",
+      "target": "claude_askClaude"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "src/services/claude.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claude_askClaude",
+      "target": "spec_removeModelEffort"
+    },
+    {
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -9822,9 +10223,9 @@
       "source_file": "events/jenkins-mention.ts",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "events_jenkins_mention_ts",
-      "target": "events_jenkins_mention_registerjenkinsmention",
-      "confidence_score": 1.0
+      "target": "events_jenkins_mention_registerjenkinsmention"
     },
     {
       "relation": "calls",
@@ -9943,8 +10344,8 @@
       "source_file": "src/events/jenkins-mention.ts",
       "source_location": null,
       "weight": 1.0,
-      "source": "jenkinsmention_registerJenkinsMention",
-      "target": "config_getConfig"
+      "source": "config_getConfig",
+      "target": "jenkinsmention_registerJenkinsMention"
     },
     {
       "relation": "calls",
@@ -9993,8 +10394,8 @@
       "source_file": "CLAUDE.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "concept_two_stage_env_validation",
-      "target": "envvalidator_validateConfig"
+      "source": "envvalidator_validateConfig",
+      "target": "concept_two_stage_env_validation"
     },
     {
       "relation": "references",
@@ -10013,8 +10414,8 @@
       "source_file": "CLAUDE.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "concept_two_stage_env_validation",
-      "target": "envvalidator_validateRequiredEnvVars"
+      "source": "envvalidator_validateRequiredEnvVars",
+      "target": "concept_two_stage_env_validation"
     },
     {
       "relation": "references",
@@ -10063,8 +10464,8 @@
       "source_file": "src/events/jenkins-mention.ts",
       "source_location": null,
       "weight": 1.0,
-      "source": "jenkinsmention_registerJenkinsMention",
-      "target": "schema_JenkinsMentionConfig"
+      "source": "schema_JenkinsMentionConfig",
+      "target": "jenkinsmention_registerJenkinsMention"
     },
     {
       "relation": "semantically_similar_to",
@@ -10113,8 +10514,8 @@
       "source_file": "docs/superpowers/plans/2026-05-27-jenkins-mention-channel.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "doc_jenkinsmention_plan",
-      "target": "jenkinsmention_registerJenkinsMention"
+      "source": "jenkinsmention_registerJenkinsMention",
+      "target": "doc_jenkinsmention_plan"
     },
     {
       "relation": "rationale_for",
@@ -10123,8 +10524,8 @@
       "source_file": "docs/setup-guide.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "concept_slack_scope_requirements",
-      "target": "jenkinsmention_registerJenkinsMention"
+      "source": "jenkinsmention_registerJenkinsMention",
+      "target": "concept_slack_scope_requirements"
     },
     {
       "relation": "references",
@@ -10133,8 +10534,8 @@
       "source_file": "src/events/jenkins-mention.ts",
       "source_location": null,
       "weight": 1.0,
-      "source": "jenkinsmention_filter_pipeline",
-      "target": "jenkinsmention_subtype_blocklist"
+      "source": "jenkinsmention_subtype_blocklist",
+      "target": "jenkinsmention_filter_pipeline"
     },
     {
       "relation": "rationale_for",
@@ -10143,8 +10544,8 @@
       "source_file": "docs/superpowers/specs/2026-05-27-jenkins-mention-channel-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "rationale_no_message_replied_subtype",
-      "target": "jenkinsmention_subtype_blocklist"
+      "source": "jenkinsmention_subtype_blocklist",
+      "target": "rationale_no_message_replied_subtype"
     },
     {
       "relation": "shares_data_with",
@@ -10173,8 +10574,8 @@
       "source_file": "docs/superpowers/specs/2026-05-27-jenkins-mention-channel-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "rationale_no_botmessage_filter",
-      "target": "jenkinsmention_filter_pipeline"
+      "source": "jenkinsmention_filter_pipeline",
+      "target": "rationale_no_botmessage_filter"
     },
     {
       "relation": "rationale_for",
@@ -10183,8 +10584,8 @@
       "source_file": "docs/superpowers/specs/2026-05-27-jenkins-mention-channel-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "concept_channel_purity_convention",
-      "target": "jenkinsmention_filter_pipeline"
+      "source": "jenkinsmention_filter_pipeline",
+      "target": "concept_channel_purity_convention"
     },
     {
       "relation": "rationale_for",
@@ -10193,8 +10594,8 @@
       "source_file": "docs/superpowers/specs/2026-05-27-jenkins-mention-channel-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "rationale_notify_failures_noncritical",
-      "target": "jenkinsmention_repost_atchannel"
+      "source": "jenkinsmention_repost_atchannel",
+      "target": "rationale_notify_failures_noncritical"
     },
     {
       "relation": "rationale_for",
@@ -10203,8 +10604,8 @@
       "source_file": "docs/superpowers/specs/2026-05-27-jenkins-mention-channel-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "rationale_independent_from_gitlab_notify",
-      "target": "env_JENKINS_NOTIFY_CHANNEL"
+      "source": "env_JENKINS_NOTIFY_CHANNEL",
+      "target": "rationale_independent_from_gitlab_notify"
     },
     {
       "relation": "semantically_similar_to",
@@ -10275,53 +10676,322 @@
       "weight": 1.0,
       "source": "doc_jenkinsmention_design",
       "target": "concept_channel_purity_convention"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_registerCommands",
+      "target": "index_resolveAlias"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_registerCommands",
+      "target": "index_handleClaude"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_registerCommands",
+      "target": "help_handleHelp"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_handleClaude",
+      "target": "index_downloadSlackImages"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_handleClaude",
+      "target": "index_threadToSessionId"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_handleClaude",
+      "target": "logger_saveConversationLog"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_handleClaude",
+      "target": "index_loadKnownSessions"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_handleClaude",
+      "target": "index_brainstormTrigger"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_handleClaude",
+      "target": "claudemd_completionNotify"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "plan_brainstormTrigger",
+      "target": "index_handleClaude"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "spec_brainstormTrigger",
+      "target": "index_handleClaude"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "spec_removeModelEffort",
+      "target": "index_handleClaude"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_resolveAlias",
+      "target": "index_commandAliases"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/commands/index.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_downloadSlackImages",
+      "target": "claude_ClaudeImage"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/setup-guide.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_downloadSlackImages",
+      "target": "setupguide_filesReadScope"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_brainstormTrigger",
+      "target": "claudemd_slashEscape"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "index_brainstormTrigger",
+      "target": "spec_brainstormTrigger"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "src/commands/help.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "help_handleHelp",
+      "target": "index_brainstormTrigger"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/claude.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claude_buildMultimodalPrompt",
+      "target": "claude_ClaudeImage"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "plan_brainstormTrigger",
+      "target": "help_handleHelp"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "docs/setup-guide.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "setupguide_doc",
+      "target": "claudemd_project"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "spec_brainstormTrigger",
+      "target": "claudemd_slashEscape"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-05-29-remove-model-effort-switching.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "plan_removeModelEffort",
+      "target": "spec_removeModelEffort"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.62,
+      "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "plan_removeModelEffort",
+      "target": "plan_brainstormTrigger"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "spec_removeModelEffort_rationale",
+      "target": "spec_removeModelEffort"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "plan_brainstormTrigger",
+      "target": "spec_brainstormTrigger"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "spec_brainstormTrigger_rationale",
+      "target": "spec_brainstormTrigger"
     }
   ],
   "hyperedges": [
     {
-      "id": "jenkins_atchannel_flow",
-      "label": "Jenkins @channel amplifier end-to-end flow",
+      "id": "brainstorm_trigger_flow",
+      "label": "\u5934\u8111\u98ce\u66b4 trigger: spec\u2192plan\u2192code\u2192help+docs",
       "nodes": [
-        "env_JENKINS_NOTIFY_CHANNEL",
-        "config_loadConfig",
-        "envvalidator_jenkinsmention_rule",
-        "jenkinsmention_registerJenkinsMention",
-        "jenkinsmention_filter_pipeline",
-        "jenkinsmention_repost_atchannel"
+        "spec_brainstormTrigger",
+        "plan_brainstormTrigger",
+        "index_brainstormTrigger",
+        "help_handleHelp",
+        "claudemd_slashEscape"
       ],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source_file": "src/events/jenkins-mention.ts"
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md"
     },
     {
-      "id": "config_validation_pipeline",
-      "label": "Config load + two-stage validation pipeline",
+      "id": "claude_passthrough_pipeline",
+      "label": "Claude passthrough: route\u2192images\u2192askClaude\u2192log",
       "nodes": [
-        "config_loadConfig",
-        "envvalidator_validateRequiredEnvVars",
-        "envvalidator_validateConfig",
-        "envvalidator_EnvValidationError",
-        "schema_AppConfig"
+        "index_registerCommands",
+        "index_handleClaude",
+        "index_downloadSlackImages",
+        "claude_askClaude",
+        "logger_saveConversationLog"
       ],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
       "confidence_score": 0.9,
-      "source_file": "src/config/index.ts"
+      "source_file": "src/commands/index.ts"
     },
     {
-      "id": "spec_plan_impl_triad",
-      "label": "Spec -> Plan -> Implementation triad for jenkins-mention",
+      "id": "model_effort_removal",
+      "label": "Remove model/effort: spec\u2192plan\u2192askClaude",
       "nodes": [
-        "doc_jenkinsmention_design",
-        "doc_jenkinsmention_plan",
-        "jenkinsmention_registerJenkinsMention"
+        "spec_removeModelEffort",
+        "plan_removeModelEffort",
+        "claude_askClaude"
       ],
-      "relation": "form",
+      "relation": "participate_in",
       "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source_file": "docs/superpowers/plans/2026-05-27-jenkins-mention-channel.md"
+      "confidence_score": 0.85,
+      "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md"
     }
   ],
-  "built_at_commit": "6097a090759e522a0bd28de04c2a49fefafa0d36"
+  "built_at_commit": "5c5eefc566eb7108e198fb9c096f8aab2cc25c58"
 }

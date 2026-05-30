@@ -1,7 +1,7 @@
 {
   "D:\\Git\\GSSlackRobot\\src\\app.ts": {
-    "mtime": 1779863234.487595,
-    "hash": "c6b3d1d52e027e4aca2ce99362054ccd"
+    "mtime": 1780056879.1573596,
+    "hash": "6250d7624944a821fd0a7bb975fcf6cd"
   },
   "D:\\Git\\GSSlackRobot\\src\\commands\\commands.ts": {
     "mtime": 1771936108.8685641,
@@ -24,12 +24,12 @@
     "hash": "f65f349ac4a3d75f98642acc79963636"
   },
   "D:\\Git\\GSSlackRobot\\src\\commands\\help.ts": {
-    "mtime": 1778579159.8452792,
-    "hash": "6fdc334356f29c94c4ed82f3db38eea9"
+    "mtime": 1780119802.5389156,
+    "hash": "5a867a9c1fc2e8933a75cf5f5c919572"
   },
   "D:\\Git\\GSSlackRobot\\src\\commands\\index.ts": {
-    "mtime": 1779532245.8628335,
-    "hash": "e6c1fea95047dd23b812564c788b0111"
+    "mtime": 1780119802.5394201,
+    "hash": "b0c383b5d5af19ed90fdf9ba1d037583"
   },
   "D:\\Git\\GSSlackRobot\\src\\commands\\list-milestone-issues.ts": {
     "mtime": 1778630491.5590055,
@@ -38,10 +38,6 @@
   "D:\\Git\\GSSlackRobot\\src\\commands\\list-milestones.ts": {
     "mtime": 1778630469.8839655,
     "hash": "2140b81a3d9790276a643df4ca6d0826"
-  },
-  "D:\\Git\\GSSlackRobot\\src\\commands\\model.ts": {
-    "mtime": 1772233512.7063005,
-    "hash": "0b7215a8533e792f46b5a69311451659"
   },
   "D:\\Git\\GSSlackRobot\\src\\config\\env-validator.ts": {
     "mtime": 1779862829.887064,
@@ -68,8 +64,8 @@
     "hash": "1900b968e9cd6b5cf672366bb1f28e28"
   },
   "D:\\Git\\GSSlackRobot\\src\\services\\claude.ts": {
-    "mtime": 1779530580.0260613,
-    "hash": "dd33518d34cc686f312759354c5ae698"
+    "mtime": 1780056879.1588683,
+    "hash": "574825260bb98d0010eba68781c25b4e"
   },
   "D:\\Git\\GSSlackRobot\\src\\services\\gemini.ts": {
     "mtime": 1772001648.2250588,
@@ -83,13 +79,9 @@
     "mtime": 1771980731.8520856,
     "hash": "dc8f19f1c96f945cafd1525f0bec12b2"
   },
-  "D:\\Git\\GSSlackRobot\\src\\services\\settings.ts": {
-    "mtime": 1772233421.8256536,
-    "hash": "4a610c80d1d08a3ddbae410fc4af3a52"
-  },
   "D:\\Git\\GSSlackRobot\\src\\utils\\logger.ts": {
-    "mtime": 1779530726.8406844,
-    "hash": "b891ae33eb5d4ca4de9da5abd39f8a5a"
+    "mtime": 1780056974.7989862,
+    "hash": "1633ea727ad3ea0a631b2f57cbebc858"
   },
   "D:\\Git\\GSSlackRobot\\src\\utils\\message.ts": {
     "mtime": 1778632039.4033217,
@@ -112,8 +104,8 @@
     "hash": "8783696b25b84dcf65fc3a62c5a1e678"
   },
   "D:\\Git\\GSSlackRobot\\CLAUDE.md": {
-    "mtime": 1779865419.0437393,
-    "hash": "ee597f2f4e47561bebb03c3ce7e419d6"
+    "mtime": 1780119802.5379097,
+    "hash": "c201068c22a6a28fdccc4b2cda7390d5"
   },
   "D:\\Git\\GSSlackRobot\\README.md": {
     "mtime": 1772428144.507212,
@@ -132,8 +124,8 @@
     "hash": "0928a23a6eeb4b85202a56b08bfde90e"
   },
   "D:\\Git\\GSSlackRobot\\docs\\setup-guide.md": {
-    "mtime": 1779865301.9019322,
-    "hash": "a320a87f6bf2d12d4e4cf50c87b4d8ec"
+    "mtime": 1780119802.5379097,
+    "hash": "207124598a6d168d3f7ab917ea3a6d3d"
   },
   "D:\\Git\\GSSlackRobot\\docs\\technical-reference.md": {
     "mtime": 1775618204.386661,
@@ -271,6 +263,14 @@
     "mtime": 1779863684.8231802,
     "hash": "4c2b4a41da9213305b6eb15ac5f898c7"
   },
+  "D:\\Git\\GSSlackRobot\\docs\\superpowers\\plans\\2026-05-29-remove-model-effort-switching.md": {
+    "mtime": 1780055265.8254125,
+    "hash": "f186dfd22d3c69aaae945cad415cbb71"
+  },
+  "D:\\Git\\GSSlackRobot\\docs\\superpowers\\plans\\2026-05-30-brainstorm-trigger.md": {
+    "mtime": 1780119388.7867496,
+    "hash": "28dcd797e2004c41e48b8b8206ddd51b"
+  },
   "D:\\Git\\GSSlackRobot\\docs\\superpowers\\specs\\2026-03-17-claude-cli-proxy-design.md": {
     "mtime": 1773749651.841164,
     "hash": "f90cc94ad447b861890d1ec1b7e6bf35"
@@ -302,5 +302,13 @@
   "D:\\Git\\GSSlackRobot\\docs\\superpowers\\specs\\2026-05-27-jenkins-mention-channel-design.md": {
     "mtime": 1779863680.3656442,
     "hash": "470dd573e192508335851dd47d70da6b"
+  },
+  "D:\\Git\\GSSlackRobot\\docs\\superpowers\\specs\\2026-05-29-remove-model-effort-switching-design.md": {
+    "mtime": 1780054992.0441725,
+    "hash": "1af61a9dcd84b66bc7e3e25cb6166c7f"
+  },
+  "D:\\Git\\GSSlackRobot\\docs\\superpowers\\specs\\2026-05-30-brainstorm-trigger-design.md": {
+    "mtime": 1780119261.7876728,
+    "hash": "f98de8618dba823a9fc23f8563db10ee"
   }
 }
