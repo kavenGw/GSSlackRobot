@@ -54,6 +54,9 @@ export async function* askClaude(
   const options: Options = {
     env,
     includePartialMessages: true,
+    // 加载 user 级设置以启用 ~/.claude 已安装插件（含 superpowers），
+    // 否则 SDK 处于隔离模式，/superpowers:xxx 会返回 Unknown skill
+    settingSources: ['user'],
   };
 
   if (cfg.projectDir) {
