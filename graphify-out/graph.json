@@ -4,47 +4,48 @@
   "graph": {
     "hyperedges": [
       {
-        "id": "brainstorm_trigger_flow",
-        "label": "\u5934\u8111\u98ce\u66b4 trigger: spec\u2192plan\u2192code\u2192help+docs",
+        "id": "slack_message_sending",
+        "label": "Slack Message Sending Functions",
         "nodes": [
-          "spec_brainstormTrigger",
-          "plan_brainstormTrigger",
-          "index_brainstormTrigger",
-          "help_handleHelp",
-          "claudemd_slashEscape"
+          "claudemd_safepost",
+          "claudemd_safeupdate",
+          "claudemd_postblocks",
+          "claudemd_safechat"
         ],
         "relation": "participate_in",
         "confidence": "EXTRACTED",
         "confidence_score": 0.85,
-        "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md"
+        "source_file": "CLAUDE.md"
       },
       {
-        "id": "claude_passthrough_pipeline",
-        "label": "Claude passthrough: route\u2192images\u2192askClaude\u2192log",
+        "id": "streaming_segmentation",
+        "label": "Streaming Output Segmentation Flow",
         "nodes": [
-          "index_registerCommands",
-          "index_handleClaude",
-          "index_downloadSlackImages",
-          "claude_askClaude",
-          "logger_saveConversationLog"
+          "claudemd_safeupdate",
+          "claudemd_segment_tracker",
+          "claudemd_split_to_blocks",
+          "claudemd_throttle",
+          "claudemd_message_limit"
         ],
         "relation": "participate_in",
-        "confidence": "EXTRACTED",
-        "confidence_score": 0.9,
-        "source_file": "src/commands/index.ts"
+        "confidence": "INFERRED",
+        "confidence_score": 0.8,
+        "source_file": "CLAUDE.md"
       },
       {
-        "id": "model_effort_removal",
-        "label": "Remove model/effort: spec\u2192plan\u2192askClaude",
+        "id": "claude_passthrough_flow",
+        "label": "Claude Passthrough Flow",
         "nodes": [
-          "spec_removeModelEffort",
-          "plan_removeModelEffort",
-          "claude_askClaude"
+          "claudemd_handle_claude",
+          "claudemd_claude_service",
+          "claudemd_slash_escape",
+          "claudemd_setting_sources",
+          "claudemd_completion_notify"
         ],
         "relation": "participate_in",
         "confidence": "EXTRACTED",
         "confidence_score": 0.85,
-        "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md"
+        "source_file": "CLAUDE.md"
       }
     ]
   },
@@ -54,7 +55,7 @@
       "file_type": "code",
       "source_file": "app.ts",
       "source_location": "L1",
-      "community": 2,
+      "community": 8,
       "norm_label": "app.ts",
       "id": "app_ts"
     },
@@ -63,7 +64,7 @@
       "file_type": "code",
       "source_file": "commands/commands.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 1,
       "norm_label": "commands.ts",
       "id": "commands_commands_ts"
     },
@@ -72,7 +73,7 @@
       "file_type": "code",
       "source_file": "commands/commands.ts",
       "source_location": "L7",
-      "community": 5,
+      "community": 1,
       "norm_label": "listmdfiles()",
       "id": "commands_commands_listmdfiles"
     },
@@ -81,7 +82,7 @@
       "file_type": "code",
       "source_file": "commands/commands.ts",
       "source_location": "L19",
-      "community": 5,
+      "community": 1,
       "norm_label": "formatsection()",
       "id": "commands_commands_formatsection"
     },
@@ -90,7 +91,7 @@
       "file_type": "code",
       "source_file": "commands/commands.ts",
       "source_location": "L24",
-      "community": 5,
+      "community": 1,
       "norm_label": "handlecommands()",
       "id": "commands_commands_handlecommands"
     },
@@ -126,7 +127,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L1",
-      "community": 9,
+      "community": 2,
       "norm_label": "daily-report.ts",
       "id": "commands_daily_report_ts"
     },
@@ -135,7 +136,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L28",
-      "community": 9,
+      "community": 2,
       "norm_label": "todaystr()",
       "id": "commands_daily_report_todaystr"
     },
@@ -144,7 +145,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L30",
-      "community": 9,
+      "community": 2,
       "norm_label": "yesterdaystr()",
       "id": "commands_daily_report_yesterdaystr"
     },
@@ -153,7 +154,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L36",
-      "community": 9,
+      "community": 2,
       "norm_label": "snapshotpath()",
       "id": "commands_daily_report_snapshotpath"
     },
@@ -162,7 +163,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L40",
-      "community": 9,
+      "community": 2,
       "norm_label": "tosnapshot()",
       "id": "commands_daily_report_tosnapshot"
     },
@@ -171,7 +172,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L49",
-      "community": 9,
+      "community": 2,
       "norm_label": "generatedailyreport()",
       "id": "commands_daily_report_generatedailyreport"
     },
@@ -180,7 +181,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L236",
-      "community": 9,
+      "community": 2,
       "norm_label": "handleresetdailyreport()",
       "id": "commands_daily_report_handleresetdailyreport"
     },
@@ -189,7 +190,7 @@
       "file_type": "code",
       "source_file": "commands/daily-report.ts",
       "source_location": "L253",
-      "community": 9,
+      "community": 2,
       "norm_label": "handledailyreport()",
       "id": "commands_daily_report_handledailyreport"
     },
@@ -198,7 +199,7 @@
       "file_type": "code",
       "source_file": "commands/gemini-draw.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 1,
       "norm_label": "gemini-draw.ts",
       "id": "commands_gemini_draw_ts"
     },
@@ -207,7 +208,7 @@
       "file_type": "code",
       "source_file": "commands/gemini-draw.ts",
       "source_location": "L4",
-      "community": 5,
+      "community": 1,
       "norm_label": "handlegeminidraw()",
       "id": "commands_gemini_draw_handlegeminidraw"
     },
@@ -216,7 +217,7 @@
       "file_type": "code",
       "source_file": "commands/gemini.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 1,
       "norm_label": "gemini.ts",
       "id": "commands_gemini_ts"
     },
@@ -225,7 +226,7 @@
       "file_type": "code",
       "source_file": "commands/gemini.ts",
       "source_location": "L6",
-      "community": 5,
+      "community": 1,
       "norm_label": "handlegemini()",
       "id": "commands_gemini_handlegemini"
     },
@@ -234,7 +235,7 @@
       "file_type": "code",
       "source_file": "commands/help.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 1,
       "norm_label": "help.ts",
       "id": "commands_help_ts"
     },
@@ -243,7 +244,7 @@
       "file_type": "code",
       "source_file": "commands/help.ts",
       "source_location": "L17",
-      "community": 5,
+      "community": 1,
       "norm_label": "handlehelp()",
       "id": "commands_help_handlehelp"
     },
@@ -252,7 +253,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 1,
       "norm_label": "index.ts",
       "id": "commands_index_ts"
     },
@@ -261,7 +262,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L24",
-      "community": 2,
+      "community": 8,
       "norm_label": "loadknownsessions()",
       "id": "commands_index_loadknownsessions"
     },
@@ -270,7 +271,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L37",
-      "community": 5,
+      "community": 1,
       "norm_label": "saveknownsessions()",
       "id": "commands_index_saveknownsessions"
     },
@@ -279,7 +280,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L70",
-      "community": 5,
+      "community": 1,
       "norm_label": "resolvealias()",
       "id": "commands_index_resolvealias"
     },
@@ -288,7 +289,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L81",
-      "community": 5,
+      "community": 1,
       "norm_label": "threadtosessionid()",
       "id": "commands_index_threadtosessionid"
     },
@@ -297,7 +298,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L87",
-      "community": 10,
+      "community": 1,
       "norm_label": "parsemodelprefix()",
       "id": "commands_index_parsemodelprefix"
     },
@@ -306,7 +307,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L85",
-      "community": 5,
+      "community": 1,
       "norm_label": "downloadslackimages()",
       "id": "commands_index_downloadslackimages"
     },
@@ -315,7 +316,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L115",
-      "community": 5,
+      "community": 1,
       "norm_label": "handleclaude()",
       "id": "commands_index_handleclaude"
     },
@@ -324,7 +325,7 @@
       "file_type": "code",
       "source_file": "commands/index.ts",
       "source_location": "L228",
-      "community": 2,
+      "community": 8,
       "norm_label": "registercommands()",
       "id": "commands_index_registercommands"
     },
@@ -351,7 +352,7 @@
       "file_type": "code",
       "source_file": "commands/list-milestones.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 2,
       "norm_label": "list-milestones.ts",
       "id": "commands_list_milestones_ts"
     },
@@ -360,7 +361,7 @@
       "file_type": "code",
       "source_file": "commands/list-milestones.ts",
       "source_location": "L6",
-      "community": 5,
+      "community": 2,
       "norm_label": "handlelistmilestones()",
       "id": "commands_list_milestones_handlelistmilestones"
     },
@@ -369,7 +370,7 @@
       "file_type": "code",
       "source_file": "commands/model.ts",
       "source_location": "L1",
-      "community": 10,
+      "community": 1,
       "norm_label": "model.ts",
       "id": "commands_model_ts"
     },
@@ -378,7 +379,7 @@
       "file_type": "code",
       "source_file": "commands/model.ts",
       "source_location": "L9",
-      "community": 10,
+      "community": 1,
       "norm_label": "validatemaxeffort()",
       "id": "commands_model_validatemaxeffort"
     },
@@ -387,7 +388,7 @@
       "file_type": "code",
       "source_file": "commands/model.ts",
       "source_location": "L16",
-      "community": 10,
+      "community": 1,
       "norm_label": "handlemodel()",
       "id": "commands_model_handlemodel"
     },
@@ -396,7 +397,7 @@
       "file_type": "code",
       "source_file": "commands/model.ts",
       "source_location": "L50",
-      "community": 10,
+      "community": 1,
       "norm_label": "handleeffort()",
       "id": "commands_model_handleeffort"
     },
@@ -405,7 +406,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L1",
-      "community": 8,
+      "community": 10,
       "norm_label": "env-validator.ts",
       "id": "config_env_validator_ts"
     },
@@ -414,7 +415,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L9",
-      "community": 8,
+      "community": 10,
       "norm_label": "envvalidationerror",
       "id": "config_env_validator_envvalidationerror"
     },
@@ -423,7 +424,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L12",
-      "community": 8,
+      "community": 10,
       "norm_label": ".constructor()",
       "id": "config_env_validator_envvalidationerror_constructor"
     },
@@ -432,7 +433,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L20",
-      "community": 8,
+      "community": 10,
       "norm_label": "formatvalidationerrors()",
       "id": "config_env_validator_formatvalidationerrors"
     },
@@ -441,7 +442,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L49",
-      "community": 8,
+      "community": 10,
       "norm_label": "isvalidurl()",
       "id": "config_env_validator_isvalidurl"
     },
@@ -450,7 +451,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L58",
-      "community": 8,
+      "community": 10,
       "norm_label": "isvalidtoken()",
       "id": "config_env_validator_isvalidtoken"
     },
@@ -459,7 +460,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L76",
-      "community": 8,
+      "community": 10,
       "norm_label": "validateconfig()",
       "id": "config_env_validator_validateconfig"
     },
@@ -468,7 +469,7 @@
       "file_type": "code",
       "source_file": "config/env-validator.ts",
       "source_location": "L226",
-      "community": 8,
+      "community": 10,
       "norm_label": "validaterequiredenvvars()",
       "id": "config_env_validator_validaterequiredenvvars"
     },
@@ -477,7 +478,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L1",
-      "community": 8,
+      "community": 10,
       "norm_label": "index.ts",
       "id": "config_index_ts"
     },
@@ -486,7 +487,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L8",
-      "community": 8,
+      "community": 10,
       "norm_label": "required()",
       "id": "config_index_required"
     },
@@ -495,7 +496,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L14",
-      "community": 8,
+      "community": 10,
       "norm_label": "optional()",
       "id": "config_index_optional"
     },
@@ -504,7 +505,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L18",
-      "community": 8,
+      "community": 10,
       "norm_label": "optionalint()",
       "id": "config_index_optionalint"
     },
@@ -513,7 +514,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L26",
-      "community": 8,
+      "community": 10,
       "norm_label": "optionalbool()",
       "id": "config_index_optionalbool"
     },
@@ -522,7 +523,7 @@
       "file_type": "code",
       "source_file": "config/index.ts",
       "source_location": "L32",
-      "community": 8,
+      "community": 10,
       "norm_label": "loadconfig()",
       "id": "config_index_loadconfig"
     },
@@ -540,7 +541,7 @@
       "file_type": "code",
       "source_file": "config/schema.ts",
       "source_location": "L1",
-      "community": 8,
+      "community": 10,
       "norm_label": "schema.ts",
       "id": "config_schema_ts"
     },
@@ -549,7 +550,7 @@
       "file_type": "code",
       "source_file": "scheduler/daily-report.ts",
       "source_location": "L1",
-      "community": 9,
+      "community": 2,
       "norm_label": "daily-report.ts",
       "id": "scheduler_daily_report_ts"
     },
@@ -558,7 +559,7 @@
       "file_type": "code",
       "source_file": "scheduler/daily-report.ts",
       "source_location": "L9",
-      "community": 2,
+      "community": 8,
       "norm_label": "scheduledailyreport()",
       "id": "scheduler_daily_report_scheduledailyreport"
     },
@@ -585,7 +586,7 @@
       "file_type": "code",
       "source_file": "services/claude.ts",
       "source_location": "L1",
-      "community": 10,
+      "community": 1,
       "norm_label": "claude.ts",
       "id": "services_claude_ts"
     },
@@ -594,7 +595,7 @@
       "file_type": "code",
       "source_file": "services/claude.ts",
       "source_location": "L11",
-      "community": 10,
+      "community": 1,
       "norm_label": "resolvemodel()",
       "id": "services_claude_resolvemodel"
     },
@@ -603,7 +604,7 @@
       "file_type": "code",
       "source_file": "services/gemini.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 1,
       "norm_label": "gemini.ts",
       "id": "services_gemini_ts"
     },
@@ -612,7 +613,7 @@
       "file_type": "code",
       "source_file": "services/gemini.ts",
       "source_location": "L7",
-      "community": 5,
+      "community": 1,
       "norm_label": "askgemini()",
       "id": "services_gemini_askgemini"
     },
@@ -621,7 +622,7 @@
       "file_type": "code",
       "source_file": "services/gemini.ts",
       "source_location": "L33",
-      "community": 5,
+      "community": 1,
       "norm_label": "drawgemini()",
       "id": "services_gemini_drawgemini"
     },
@@ -657,7 +658,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L48",
-      "community": 5,
+      "community": 2,
       "norm_label": "getactivemilestones()",
       "id": "services_gitlab_getactivemilestones"
     },
@@ -666,7 +667,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L53",
-      "community": 9,
+      "community": 2,
       "norm_label": "getlatestactivemilestone()",
       "id": "services_gitlab_getlatestactivemilestone"
     },
@@ -675,7 +676,7 @@
       "file_type": "code",
       "source_file": "services/gitlab.ts",
       "source_location": "L59",
-      "community": 9,
+      "community": 2,
       "norm_label": "getmilestonebytitle()",
       "id": "services_gitlab_getmilestonebytitle"
     },
@@ -738,7 +739,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L1",
-      "community": 10,
+      "community": 1,
       "norm_label": "settings.ts",
       "id": "services_settings_ts"
     },
@@ -747,7 +748,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L25",
-      "community": 10,
+      "community": 8,
       "norm_label": "loadsettings()",
       "id": "services_settings_loadsettings"
     },
@@ -756,7 +757,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L39",
-      "community": 10,
+      "community": 1,
       "norm_label": "save()",
       "id": "services_settings_save"
     },
@@ -765,7 +766,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L44",
-      "community": 10,
+      "community": 1,
       "norm_label": "getclaudesettings()",
       "id": "services_settings_getclaudesettings"
     },
@@ -774,7 +775,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L48",
-      "community": 10,
+      "community": 1,
       "norm_label": "updateclaudemodel()",
       "id": "services_settings_updateclaudemodel"
     },
@@ -783,7 +784,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L54",
-      "community": 10,
+      "community": 1,
       "norm_label": "updateclaudeeffort()",
       "id": "services_settings_updateclaudeeffort"
     },
@@ -792,7 +793,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L59",
-      "community": 10,
+      "community": 1,
       "norm_label": "isvalidmodel()",
       "id": "services_settings_isvalidmodel"
     },
@@ -801,7 +802,7 @@
       "file_type": "code",
       "source_file": "services/settings.ts",
       "source_location": "L63",
-      "community": 10,
+      "community": 1,
       "norm_label": "isvalideffort()",
       "id": "services_settings_isvalideffort"
     },
@@ -810,7 +811,7 @@
       "file_type": "code",
       "source_file": "utils/logger.ts",
       "source_location": "L9",
-      "community": 2,
+      "community": 8,
       "norm_label": "ts()",
       "id": "utils_logger_ts"
     },
@@ -819,7 +820,7 @@
       "file_type": "code",
       "source_file": "utils/logger.ts",
       "source_location": "L5",
-      "community": 2,
+      "community": 8,
       "norm_label": "isdebug()",
       "id": "utils_logger_isdebug"
     },
@@ -828,7 +829,7 @@
       "file_type": "code",
       "source_file": "utils/logger.ts",
       "source_location": "L23",
-      "community": 5,
+      "community": 1,
       "norm_label": "saveconversationlog()",
       "id": "utils_logger_saveconversationlog"
     },
@@ -837,7 +838,7 @@
       "file_type": "code",
       "source_file": "utils/logger.ts",
       "source_location": "L76",
-      "community": 2,
+      "community": 8,
       "norm_label": "saverawlog()",
       "id": "utils_logger_saverawlog"
     },
@@ -846,7 +847,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L1",
-      "community": 5,
+      "community": 1,
       "norm_label": "message.ts",
       "id": "utils_message_ts"
     },
@@ -855,7 +856,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L4",
-      "community": 5,
+      "community": 1,
       "norm_label": "strwidth()",
       "id": "utils_message_strwidth"
     },
@@ -864,7 +865,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L22",
-      "community": 5,
+      "community": 1,
       "norm_label": "converttables()",
       "id": "utils_message_converttables"
     },
@@ -873,7 +874,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L50",
-      "community": 5,
+      "community": 1,
       "norm_label": "markdowntoslack()",
       "id": "utils_message_markdowntoslack"
     },
@@ -882,7 +883,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L101",
-      "community": 5,
+      "community": 1,
       "norm_label": "splittoblocks()",
       "id": "utils_message_splittoblocks"
     },
@@ -891,7 +892,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L117",
-      "community": 5,
+      "community": 1,
       "norm_label": "safechat()",
       "id": "utils_message_safechat"
     },
@@ -900,7 +901,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L135",
-      "community": 5,
+      "community": 1,
       "norm_label": "createtracker()",
       "id": "utils_message_createtracker"
     },
@@ -909,7 +910,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L139",
-      "community": 5,
+      "community": 1,
       "norm_label": "safepost()",
       "id": "utils_message_safepost"
     },
@@ -918,7 +919,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L153",
-      "community": 9,
+      "community": 2,
       "norm_label": "postblocks()",
       "id": "utils_message_postblocks"
     },
@@ -927,7 +928,7 @@
       "file_type": "code",
       "source_file": "utils/message.ts",
       "source_location": "L167",
-      "community": 5,
+      "community": 1,
       "norm_label": "safeupdate()",
       "id": "utils_message_safeupdate"
     },
@@ -936,7 +937,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L1",
-      "community": 9,
+      "community": 2,
       "norm_label": "scheduler-guard.ts",
       "id": "utils_scheduler_guard_ts"
     },
@@ -945,7 +946,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L6",
-      "community": 9,
+      "community": 2,
       "norm_label": "loadstate()",
       "id": "utils_scheduler_guard_loadstate"
     },
@@ -954,7 +955,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L14",
-      "community": 9,
+      "community": 2,
       "norm_label": "hasruntoday()",
       "id": "utils_scheduler_guard_hasruntoday"
     },
@@ -963,7 +964,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L19",
-      "community": 9,
+      "community": 2,
       "norm_label": "clearruntoday()",
       "id": "utils_scheduler_guard_clearruntoday"
     },
@@ -972,7 +973,7 @@
       "file_type": "code",
       "source_file": "utils/scheduler-guard.ts",
       "source_location": "L26",
-      "community": 9,
+      "community": 2,
       "norm_label": "markruntoday()",
       "id": "utils_scheduler_guard_markruntoday"
     },
@@ -981,7 +982,7 @@
       "file_type": "code",
       "source_file": "utils/singleton.ts",
       "source_location": "L1",
-      "community": 2,
+      "community": 8,
       "norm_label": "singleton.ts",
       "id": "utils_singleton_ts"
     },
@@ -990,7 +991,7 @@
       "file_type": "code",
       "source_file": "utils/singleton.ts",
       "source_location": "L7",
-      "community": 2,
+      "community": 8,
       "norm_label": "waitforkeypress()",
       "id": "utils_singleton_waitforkeypress"
     },
@@ -999,7 +1000,7 @@
       "file_type": "code",
       "source_file": "utils/singleton.ts",
       "source_location": "L23",
-      "community": 2,
+      "community": 8,
       "norm_label": "ensuresingleinstance()",
       "id": "utils_singleton_ensuresingleinstance"
     },
@@ -1008,7 +1009,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L1",
-      "community": 2,
+      "community": 8,
       "norm_label": "gitlab.ts",
       "id": "webhooks_gitlab_ts"
     },
@@ -1017,7 +1018,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L7",
-      "community": 2,
+      "community": 8,
       "norm_label": "formatpush()",
       "id": "webhooks_gitlab_formatpush"
     },
@@ -1026,7 +1027,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L20",
-      "community": 2,
+      "community": 8,
       "norm_label": "formatmergerequest()",
       "id": "webhooks_gitlab_formatmergerequest"
     },
@@ -1035,7 +1036,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L27",
-      "community": 2,
+      "community": 8,
       "norm_label": "formatpipeline()",
       "id": "webhooks_gitlab_formatpipeline"
     },
@@ -1044,7 +1045,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L36",
-      "community": 2,
+      "community": 8,
       "norm_label": "formatissue()",
       "id": "webhooks_gitlab_formatissue"
     },
@@ -1053,7 +1054,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L43",
-      "community": 2,
+      "community": 8,
       "norm_label": "formatnote()",
       "id": "webhooks_gitlab_formatnote"
     },
@@ -1062,7 +1063,7 @@
       "file_type": "code",
       "source_file": "webhooks/gitlab.ts",
       "source_location": "L58",
-      "community": 2,
+      "community": 8,
       "norm_label": "handlegitlabevent()",
       "id": "webhooks_gitlab_handlegitlabevent"
     },
@@ -1071,7 +1072,7 @@
       "file_type": "code",
       "source_file": "webhooks/server.ts",
       "source_location": "L1",
-      "community": 2,
+      "community": 8,
       "norm_label": "server.ts",
       "id": "webhooks_server_ts"
     },
@@ -1080,7 +1081,7 @@
       "file_type": "code",
       "source_file": "webhooks/server.ts",
       "source_location": "L7",
-      "community": 2,
+      "community": 8,
       "norm_label": "startwebhookserver()",
       "id": "webhooks_server_startwebhookserver"
     },
@@ -1132,7 +1133,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 5,
+      "community": 1,
       "norm_label": "commandcontext interface",
       "id": "commands_index_CommandContext"
     },
@@ -1353,7 +1354,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 8,
+      "community": 10,
       "norm_label": "loadconfig",
       "id": "config_index_loadConfig"
     },
@@ -1379,7 +1380,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 8,
+      "community": 10,
       "norm_label": "validateconfig",
       "id": "config_envvalidator_validateConfig"
     },
@@ -1392,7 +1393,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 8,
+      "community": 10,
       "norm_label": "validaterequiredenvvars",
       "id": "config_envvalidator_validateRequiredEnvVars"
     },
@@ -1405,7 +1406,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 8,
+      "community": 10,
       "norm_label": "envvalidationerror class",
       "id": "config_envvalidator_EnvValidationError"
     },
@@ -1418,7 +1419,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 8,
+      "community": 10,
       "norm_label": "appconfig interface",
       "id": "config_schema_AppConfig"
     },
@@ -2029,7 +2030,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "simplify bot plan",
       "id": "2026-02-24-simplify-bot-plan_simplify_bot_plan"
     },
@@ -2042,7 +2043,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "delete gitlab/jenkins/webhook files",
       "id": "2026-02-24-simplify-bot-plan_delete_legacy_files"
     },
@@ -2055,7 +2056,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "simplify appconfig to slack+claude",
       "id": "2026-02-24-simplify-bot-plan_simplify_appconfig"
     },
@@ -2068,7 +2069,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "inline claude passthrough routing",
       "id": "2026-02-24-simplify-bot-plan_inline_claude_passthrough"
     },
@@ -2081,7 +2082,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "gemini command implementation plan",
       "id": "2026-02-25-gemini-command-design_gemini_command_plan"
     },
@@ -2094,7 +2095,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "@google/generative-ai sdk",
       "id": "2026-02-25-gemini-command-design_google_generative_ai_sdk"
     },
@@ -2107,7 +2108,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "thread-scoped gemini chat history",
       "id": "2026-02-25-gemini-command-design_gemini_chat_history"
     },
@@ -2120,7 +2121,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "gemini draw design",
       "id": "2026-02-25-gemini-draw-design_gemini_draw_design"
     },
@@ -2133,7 +2134,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "responsemodalities text+image",
       "id": "2026-02-25-gemini-draw-design_response_modalities"
     },
@@ -2146,7 +2147,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "slack files.uploadv2",
       "id": "2026-02-25-gemini-draw-design_files_upload_v2"
     },
@@ -2159,7 +2160,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "gemini draw implementation plan",
       "id": "2026-02-25-gemini-draw-plan_gemini_draw_plan"
     },
@@ -2172,7 +2173,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "gemini-draw route order rationale",
       "id": "2026-02-25-gemini-draw-plan_route_order_rationale"
     },
@@ -2185,7 +2186,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "gitlab commands migration plan",
       "id": "2026-02-25-gitlab-commands-design_gitlab_commands_migration"
     },
@@ -2198,7 +2199,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 14,
+      "community": 15,
       "norm_label": "gitlab rest service layer",
       "id": "2026-02-25-gitlab-commands-design_gitlab_rest_service"
     },
@@ -2211,7 +2212,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 15,
+      "community": 16,
       "norm_label": "jenkins script console service",
       "id": "2026-02-25-gitlab-commands-design_jenkins_script_console"
     },
@@ -2224,7 +2225,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "list-milestones command",
       "id": "2026-02-25-gitlab-commands-design_list_milestones_cmd"
     },
@@ -2237,7 +2238,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "list-issues command",
       "id": "2026-02-25-gitlab-commands-design_list_issues_cmd"
     },
@@ -2250,7 +2251,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "create-milestone command",
       "id": "2026-02-25-gitlab-commands-design_create_milestone_cmd"
     },
@@ -2263,7 +2264,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "daily-report command",
       "id": "2026-02-25-gitlab-commands-design_daily_report_cmd"
     },
@@ -2276,7 +2277,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "daily-report scheduler (settimeout)",
       "id": "2026-02-25-gitlab-commands-design_daily_report_scheduler"
     },
@@ -2289,7 +2290,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "gitlab webhook design",
       "id": "2026-02-25-gitlab-webhook-notify-design_webhook_design"
     },
@@ -2302,7 +2303,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "express choice rationale",
       "id": "2026-02-25-gitlab-webhook-notify-design_express_choice"
     },
@@ -2315,7 +2316,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "gitlab webhook implementation plan",
       "id": "2026-02-25-gitlab-webhook-notify-plan_webhook_plan"
     },
@@ -2328,7 +2329,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "5 gitlab event formatters",
       "id": "2026-02-25-gitlab-webhook-notify-plan_event_formatters"
     },
@@ -2341,7 +2342,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "x-gitlab-token validation",
       "id": "2026-02-25-gitlab-webhook-notify-plan_secret_token_validation"
     },
@@ -2354,7 +2355,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "jenkins cron design",
       "id": "2026-02-25-jenkins-cron-design_jenkins_cron_design"
     },
@@ -2367,7 +2368,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "jenkins_cron_jobs env format",
       "id": "2026-02-25-jenkins-cron-design_jenkins_cron_jobs_env"
     },
@@ -2380,7 +2381,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "jenkins cron implementation plan",
       "id": "2026-02-25-jenkins-cron-plan_jenkins_cron_plan"
     },
@@ -2393,7 +2394,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "triggerjob function",
       "id": "2026-02-25-jenkins-cron-plan_trigger_job_fn"
     },
@@ -2406,7 +2407,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "milestone dates design",
       "id": "2026-02-25-milestone-dates-design_milestone_dates_design"
     },
@@ -2419,7 +2420,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "default due date +14 days",
       "id": "2026-02-25-milestone-dates-design_default_14_days"
     },
@@ -2432,7 +2433,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "milestone dates plan",
       "id": "2026-02-25-milestone-dates-plan_milestone_dates_plan"
     },
@@ -2445,7 +2446,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 5,
       "norm_label": "scheduler guard design",
       "id": "2026-02-25-scheduler-guard-design_scheduler_guard_design"
     },
@@ -2458,7 +2459,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 5,
       "norm_label": "jenkins-cron duplicate execution problem",
       "id": "2026-02-25-scheduler-guard-design_problem_duplicate_exec"
     },
@@ -2471,7 +2472,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "scheduler guard plan",
       "id": "2026-02-25-scheduler-guard-plan_scheduler_guard_plan"
     },
@@ -2484,7 +2485,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "data/scheduler-state.json",
       "id": "2026-02-25-scheduler-guard-plan_scheduler_state_json"
     },
@@ -2497,7 +2498,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 5,
       "norm_label": "singleton guard design",
       "id": "2026-02-25-singleton-guard-design_singleton_design"
     },
@@ -2510,7 +2511,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 5,
       "norm_label": "tcp port eaddrinuse detection",
       "id": "2026-02-25-singleton-guard-design_tcp_port_check"
     },
@@ -2523,7 +2524,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 5,
       "norm_label": "singleton guard plan",
       "id": "2026-02-25-singleton-guard-plan_singleton_plan"
     },
@@ -2536,7 +2537,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "claude debug log design",
       "id": "2026-02-28-claude-debug-log-design_debug_log_design"
     },
@@ -2549,7 +2550,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "debug_claude env var",
       "id": "2026-02-28-claude-debug-log-design_debug_claude_env"
     },
@@ -2562,7 +2563,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "claude_raw.log file",
       "id": "2026-02-28-claude-debug-log-design_raw_log_file"
     },
@@ -2575,7 +2576,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "claude debug log plan",
       "id": "2026-02-28-claude-debug-log-plan_debug_log_plan"
     },
@@ -2588,7 +2589,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "slack model config design",
       "id": "2026-02-28-slack-model-config-design_model_config_design"
     },
@@ -2601,7 +2602,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "data/settings.json persistence",
       "id": "2026-02-28-slack-model-config-design_settings_json"
     },
@@ -2614,7 +2615,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "inline opus/sonnet/haiku prefix",
       "id": "2026-02-28-slack-model-config-design_inline_model_prefix"
     },
@@ -2627,7 +2628,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "max effort only valid for opus",
       "id": "2026-02-28-slack-model-config-design_max_effort_opus_only"
     },
@@ -2640,7 +2641,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "src/commands/index.ts",
       "id": "src_commands_index"
     },
@@ -2653,7 +2654,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 12,
       "norm_label": "src/services/gemini.ts",
       "id": "src_services_gemini"
     },
@@ -2666,7 +2667,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "src/services/gitlab.ts",
       "id": "src_services_gitlab"
     },
@@ -2679,7 +2680,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "src/services/jenkins.ts",
       "id": "src_services_jenkins"
     },
@@ -2692,7 +2693,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "src/webhooks/server.ts",
       "id": "src_webhooks_server"
     },
@@ -2705,7 +2706,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "src/webhooks/gitlab.ts",
       "id": "src_webhooks_gitlab"
     },
@@ -2718,7 +2719,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "src/scheduler/daily-report.ts",
       "id": "src_scheduler_daily_report"
     },
@@ -2731,7 +2732,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 1,
+      "community": 5,
       "norm_label": "src/scheduler/jenkins-cron.ts",
       "id": "src_scheduler_jenkins_cron"
     },
@@ -2744,7 +2745,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 5,
       "norm_label": "src/utils/scheduler-guard.ts",
       "id": "src_utils_scheduler_guard"
     },
@@ -2757,7 +2758,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 5,
       "norm_label": "src/utils/singleton.ts",
       "id": "src_utils_singleton"
     },
@@ -2770,7 +2771,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "src/services/claude.ts",
       "id": "src_services_claude"
     },
@@ -2783,7 +2784,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 11,
+      "community": 13,
       "norm_label": "src/services/settings.ts",
       "id": "src_services_settings"
     },
@@ -2796,7 +2797,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 12,
+      "community": 5,
       "norm_label": "src/app.ts",
       "id": "src_app"
     },
@@ -2809,7 +2810,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 16,
+      "community": 17,
       "norm_label": "src/config/schema.ts",
       "id": "src_config_schema"
     },
@@ -2822,7 +2823,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 17,
+      "community": 18,
       "norm_label": "src/config/index.ts",
       "id": "src_config_index"
     },
@@ -2835,7 +2836,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 18,
+      "community": 19,
       "norm_label": "src/config/env-validator.ts",
       "id": "src_config_env_validator"
     },
@@ -3559,7 +3560,7 @@
       "file_type": "code",
       "source_file": "events/jenkins-mention.ts",
       "source_location": "L1",
-      "community": 2,
+      "community": 8,
       "norm_label": "jenkins-mention.ts",
       "id": "events_jenkins_mention_ts"
     },
@@ -3568,7 +3569,7 @@
       "file_type": "code",
       "source_file": "events/jenkins-mention.ts",
       "source_location": "L7",
-      "community": 2,
+      "community": 8,
       "norm_label": "registerjenkinsmention()",
       "id": "events_jenkins_mention_registerjenkinsmention"
     },
@@ -3620,7 +3621,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 19,
+      "community": 20,
       "norm_label": "registerjenkinsmention(app) call in bootstrap",
       "id": "app_registerjenkinsmention_call"
     },
@@ -4062,9 +4063,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "app_ensureSingleInstance",
       "community": 4,
-      "norm_label": "ensuresingleinstance bootstrap"
+      "norm_label": "ensuresingleinstance bootstrap",
+      "id": "app_ensureSingleInstance"
     },
     {
       "label": "registerCommands (app_mention router)",
@@ -4075,9 +4076,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_registerCommands",
       "community": 0,
-      "norm_label": "registercommands (app_mention router)"
+      "norm_label": "registercommands (app_mention router)",
+      "id": "index_registerCommands"
     },
     {
       "label": "handleClaude (Claude passthrough)",
@@ -4088,9 +4089,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_handleClaude",
       "community": 0,
-      "norm_label": "handleclaude (claude passthrough)"
+      "norm_label": "handleclaude (claude passthrough)",
+      "id": "index_handleClaude"
     },
     {
       "label": "resolveAlias",
@@ -4101,9 +4102,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_resolveAlias",
       "community": 0,
-      "norm_label": "resolvealias"
+      "norm_label": "resolvealias",
+      "id": "index_resolveAlias"
     },
     {
       "label": "downloadSlackImages",
@@ -4114,9 +4115,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_downloadSlackImages",
       "community": 0,
-      "norm_label": "downloadslackimages"
+      "norm_label": "downloadslackimages",
+      "id": "index_downloadSlackImages"
     },
     {
       "label": "threadToSessionId (uuidv5)",
@@ -4127,9 +4128,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_threadToSessionId",
       "community": 0,
-      "norm_label": "threadtosessionid (uuidv5)"
+      "norm_label": "threadtosessionid (uuidv5)",
+      "id": "index_threadToSessionId"
     },
     {
       "label": "loadKnownSessions / knownSessions",
@@ -4140,9 +4141,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_loadKnownSessions",
       "community": 4,
-      "norm_label": "loadknownsessions / knownsessions"
+      "norm_label": "loadknownsessions / knownsessions",
+      "id": "index_loadKnownSessions"
     },
     {
       "label": "\u5934\u8111\u98ce\u66b4 brainstorm trigger branch",
@@ -4153,9 +4154,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_brainstormTrigger",
       "community": 0,
-      "norm_label": "\u5934\u8111\u98ce\u66b4 brainstorm trigger branch"
+      "norm_label": "\u5934\u8111\u98ce\u66b4 brainstorm trigger branch",
+      "id": "index_brainstormTrigger"
     },
     {
       "label": "COMMAND_ALIASES",
@@ -4166,9 +4167,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "index_commandAliases",
       "community": 0,
-      "norm_label": "command_aliases"
+      "norm_label": "command_aliases",
+      "id": "index_commandAliases"
     },
     {
       "label": "buildMultimodalPrompt",
@@ -4179,9 +4180,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "claude_buildMultimodalPrompt",
       "community": 0,
-      "norm_label": "buildmultimodalprompt"
+      "norm_label": "buildmultimodalprompt",
+      "id": "claude_buildMultimodalPrompt"
     },
     {
       "label": "ClaudeImage type",
@@ -4192,9 +4193,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "claude_ClaudeImage",
       "community": 0,
-      "norm_label": "claudeimage type"
+      "norm_label": "claudeimage type",
+      "id": "claude_ClaudeImage"
     },
     {
       "label": "handleHelp / HELP_TEXT",
@@ -4205,9 +4206,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "help_handleHelp",
       "community": 0,
-      "norm_label": "handlehelp / help_text"
+      "norm_label": "handlehelp / help_text",
+      "id": "help_handleHelp"
     },
     {
       "label": "saveConversationLog",
@@ -4218,9 +4219,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "logger_saveConversationLog",
       "community": 6,
-      "norm_label": "saveconversationlog"
+      "norm_label": "saveconversationlog",
+      "id": "logger_saveConversationLog"
     },
     {
       "label": "CLAUDE.md project context",
@@ -4231,9 +4232,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "claudemd_project",
-      "community": 13,
-      "norm_label": "claude.md project context"
+      "community": 14,
+      "norm_label": "claude.md project context",
+      "id": "claudemd_project"
     },
     {
       "label": "Slash \u524d\u7f00\u8f6c\u4e49 design rule",
@@ -4244,9 +4245,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "claudemd_slashEscape",
       "community": 0,
-      "norm_label": "slash \u524d\u7f00\u8f6c\u4e49 design rule"
+      "norm_label": "slash \u524d\u7f00\u8f6c\u4e49 design rule",
+      "id": "claudemd_slashEscape"
     },
     {
       "label": "Claude \u5b8c\u6210\u901a\u77e5 (@user \u2705/\u274c)",
@@ -4257,9 +4258,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "claudemd_completionNotify",
       "community": 0,
-      "norm_label": "claude \u5b8c\u6210\u901a\u77e5 (@user \u2705/\u274c)"
+      "norm_label": "claude \u5b8c\u6210\u901a\u77e5 (@user \u2705/\u274c)",
+      "id": "claudemd_completionNotify"
     },
     {
       "label": "setup-guide.md",
@@ -4270,9 +4271,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "setupguide_doc",
-      "community": 13,
-      "norm_label": "setup-guide.md"
+      "community": 14,
+      "norm_label": "setup-guide.md",
+      "id": "setupguide_doc"
     },
     {
       "label": "files:read scope requirement",
@@ -4283,9 +4284,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "setupguide_filesReadScope",
       "community": 0,
-      "norm_label": "files:read scope requirement"
+      "norm_label": "files:read scope requirement",
+      "id": "setupguide_filesReadScope"
     },
     {
       "label": "Plan: remove model/effort switching",
@@ -4296,9 +4297,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "plan_removeModelEffort",
       "community": 0,
-      "norm_label": "plan: remove model/effort switching"
+      "norm_label": "plan: remove model/effort switching",
+      "id": "plan_removeModelEffort"
     },
     {
       "label": "Spec: remove model/effort switching",
@@ -4309,9 +4310,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "spec_removeModelEffort",
       "community": 0,
-      "norm_label": "spec: remove model/effort switching"
+      "norm_label": "spec: remove model/effort switching",
+      "id": "spec_removeModelEffort"
     },
     {
       "label": "Rationale: single-point follow local default",
@@ -4322,9 +4323,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "spec_removeModelEffort_rationale",
       "community": 0,
-      "norm_label": "rationale: single-point follow local default"
+      "norm_label": "rationale: single-point follow local default",
+      "id": "spec_removeModelEffort_rationale"
     },
     {
       "label": "Plan: \u5934\u8111\u98ce\u66b4 trigger",
@@ -4335,9 +4336,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "plan_brainstormTrigger",
       "community": 0,
-      "norm_label": "plan: \u5934\u8111\u98ce\u66b4 trigger"
+      "norm_label": "plan: \u5934\u8111\u98ce\u66b4 trigger",
+      "id": "plan_brainstormTrigger"
     },
     {
       "label": "Spec: \u5934\u8111\u98ce\u66b4 trigger brainstorming skill",
@@ -4348,9 +4349,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "spec_brainstormTrigger",
       "community": 0,
-      "norm_label": "spec: \u5934\u8111\u98ce\u66b4 trigger brainstorming skill"
+      "norm_label": "spec: \u5934\u8111\u98ce\u66b4 trigger brainstorming skill",
+      "id": "spec_brainstormTrigger"
     },
     {
       "label": "Rationale: bypass slash escape to truly trigger skill",
@@ -4361,9 +4362,525 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "id": "spec_brainstormTrigger_rationale",
       "community": 0,
-      "norm_label": "rationale: bypass slash escape to truly trigger skill"
+      "norm_label": "rationale: bypass slash escape to truly trigger skill",
+      "id": "spec_brainstormTrigger_rationale"
+    },
+    {
+      "label": "claude.ts",
+      "file_type": "code",
+      "source_file": "claude.ts",
+      "source_location": "L1",
+      "id": "claude_ts",
+      "community": 21,
+      "norm_label": "claude.ts"
+    },
+    {
+      "label": "GSSlackRobot Slack Bot",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_gsslackrobot",
+      "community": 9,
+      "norm_label": "gsslackrobot slack bot"
+    },
+    {
+      "label": "app.ts Entry Point",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_app_entry",
+      "community": 9,
+      "norm_label": "app.ts entry point"
+    },
+    {
+      "label": "Command Routing",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_command_routing",
+      "community": 9,
+      "norm_label": "command routing"
+    },
+    {
+      "label": "Claude Agent SDK Integration",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_claude_sdk",
+      "community": 9,
+      "norm_label": "claude agent sdk integration"
+    },
+    {
+      "label": "services/claude.ts query() Streaming",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_claude_service",
+      "community": 9,
+      "norm_label": "services/claude.ts query() streaming"
+    },
+    {
+      "label": "handleClaude Passthrough",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_handle_claude",
+      "community": 9,
+      "norm_label": "handleclaude passthrough"
+    },
+    {
+      "label": "safePost Function",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_safepost",
+      "community": 11,
+      "norm_label": "safepost function"
+    },
+    {
+      "label": "safeUpdate Streaming Function",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_safeupdate",
+      "community": 11,
+      "norm_label": "safeupdate streaming function"
+    },
+    {
+      "label": "postBlocks Function",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_postblocks",
+      "community": 11,
+      "norm_label": "postblocks function"
+    },
+    {
+      "label": "safeChat Fallback",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_safechat",
+      "community": 11,
+      "norm_label": "safechat fallback"
+    },
+    {
+      "label": "SegmentTracker",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_segment_tracker",
+      "community": 11,
+      "norm_label": "segmenttracker"
+    },
+    {
+      "label": "splitToBlocks Segmentation",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_split_to_blocks",
+      "community": 11,
+      "norm_label": "splittoblocks segmentation"
+    },
+    {
+      "label": "SLACK_MAX_BLOCK_TEXT Limit",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_message_limit",
+      "community": 11,
+      "norm_label": "slack_max_block_text limit"
+    },
+    {
+      "label": "500ms chat.update Throttle",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_throttle",
+      "community": 11,
+      "norm_label": "500ms chat.update throttle"
+    },
+    {
+      "label": "Image Multimodal Passthrough",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_image_multimodal",
+      "community": 9,
+      "norm_label": "image multimodal passthrough"
+    },
+    {
+      "label": "downloadSlackImages",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_download_images",
+      "community": 9,
+      "norm_label": "downloadslackimages"
+    },
+    {
+      "label": "sharp Image Normalization",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_sharp_normalize",
+      "community": 9,
+      "norm_label": "sharp image normalization"
+    },
+    {
+      "label": "files:read Scope Requirement",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_files_read_scope",
+      "community": 9,
+      "norm_label": "files:read scope requirement"
+    },
+    {
+      "label": "GitLab Webhook Server",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_gitlab_webhook",
+      "community": 9,
+      "norm_label": "gitlab webhook server"
+    },
+    {
+      "label": "services/gitlab.ts REST API",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_gitlab_service",
+      "community": 9,
+      "norm_label": "services/gitlab.ts rest api"
+    },
+    {
+      "label": "Jenkins Integration",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_jenkins_integration",
+      "community": 11,
+      "norm_label": "jenkins integration"
+    },
+    {
+      "label": "Jenkins @channel Repost",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_jenkins_channel",
+      "community": 11,
+      "norm_label": "jenkins @channel repost"
+    },
+    {
+      "label": "Jenkins Cron Scheduler",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_jenkins_cron",
+      "community": 11,
+      "norm_label": "jenkins cron scheduler"
+    },
+    {
+      "label": "Gemini AI Commands",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_gemini",
+      "community": 9,
+      "norm_label": "gemini ai commands"
+    },
+    {
+      "label": "Environment Variable Validation",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_env_validation",
+      "community": 9,
+      "norm_label": "environment variable validation"
+    },
+    {
+      "label": "loadConfig() Two-Phase Validation",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_load_config",
+      "community": 9,
+      "norm_label": "loadconfig() two-phase validation"
+    },
+    {
+      "label": "env-validator.ts",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_env_validator",
+      "community": 9,
+      "norm_label": "env-validator.ts"
+    },
+    {
+      "label": "getConfig() Singleton",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_get_config",
+      "community": 9,
+      "norm_label": "getconfig() singleton"
+    },
+    {
+      "label": "Daily Report Scheduler",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_daily_report_scheduler",
+      "community": 11,
+      "norm_label": "daily report scheduler"
+    },
+    {
+      "label": "setTimeout Single-Shot Scheduling",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_scheduler_pattern",
+      "community": 11,
+      "norm_label": "settimeout single-shot scheduling"
+    },
+    {
+      "label": "Slash Prefix Escaping",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_slash_escape",
+      "community": 9,
+      "norm_label": "slash prefix escaping"
+    },
+    {
+      "label": "settingSources user Config",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_setting_sources",
+      "community": 9,
+      "norm_label": "settingsources user config"
+    },
+    {
+      "label": "\u5934\u8111\u98ce\u66b4 Brainstorming Trigger",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_brainstorm_trigger",
+      "community": 9,
+      "norm_label": "\u5934\u8111\u98ce\u66b4 brainstorming trigger"
+    },
+    {
+      "label": "Claude Completion Notification",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_completion_notify",
+      "community": 11,
+      "norm_label": "claude completion notification"
+    },
+    {
+      "label": "thread_ts Threading Requirement",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_thread_ts",
+      "community": 11,
+      "norm_label": "thread_ts threading requirement"
+    },
+    {
+      "label": "ES Module .js Import Convention",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_es_module",
+      "community": 9,
+      "norm_label": "es module .js import convention"
+    },
+    {
+      "label": "utils/logger.ts log Object",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_logger",
+      "community": 22,
+      "norm_label": "utils/logger.ts log object"
+    },
+    {
+      "label": "Slack Bolt Event/Type Quirks",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_bolt_quirks",
+      "community": 11,
+      "norm_label": "slack bolt event/type quirks"
+    },
+    {
+      "label": "Config/Command Change Sync Rule",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "id": "claudemd_config_sync",
+      "community": 9,
+      "norm_label": "config/command change sync rule"
     }
   ],
   "links": [
@@ -5516,8 +6033,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_index_ts",
-      "target": "commands_help_ts"
+      "source": "commands_help_ts",
+      "target": "commands_index_ts"
     },
     {
       "relation": "imports",
@@ -5548,8 +6065,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_index_ts",
-      "target": "commands_help_handlehelp"
+      "source": "commands_help_handlehelp",
+      "target": "commands_index_ts"
     },
     {
       "relation": "imports_from",
@@ -5881,8 +6398,8 @@
       "source_location": "L222",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_index_handleclaude",
-      "target": "commands_index_saveknownsessions"
+      "source": "commands_index_saveknownsessions",
+      "target": "commands_index_handleclaude"
     },
     {
       "relation": "calls",
@@ -5892,8 +6409,8 @@
       "source_location": "L135",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_index_handleclaude",
-      "target": "commands_index_threadtosessionid"
+      "source": "commands_index_threadtosessionid",
+      "target": "commands_index_handleclaude"
     },
     {
       "relation": "calls",
@@ -5936,8 +6453,8 @@
       "source_location": "L126",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_index_handleclaude",
-      "target": "commands_index_downloadslackimages"
+      "source": "commands_index_downloadslackimages",
+      "target": "commands_index_handleclaude"
     },
     {
       "relation": "calls",
@@ -8664,8 +9181,8 @@
       "source_file": "src/utils/logger.ts",
       "source_location": null,
       "weight": 1.0,
-      "source": "logger_saveConversationLog",
-      "target": "logger_log"
+      "source": "logger_log",
+      "target": "logger_saveConversationLog"
     },
     {
       "relation": "calls",
@@ -9674,8 +10191,8 @@
       "source_file": "src/commands/index.ts",
       "source_location": null,
       "weight": 1.0,
-      "source": "index_handleClaude",
-      "target": "claude_askClaude"
+      "source": "claude_askClaude",
+      "target": "index_handleClaude"
     },
     {
       "relation": "calls",
@@ -9694,8 +10211,8 @@
       "source_file": "docs/superpowers/plans/2026-05-29-remove-model-effort-switching.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "plan_removeModelEffort",
-      "target": "claude_askClaude"
+      "source": "claude_askClaude",
+      "target": "plan_removeModelEffort"
     },
     {
       "relation": "implements",
@@ -10774,8 +11291,8 @@
       "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "plan_brainstormTrigger",
-      "target": "index_handleClaude"
+      "source": "index_handleClaude",
+      "target": "plan_brainstormTrigger"
     },
     {
       "relation": "references",
@@ -10784,8 +11301,8 @@
       "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "spec_brainstormTrigger",
-      "target": "index_handleClaude"
+      "source": "index_handleClaude",
+      "target": "spec_brainstormTrigger"
     },
     {
       "relation": "references",
@@ -10794,8 +11311,8 @@
       "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "spec_removeModelEffort",
-      "target": "index_handleClaude"
+      "source": "index_handleClaude",
+      "target": "spec_removeModelEffort"
     },
     {
       "relation": "references",
@@ -10854,8 +11371,8 @@
       "source_file": "src/commands/help.ts",
       "source_location": null,
       "weight": 1.0,
-      "source": "help_handleHelp",
-      "target": "index_brainstormTrigger"
+      "source": "index_brainstormTrigger",
+      "target": "help_handleHelp"
     },
     {
       "relation": "references",
@@ -10874,8 +11391,8 @@
       "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "plan_brainstormTrigger",
-      "target": "help_handleHelp"
+      "source": "help_handleHelp",
+      "target": "plan_brainstormTrigger"
     },
     {
       "relation": "conceptually_related_to",
@@ -10884,8 +11401,8 @@
       "source_file": "docs/setup-guide.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "setupguide_doc",
-      "target": "claudemd_project"
+      "source": "claudemd_project",
+      "target": "setupguide_doc"
     },
     {
       "relation": "references",
@@ -10894,8 +11411,8 @@
       "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "spec_brainstormTrigger",
-      "target": "claudemd_slashEscape"
+      "source": "claudemd_slashEscape",
+      "target": "spec_brainstormTrigger"
     },
     {
       "relation": "references",
@@ -10924,8 +11441,8 @@
       "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "spec_removeModelEffort_rationale",
-      "target": "spec_removeModelEffort"
+      "source": "spec_removeModelEffort",
+      "target": "spec_removeModelEffort_rationale"
     },
     {
       "relation": "references",
@@ -10944,54 +11461,475 @@
       "source_file": "docs/superpowers/specs/2026-05-30-brainstorm-trigger-design.md",
       "source_location": null,
       "weight": 1.0,
-      "source": "spec_brainstormTrigger_rationale",
-      "target": "spec_brainstormTrigger"
+      "source": "spec_brainstormTrigger",
+      "target": "spec_brainstormTrigger_rationale"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_gsslackrobot",
+      "target": "claudemd_app_entry"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_gsslackrobot",
+      "target": "claudemd_command_routing"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_gsslackrobot",
+      "target": "claudemd_es_module"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_app_entry",
+      "target": "claudemd_load_config"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_command_routing",
+      "target": "claudemd_handle_claude"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_command_routing",
+      "target": "claudemd_gemini"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_command_routing",
+      "target": "claudemd_gitlab_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_config_sync",
+      "target": "claudemd_command_routing"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_claude_service",
+      "target": "claudemd_claude_sdk"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_handle_claude",
+      "target": "claudemd_claude_service"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_claude_service",
+      "target": "claudemd_setting_sources"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_image_multimodal",
+      "target": "claudemd_claude_service"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_handle_claude",
+      "target": "claudemd_slash_escape"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_handle_claude",
+      "target": "claudemd_completion_notify"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_handle_claude",
+      "target": "claudemd_image_multimodal"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_safepost",
+      "target": "claudemd_safechat"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_safepost",
+      "target": "claudemd_split_to_blocks"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_safepost",
+      "target": "claudemd_thread_ts"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_safepost",
+      "target": "claudemd_safeupdate"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_safeupdate",
+      "target": "claudemd_segment_tracker"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_safeupdate",
+      "target": "claudemd_safechat"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_safeupdate",
+      "target": "claudemd_throttle"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_safeupdate",
+      "target": "claudemd_postblocks"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.6,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_postblocks",
+      "target": "claudemd_daily_report_scheduler"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_split_to_blocks",
+      "target": "claudemd_message_limit"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_image_multimodal",
+      "target": "claudemd_download_images"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_image_multimodal",
+      "target": "claudemd_sharp_normalize"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_files_read_scope",
+      "target": "claudemd_download_images"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_gitlab_webhook",
+      "target": "claudemd_gitlab_service"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_jenkins_integration",
+      "target": "claudemd_jenkins_channel"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_jenkins_integration",
+      "target": "claudemd_jenkins_cron"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.8,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_jenkins_channel",
+      "target": "claudemd_bolt_quirks"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_jenkins_cron",
+      "target": "claudemd_scheduler_pattern"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_load_config",
+      "target": "claudemd_env_validation"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_env_validation",
+      "target": "claudemd_env_validator"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.8,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_config_sync",
+      "target": "claudemd_env_validation"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_load_config",
+      "target": "claudemd_env_validator"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.8,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_load_config",
+      "target": "claudemd_get_config"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_daily_report_scheduler",
+      "target": "claudemd_scheduler_pattern"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_setting_sources",
+      "target": "claudemd_slash_escape"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_brainstorm_trigger",
+      "target": "claudemd_slash_escape"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.8,
+      "source_file": "CLAUDE.md",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "claudemd_completion_notify",
+      "target": "claudemd_thread_ts"
     }
   ],
   "hyperedges": [
     {
-      "id": "brainstorm_trigger_flow",
-      "label": "\u5934\u8111\u98ce\u66b4 trigger: spec\u2192plan\u2192code\u2192help+docs",
+      "id": "slack_message_sending",
+      "label": "Slack Message Sending Functions",
       "nodes": [
-        "spec_brainstormTrigger",
-        "plan_brainstormTrigger",
-        "index_brainstormTrigger",
-        "help_handleHelp",
-        "claudemd_slashEscape"
+        "claudemd_safepost",
+        "claudemd_safeupdate",
+        "claudemd_postblocks",
+        "claudemd_safechat"
       ],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
       "confidence_score": 0.85,
-      "source_file": "docs/superpowers/plans/2026-05-30-brainstorm-trigger.md"
+      "source_file": "CLAUDE.md"
     },
     {
-      "id": "claude_passthrough_pipeline",
-      "label": "Claude passthrough: route\u2192images\u2192askClaude\u2192log",
+      "id": "streaming_segmentation",
+      "label": "Streaming Output Segmentation Flow",
       "nodes": [
-        "index_registerCommands",
-        "index_handleClaude",
-        "index_downloadSlackImages",
-        "claude_askClaude",
-        "logger_saveConversationLog"
+        "claudemd_safeupdate",
+        "claudemd_segment_tracker",
+        "claudemd_split_to_blocks",
+        "claudemd_throttle",
+        "claudemd_message_limit"
       ],
       "relation": "participate_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source_file": "src/commands/index.ts"
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "CLAUDE.md"
     },
     {
-      "id": "model_effort_removal",
-      "label": "Remove model/effort: spec\u2192plan\u2192askClaude",
+      "id": "claude_passthrough_flow",
+      "label": "Claude Passthrough Flow",
       "nodes": [
-        "spec_removeModelEffort",
-        "plan_removeModelEffort",
-        "claude_askClaude"
+        "claudemd_handle_claude",
+        "claudemd_claude_service",
+        "claudemd_slash_escape",
+        "claudemd_setting_sources",
+        "claudemd_completion_notify"
       ],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
       "confidence_score": 0.85,
-      "source_file": "docs/superpowers/specs/2026-05-29-remove-model-effort-switching-design.md"
+      "source_file": "CLAUDE.md"
     }
   ],
-  "built_at_commit": "5c5eefc566eb7108e198fb9c096f8aab2cc25c58"
+  "built_at_commit": "db923f41a02ac780d990c283c175e4fc6a72c566"
 }
