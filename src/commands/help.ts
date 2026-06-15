@@ -13,6 +13,7 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`gemini-draw <描述>\` (\`draw\`) — 用 Gemini 生成图片
 • \`头脑风暴 <任意问题>\` — 与 Claude 开始头脑风暴（superpowers brainstorming）
 • \`bug修复 <问题描述>\` — 与 Claude 系统化调试（superpowers systematic-debugging）
+• \`归纳总结 <任意说明>\` — 让 Claude 归纳总结并更新 CLAUDE.md（claude-md-management:revise-claude-md）
 • \`<任意问题>\` — 直接与 Claude AI 对话`;
 
 export async function handleHelp({ say, threadTs }: CommandContext) {

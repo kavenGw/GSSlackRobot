@@ -79,6 +79,8 @@ const BRAINSTORM_TRIGGER = '头脑风暴';
 const BRAINSTORM_SKILL = '/superpowers:brainstorming';
 const DEBUG_TRIGGER = 'bug修复';
 const DEBUG_SKILL = '/superpowers:systematic-debugging';
+const REVISE_CLAUDEMD_TRIGGER = '归纳总结';
+const REVISE_CLAUDEMD_SKILL = '/claude-md-management:revise-claude-md';
 
 function threadToSessionId(threadTs: string): string {
   return uuidv5(threadTs, SESSION_NAMESPACE);
@@ -122,6 +124,9 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
   } else if (text.startsWith(DEBUG_TRIGGER + ' ')) {
     // 主动请求系统化调试 skill：替换前缀并保持斜杠开头，跳过转义以真正触发
     prompt = DEBUG_SKILL + text.slice(DEBUG_TRIGGER.length);
+  } else if (text.startsWith(REVISE_CLAUDEMD_TRIGGER + ' ')) {
+    // 主动请求归纳总结 skill：替换前缀并保持斜杠开头，跳过转义以真正触发
+    prompt = REVISE_CLAUDEMD_SKILL + text.slice(REVISE_CLAUDEMD_TRIGGER.length);
   } else {
     prompt = text.startsWith('/') ? ` ${text}` : text;
   }
