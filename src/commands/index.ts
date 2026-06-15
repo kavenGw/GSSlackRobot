@@ -77,6 +77,8 @@ function resolveAlias(input: string): string {
 const THROTTLE_MS = 500;
 const BRAINSTORM_TRIGGER = '头脑风暴';
 const BRAINSTORM_SKILL = '/superpowers:brainstorming';
+const DEBUG_TRIGGER = 'bug修复';
+const DEBUG_SKILL = '/superpowers:systematic-debugging';
 
 function threadToSessionId(threadTs: string): string {
   return uuidv5(threadTs, SESSION_NAMESPACE);
@@ -117,6 +119,9 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
   if (text.startsWith(BRAINSTORM_TRIGGER + ' ')) {
     // 主动请求脑暴 skill：替换前缀并保持斜杠开头，跳过转义以真正触发
     prompt = BRAINSTORM_SKILL + text.slice(BRAINSTORM_TRIGGER.length);
+  } else if (text.startsWith(DEBUG_TRIGGER + ' ')) {
+    // 主动请求系统化调试 skill：替换前缀并保持斜杠开头，跳过转义以真正触发
+    prompt = DEBUG_SKILL + text.slice(DEBUG_TRIGGER.length);
   } else {
     prompt = text.startsWith('/') ? ` ${text}` : text;
   }

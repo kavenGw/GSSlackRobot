@@ -76,6 +76,10 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
 - `头脑风暴 <任意问题>`：以 `/superpowers:brainstorming` 进入头脑风暴流程（@bot 透传 Claude）
 
+### Bug 修复
+
+- `bug修复 <问题描述>`：以 `/superpowers:systematic-debugging` 进入系统化调试流程（@bot 透传 Claude）
+
 ## Jenkins 配置
 
 ### 获取凭证
