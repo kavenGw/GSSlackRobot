@@ -82,7 +82,7 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
 ### 归纳总结
 
-- `归纳总结 <任意说明>`：以 `/claude-md-management:revise-claude-md` 进入归纳总结流程，更新 CLAUDE.md（@bot 透传 Claude）
+- `归纳总结 <任意说明>`：以 `/claude-md-management:claude-md-improver` 进入归纳总结流程，更新 CLAUDE.md（@bot 透传 Claude）
 
 ## Jenkins 配置
 

@@ -80,7 +80,7 @@ const BRAINSTORM_SKILL = '/superpowers:brainstorming';
 const DEBUG_TRIGGER = 'bug修复';
 const DEBUG_SKILL = '/superpowers:systematic-debugging';
 const REVISE_CLAUDEMD_TRIGGER = '归纳总结';
-const REVISE_CLAUDEMD_SKILL = '/claude-md-management:revise-claude-md';
+const REVISE_CLAUDEMD_SKILL = '/claude-md-management:claude-md-improver';
 
 function threadToSessionId(threadTs: string): string {
   return uuidv5(threadTs, SESSION_NAMESPACE);
