@@ -84,6 +84,10 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
 - `归纳总结 <任意说明>`：以 `/claude-md-management:claude-md-improver` 进入归纳总结流程，更新 CLAUDE.md（@bot 透传 Claude）
 
+### 压缩上下文
+
+- `压缩 [说明]`：以 `/compact` 压缩当前 thread 的 Claude 会话上下文（可省略说明）
+
 ## Jenkins 配置
 
 ### 获取凭证

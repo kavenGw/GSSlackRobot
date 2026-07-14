@@ -75,12 +75,22 @@ function resolveAlias(input: string): string {
 }
 
 const THROTTLE_MS = 500;
-const BRAINSTORM_TRIGGER = '头脑风暴';
-const BRAINSTORM_SKILL = '/superpowers:brainstorming';
-const DEBUG_TRIGGER = 'bug修复';
-const DEBUG_SKILL = '/superpowers:systematic-debugging';
-const REVISE_CLAUDEMD_TRIGGER = '归纳总结';
-const REVISE_CLAUDEMD_SKILL = '/claude-md-management:claude-md-improver';
+
+// 中文前缀 → skill / 内建命令：替换后保持斜杠开头，跳过转义以真正触发
+const SKILL_PREFIXES: ReadonlyArray<readonly [string, string]> = [
+  ['头脑风暴', '/superpowers:brainstorming'],
+  ['bug修复', '/superpowers:systematic-debugging'],
+  ['归纳总结', '/claude-md-management:claude-md-improver'],
+  ['压缩', '/compact'],
+];
+
+function toPrompt(text: string): string {
+  for (const [trigger, skill] of SKILL_PREFIXES) {
+    if (text === trigger) return skill;
+    if (text.startsWith(trigger + ' ')) return skill + text.slice(trigger.length);
+  }
+  return text.startsWith('/') ? ` ${text}` : text;
+}
 
 function threadToSessionId(threadTs: string): string {
   return uuidv5(threadTs, SESSION_NAMESPACE);
@@ -117,19 +127,7 @@ async function downloadSlackImages(files: SlackFile[], token: string): Promise<C
 }
 
 async function handleClaude({ text, channel, threadTs, client, files, userId }: CommandContext) {
-  let prompt: string;
-  if (text.startsWith(BRAINSTORM_TRIGGER + ' ')) {
-    // 主动请求脑暴 skill：替换前缀并保持斜杠开头，跳过转义以真正触发
-    prompt = BRAINSTORM_SKILL + text.slice(BRAINSTORM_TRIGGER.length);
-  } else if (text.startsWith(DEBUG_TRIGGER + ' ')) {
-    // 主动请求系统化调试 skill：替换前缀并保持斜杠开头，跳过转义以真正触发
-    prompt = DEBUG_SKILL + text.slice(DEBUG_TRIGGER.length);
-  } else if (text.startsWith(REVISE_CLAUDEMD_TRIGGER + ' ')) {
-    // 主动请求归纳总结 skill：替换前缀并保持斜杠开头，跳过转义以真正触发
-    prompt = REVISE_CLAUDEMD_SKILL + text.slice(REVISE_CLAUDEMD_TRIGGER.length);
-  } else {
-    prompt = text.startsWith('/') ? ` ${text}` : text;
-  }
+  const prompt = toPrompt(text);
 
   let images: ClaudeImage[] = [];
   if (files?.length) {
