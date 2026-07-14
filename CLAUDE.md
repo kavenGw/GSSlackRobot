@@ -10,48 +10,6 @@ GSSlackRobot 是一个中文 Slack Bot 个人助手，本机常驻运行，集�
 - **运行时**: Node.js
 - **入口**: `src/app.ts`
 
-## 常用命令
-
-```bash
-npm run dev      # 开发模式 (tsx watch 热重载)
-npm run build    # 编译 TypeScript → dist/
-npm start        # 生产模式 (node dist/app.js)
-```
-
-## 项目结构
-
-```
-src/
-├── app.ts                    # 入口：加载配置 → 启动 Bolt
-├── config/
-│   ├── schema.ts             # 配置类型定义 (AppConfig 接口)
-│   ├── index.ts              # loadConfig() 环境变量加载 + 验证调用
-│   └── env-validator.ts      # 环境变量有效性验证 (格式/范围/占位符检测)
-├── commands/
-│   ├── index.ts              # app_mention 事件 → help 或 Claude 透传
-│   ├── help.ts               # 帮助信息
-│   ├── daily-report.ts       # 每日简报
-│   ├── list-milestones.ts    # 列出活跃 milestones
-│   ├── list-milestone-issues.ts # 列出 milestone issues
-│   ├── create-milestone.ts   # 创建 milestone（含起止日期）+ 杂项 issue
-│   ├── gemini.ts             # Gemini AI 对话
-│   └── gemini-draw.ts        # Gemini 画图生成
-├── scheduler/
-│   ├── daily-report.ts       # 每日简报定时调度
-│   └── jenkins-cron.ts       # Jenkins Job 定时触发
-├── services/
-│   ├── claude.ts             # Claude Agent SDK query() 流式调用 (AsyncGenerator)
-│   ├── gitlab.ts             # GitLab REST API
-│   ├── jenkins.ts            # Jenkins Script Console + Build API
-│   └── gemini.ts             # Google Gemini API
-├── webhooks/
-│   ├── server.ts             # Express Webhook 服务器 (GitLab → Slack)
-│   └── gitlab.ts             # GitLab 事件格式化 (Push/MR/Pipeline/Issue/Note)
-└── utils/
-    ├── logger.ts             # 彩色控制台日志
-    └── message.ts            # 文本截断/分段
-```
-
 ## 编码规范
 
 - **测试策略**: 无单元测试套件；验证 = `npm run build`（tsc 通过）+ 必要时 Slack 端到端手动测试
@@ -63,48 +21,10 @@ src/
 - **消息限制**: 单段最大字符数由 `SLACK_MAX_BLOCK_TEXT` 控制（默认 2000），超出由 `splitToBlocks()` 分段发送；流式 `safeUpdate` 使用 `SegmentTracker` 跟踪每段 ts/lastContent，所有 Slack API 调用经 `safeChat` 兜底，`msg_too_long` 仅记 warn 不中断
 - **消息发送函数选择**: 普通文本回复用 `safePost(client, channel, text, threadTs, maxBlockText)`；流式增量更新用 `safeUpdate(..., tracker, maxBlockText)`；Block Kit 结构化消息（每日简报）用 `postBlocks(client, channel, blocks, threadTs)`；短固定文本通知（如 `<@user> ✅` 这类不会超长的提示）直接用 `client.chat.postMessage`，无需分段（`chat.update` 推送不可靠，分段对短文本是多余的）
 - **节流更新**: 流式输出场景下，`chat.update()` 最小间隔 500ms
-- **日志接口**: `src/utils/logger.ts` 导出 `log` 对象，方法：`info/warn/error/startup/incoming/claudeStart/claudeDone/reply/help/webhook/webhookServer/logSaved`
 
 ## 环境变量
 
-### 必填参数 (启动时验证)
-
-| 变量 | 说明 | 格式要求 |
-|------|------|---------|
-| `SLACK_BOT_TOKEN` | Slack Bot Token | 必须以 `xoxb-` 开头 |
-| `SLACK_APP_TOKEN` | Slack App Token | 必须以 `xapp-` 开头 |
-
-### 可选参数 (带默认值)
-
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `SLACK_MAX_BLOCK_TEXT` | `2000` | Slack 单段最大字符数（100..4000，过大易触发 `msg_too_long`） |
-| `ANTHROPIC_BASE_URL` | 无 | Anthropic API Base URL (若设置需有效 URL) |
-| `ANTHROPIC_AUTH_TOKEN` | 无 | Anthropic Auth Token (若设置不可为占位符) |
-| `CLAUDE_PROJECT_DIR` | 无 | Claude 项目目录 |
-| `CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS` | `true` | 跳过 Claude 权限检查 |
-| `CLAUDE_HTTP_PROXY` | 无 | Claude CLI HTTP 代理地址 |
-| `CLAUDE_HTTPS_PROXY` | 无 | Claude CLI HTTPS 代理地址 |
-| `GITLAB_NOTIFY_CHANNEL` | 无 | GitLab 通知 Slack 频道 ID（设置后启用 Webhook） |
-| `GITLAB_WEBHOOK_PORT` | `3000` | Webhook 监听端口 |
-| `GITLAB_WEBHOOK_SECRET` | 无 | GitLab Webhook Secret Token |
-| `GITLAB_EVENTS_PUSH` | `true` | Push 事件通知开关 |
-| `GITLAB_EVENTS_MR` | `true` | MR 事件通知开关 |
-| `GITLAB_EVENTS_PIPELINE` | `true` | Pipeline 事件通知开关 |
-| `GITLAB_EVENTS_ISSUE` | `true` | Issue 事件通知开关 |
-| `GITLAB_EVENTS_NOTE` | `true` | Note 事件通知开关 |
-| `GITLAB_API_URL` | 无 | GitLab API 基础 URL（三个都设置时启用 GitLab 命令） |
-| `GITLAB_TOKEN` | 无 | GitLab Personal Access Token |
-| `GITLAB_PROJECT_ID` | 无 | GitLab 项目 ID |
-| `JENKINS_URL` | 无 | Jenkins 基础 URL（三个都设置时启用 Jenkins 集成） |
-| `JENKINS_USERNAME` | 无 | Jenkins 用户名 |
-| `JENKINS_API_TOKEN` | 无 | Jenkins API Token |
-| `JENKINS_CRON_JOBS` | 无 | Jenkins 定时任务（格式：`JobName HH:MM[,...]`） |
-| `JENKINS_NOTIFY_CHANNEL` | 无 | Jenkins 通知 Slack 频道 ID（设置后启用 bot 自动 @channel 补发功能） |
-| `SINGLETON_PORT` | `19280` | 单实例检测端口 |
-| `GEMINI_API_KEY` | 无 | Google AI Studio API Key（设置后启用 gemini 命令） |
-| `GEMINI_MODEL` | `gemini-2.0-flash` | Gemini 模型名 |
-| `GEMINI_IMAGE_MODEL` | `gemini-3-pro-image-preview` | Gemini 画图模型名 |
+完整清单（变量名、默认值、说明）见 `.env.example` 与 `docs/setup-guide.md`；类型定义见 `src/config/schema.ts`。必填项只有 `SLACK_BOT_TOKEN` 和 `SLACK_APP_TOKEN`，其余均为可选并带默认值。
 
 ### 环境变量验证机制
 
@@ -129,7 +49,7 @@ src/
 - **Jenkins @channel 补发**: 设置 `JENKINS_NOTIFY_CHANNEL` 后，bot 注册 Slack `message` 事件 handler 监听该频道。频道里出现新的顶层消息（且非 bot 自己发的、非 message_changed/deleted、非 thread 回复）时，自动在同频道独立发一条 `<!channel>` 触发推送提醒。频道纯净度（只用于 Jenkins App 推送）是运维约定，不在代码层校验。需要 Slack App 订阅 `message.channels`（或 `message.groups`）event，并加 `channels:history`（或 `groups:history`）scope，bot 也需 invite 进该频道。
 - **Slack Bolt 事件 / 类型 quirks**: `chat.postMessage` 的 `link_names` 是 `boolean | undefined`（不是 Slack REST 文档里写的 `0|1`，传数字编不过）；`message` 事件**没有** `subtype: 'message_replied'`，thread 回复是带 `thread_ts` 的普通 message，应用 `thread_ts !== ts` 过滤而非 subtype；订阅 `message.channels/groups` 后 bot **必须**被 invite 进目标频道，否则 Slack 静默丢事件且无任何错误信号
 - **定时调度模式**: scheduler 使用 setTimeout 单次调度（过点立即执行，否则定时等待），程序每日重启
-- **配置变更同步**: 新增/修改环境变量配置或 Slack OAuth scope 时，需同步更新 `CLAUDE.md`、`docs/setup-guide.md`、`.env.example` 三处
+- **配置变更同步**: 新增/修改环境变量配置或 Slack OAuth scope 时，需同步更新 `docs/setup-guide.md` 与 `.env.example` 两处
 - **设计/计划文档**: 非平凡功能走 `docs/superpowers/specs/<YYYY-MM-DD>-<feature>-design.md`（设计） → `docs/superpowers/plans/<YYYY-MM-DD>-<feature>.md`（实现计划）流程
 - **Slash 前缀转义**: `handleClaude` 在透传给 Claude Agent SDK 前，对以 `/` 开头的 prompt 前置一个空格，避免 SDK 把 `/foo:bar` 当作 skill 调用返回 `Unknown skill`；例外由 `src/commands/index.ts` 的 `SKILL_PREFIXES` 表驱动（`toPrompt()`）：`头脑风暴`→`/superpowers:brainstorming`、`bug修复`→`/superpowers:systematic-debugging`、`归纳总结`→`/claude-md-management:claude-md-improver`、`压缩`→`/compact`（内建命令，压缩当前 thread 会话上下文）。命中条件是消息**等于**触发词或以「触发词+空格」开头，替换后保持斜杠开头从而真正触发（不前置空格）。新增映射只需往表里加一行。**注意**：skill 能被解析的前提是 `src/services/claude.ts` 的 SDK `options` 设了 `settingSources: ['user']`——否则 SDK 处于隔离模式不读 `~/.claude` 的 `enabledPlugins`，任何 `/plugin:skill` 都会返回 `Unknown skill`
 - **Claude 完成通知**: `handleClaude` 透传链路在成功结束（`✅`）或失败（`❌`）后，会在同一 thread 独立 `postMessage` 一条 `<@user> ✅|❌` 消息，用于触发 Slack 推送通知；该行为仅作用于 Claude，不涉及 Gemini 等其他命令；`postMessage` 自身失败仅 `log.warn`，不中断主流程
