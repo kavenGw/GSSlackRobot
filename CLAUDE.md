@@ -6,10 +6,6 @@
 
 GSSlackRobot 是一个中文 Slack Bot 个人助手，本机常驻运行，集成本机 Claude Code CLI。用户 @bot 任意文字即可透传给 Claude AI 对话。
 
-- **语言**: TypeScript (strict mode) + ES2022 Modules
-- **运行时**: Node.js
-- **入口**: `src/app.ts`
-
 ## 编码规范
 
 - **测试策略**: 无单元测试套件；验证 = `npm run build`（tsc 通过）+ 必要时 Slack 端到端手动测试
@@ -25,18 +21,6 @@ GSSlackRobot 是一个中文 Slack Bot 个人助手，本机常驻运行，集�
 ## 环境变量
 
 完整清单（变量名、默认值、说明）见 `.env.example` 与 `docs/setup-guide.md`；类型定义见 `src/config/schema.ts`。必填项只有 `SLACK_BOT_TOKEN` 和 `SLACK_APP_TOKEN`，其余均为可选并带默认值。
-
-### 环境变量验证机制
-
-`loadConfig()` 执行两阶段验证：
-
-1. **存在性检查** (`validateRequiredEnvVars`): 确认必填环境变量已设置
-2. **有效性检查** (`validateConfig`): 验证值的格式和范围
-   - Token 前缀格式验证
-   - URL 格式必须为有效的 HTTP/HTTPS（若设置）
-   - Token 不能是占位符值
-
-验证失败时抛出 `EnvValidationError`，输出所有错误详情后 `process.exit(1)` 退出。
 
 ## 关键设计注意事项
 
