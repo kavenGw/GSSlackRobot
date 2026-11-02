@@ -173,6 +173,8 @@ dev.bat      # npm run dev（tsx watch 热重载）
 start.bat    # npm run build && npm start
 ```
 
+两个脚本启动前都会运行 `scripts/update-sdk.mjs`：距上次检查超过 `SDK_UPDATE_INTERVAL_DAYS` 天（默认 `7`，`0` 关闭）时，把 Claude Agent SDK 升到 npm 最新版并执行 `tsc` 校验，编译失败自动回退。升级用 `--no-save`，不改 `package.json` 和 lock；检查时间记录在 `data/sdk-update.json`。直接运行 `npm start` / `npm run dev` 不会触发更新。
+
 建议配置：
 - 设备管理器 → 网络适配器 → 属性 → 电源管理 → 取消"允许计算机关闭此设备以节约电源"
 - Windows 防火墙放行入站 TCP 3000 端口（GitLab Webhook）
