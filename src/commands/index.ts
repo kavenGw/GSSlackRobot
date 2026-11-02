@@ -18,7 +18,7 @@ import { getConfig } from '../config/index.js';
 
 const SESSION_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 const KNOWN_SESSIONS_PATH = 'data/known-sessions.json';
-const activeSessions = new Set<string>();
+const activeSessions = new Map<string, AbortController>();
 const knownSessions = new Set<string>();
 
 export async function loadKnownSessions(): Promise<void> {
@@ -75,6 +75,7 @@ function resolveAlias(input: string): string {
 }
 
 const THROTTLE_MS = 500;
+const STOPPED_TEXT = '⏹️ 已终止';
 
 // 中文前缀 → skill / 内建命令：替换后保持斜杠开头，跳过转义以真正触发
 const SKILL_PREFIXES: ReadonlyArray<readonly [string, string]> = [
@@ -151,7 +152,8 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
     return;
   }
 
-  activeSessions.add(sessionId);
+  const controller = new AbortController();
+  activeSessions.set(sessionId, controller);
   const initial = await client.chat.postMessage({
     channel,
     thread_ts: threadTs,
@@ -172,11 +174,26 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
     await safeUpdate(client, channel, text || '思考中...', threadTs, tracker, maxBlockText);
   };
 
+  const reportStopped = async () => {
+    if (content) {
+      await flush(true);
+      await client.chat.postMessage({ channel, thread_ts: threadTs, text: STOPPED_TEXT });
+    } else {
+      await client.chat.update({ channel, ts: msgTs, text: STOPPED_TEXT });
+    }
+  };
+
   try {
     const resume = knownSessions.has(sessionId);
-    for await (const chunk of askClaude(finalText, images, sessionId, resume)) {
+    for await (const chunk of askClaude(finalText, images, sessionId, resume, controller)) {
+      // abort 后 SDK 仍会继续吐缓冲内容数秒，主动 break 才能立即停止
+      if (controller.signal.aborted) break;
       content += chunk;
       await flush();
+    }
+    if (controller.signal.aborted) {
+      await reportStopped();
+      return;
     }
     await flush(true);
     if (!content) {
@@ -207,6 +224,10 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
       }
     }
   } catch (err) {
+    if (controller.signal.aborted) {
+      await reportStopped();
+      return;
+    }
     const errMsg = err instanceof Error ? err.message : String(err);
     if (!content) {
       await client.chat.update({ channel, ts: msgTs, text: `出错: ${errMsg}` });
@@ -233,6 +254,15 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
   }
 }
 
+async function handleStop({ channel, threadTs, client }: CommandContext) {
+  const controller = activeSessions.get(threadToSessionId(threadTs));
+  if (!controller) {
+    await client.chat.postMessage({ channel, thread_ts: threadTs, text: '当前 thread 没有正在运行的 Claude 任务。' });
+    return;
+  }
+  controller.abort();
+}
+
 export function registerCommands(app: App) {
   app.event('app_mention', async ({ event, say, client }) => {
     const text = resolveAlias(event.text.replace(/<@[A-Z0-9]+>\s*/g, '').trim());
@@ -248,6 +278,8 @@ export function registerCommands(app: App) {
         await handleHelp(ctx);
       } else if (/^commands$/i.test(text)) {
         await handleCommands(ctx);
+      } else if (text === '终止') {
+        await handleStop(ctx);
       } else if (/^(list-milestones|list-issues|daily-report|reset-daily-report|create-milestone)\b/i.test(text)) {
         if (!getConfig().gitlab) {
           await say({ text: 'GitLab 未配置，请设置 GITLAB_API_URL、GITLAB_TOKEN、GITLAB_PROJECT_ID 环境变量', thread_ts: threadTs });

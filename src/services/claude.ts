@@ -35,6 +35,7 @@ export async function* askClaude(
   images: ClaudeImage[] = [],
   sessionId?: string,
   resume = false,
+  abortController?: AbortController,
 ): AsyncGenerator<string> {
   const cfg = getConfig().claude;
   const env: Record<string, string | undefined> = { ...process.env };
@@ -57,6 +58,7 @@ export async function* askClaude(
     // 加载 user 级设置以启用 ~/.claude 已安装插件（含 superpowers），
     // 否则 SDK 处于隔离模式，/superpowers:xxx 会返回 Unknown skill
     settingSources: ['user'],
+    abortController,
   };
 
   if (cfg.projectDir) {

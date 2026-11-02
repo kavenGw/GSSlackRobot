@@ -15,6 +15,7 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`bug修复 <问题描述>\` — 与 Claude 系统化调试（mattpocock-skills:diagnosing-bugs）
 • \`归纳总结 <任意说明>\` — 让 Claude 归纳总结并更新 CLAUDE.md（claude-md-management:claude-md-improver）
 • \`压缩 [说明]\` — 压缩当前 thread 的 Claude 会话上下文（/compact）
+• \`终止\` — 终止当前 thread 正在运行的 Claude 任务
 • \`<任意问题>\` — 直接与 Claude AI 对话`;
 
 export async function handleHelp({ say, threadTs }: CommandContext) {
