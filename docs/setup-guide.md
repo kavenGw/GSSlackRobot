@@ -74,7 +74,7 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
 ### 头脑风暴
 
-- `头脑风暴 <任意问题>`：以 `/superpowers:brainstorming` 进入头脑风暴流程（@bot 透传 Claude）
+- `头脑风暴 <任意问题>`：以 `/mattpocock-skills:grilling` 进入追问拷打流程（@bot 透传 Claude）
 
 ### Bug 修复
 
