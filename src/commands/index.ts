@@ -79,7 +79,7 @@ const THROTTLE_MS = 500;
 // 中文前缀 → skill / 内建命令：替换后保持斜杠开头，跳过转义以真正触发
 const SKILL_PREFIXES: ReadonlyArray<readonly [string, string]> = [
   ['头脑风暴', '/mattpocock-skills:grilling'],
-  ['bug修复', '/superpowers:systematic-debugging'],
+  ['bug修复', '/mattpocock-skills:diagnosing-bugs'],
   ['归纳总结', '/claude-md-management:claude-md-improver'],
   ['压缩', '/compact'],
 ];

@@ -12,7 +12,7 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`gemini <问题>\` (\`gem\`) — 与 Google Gemini AI 对话
 • \`gemini-draw <描述>\` (\`draw\`) — 用 Gemini 生成图片
 • \`头脑风暴 <任意问题>\` — 让 Claude 追问拷打你的方案（mattpocock grilling）
-• \`bug修复 <问题描述>\` — 与 Claude 系统化调试（superpowers systematic-debugging）
+• \`bug修复 <问题描述>\` — 与 Claude 系统化调试（mattpocock-skills:diagnosing-bugs）
 • \`归纳总结 <任意说明>\` — 让 Claude 归纳总结并更新 CLAUDE.md（claude-md-management:claude-md-improver）
 • \`压缩 [说明]\` — 压缩当前 thread 的 Claude 会话上下文（/compact）
 • \`<任意问题>\` — 直接与 Claude AI 对话`;

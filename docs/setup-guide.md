@@ -78,7 +78,7 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
 ### Bug 修复
 
-- `bug修复 <问题描述>`：以 `/superpowers:systematic-debugging` 进入系统化调试流程（@bot 透传 Claude）
+- `bug修复 <问题描述>`：以 `/mattpocock-skills:diagnosing-bugs` 进入系统化调试流程（@bot 透传 Claude）
 
 ### 归纳总结
 
