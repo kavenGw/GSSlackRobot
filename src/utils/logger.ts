@@ -18,6 +18,7 @@ interface ConversationLogParams {
   resume: boolean;
   segments: number;
   imageCount?: number;
+  provider?: string;
 }
 
 export async function saveConversationLog(params: ConversationLogParams): Promise<void> {
@@ -37,7 +38,7 @@ export async function saveConversationLog(params: ConversationLogParams): Promis
   const filePath = join(logsDir, fileName);
 
   const sec = (params.durationMs / 1000).toFixed(1);
-  const content = `# Claude 对话日志
+  const content = `# ${params.provider ?? 'Claude'} 对话日志
 - 时间: ${dateStr} ${timeStr}
 - 会话ID: ${params.sessionId}
 - 续对话: ${params.resume ? '是' : '否'}
@@ -49,7 +50,7 @@ ${params.imageCount ? `- 图片数: ${params.imageCount}\n` : ''}
 ## 用户提问
 ${params.prompt}
 
-## Claude 回复
+## ${params.provider ?? 'Claude'} 回复
 ${params.reply}
 `;
 
@@ -72,13 +73,13 @@ export const log = {
     console.log(`${ts()} ${chalk.cyan('←')} @${user}: ${preview}`);
   },
 
-  claudeStart(promptLen: number) {
-    console.log(`${ts()} ${chalk.yellow('↻')} Claude 调用开始 (${promptLen} chars)`);
+  agentStart(provider: string, promptLen: number) {
+    console.log(`${ts()} ${chalk.yellow('↻')} ${provider} 调用开始 (${promptLen} chars)`);
   },
 
-  claudeDone(ms: number, chars: number) {
+  agentDone(provider: string, ms: number, chars: number) {
     const sec = (ms / 1000).toFixed(1);
-    console.log(`${ts()} ${chalk.green('✓')} Claude 完成 (${sec}s, ${chars} chars)`);
+    console.log(`${ts()} ${chalk.green('✓')} ${provider} 完成 (${sec}s, ${chars} chars)`);
   },
 
   reply(segments: number) {

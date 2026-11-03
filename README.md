@@ -12,6 +12,7 @@
 ## Features
 
 - **Claude AI Chat** — Mention the bot with any text to chat with Claude AI via local Claude Code CLI, with streaming output
+- **Codex Chat** — Start a thread with `@bot codex <prompt>` to use the local Codex login. Later mentions continue that conversation without a prefix; the provider cannot change within a thread. See [Codex integration](docs/codex-integration.md).
 - **Multi-Model Support** — Switch between Claude Opus/Sonnet/Haiku models and adjust thinking effort on the fly
 - **Gemini AI** — Chat with Google Gemini and generate images via `gemini` / `gemini-draw` commands
 - **GitLab Integration** — Receive webhook notifications (Push, MR, Pipeline, Issue, Note) and manage milestones/issues from Slack

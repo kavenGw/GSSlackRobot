@@ -1,8 +1,6 @@
 import type { App, SayFn } from '@slack/bolt';
 import type { WebClient } from '@slack/web-api';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import sharp from 'sharp';
-import { v5 as uuidv5 } from 'uuid';
 import { handleHelp } from './help.js';
 import { handleCommands } from './commands.js';
 import { handleListMilestones } from './list-milestones.js';
@@ -12,31 +10,17 @@ import { handleDailyReport, handleResetDailyReport } from './daily-report.js';
 import { handleGemini } from './gemini.js';
 import { handleGeminiDraw } from './gemini-draw.js';
 import { askClaude, type ClaudeImage } from '../services/claude.js';
+import { askCodex, codexPrompt } from '../services/codex.js';
+import { AgentSessions, claudeSessionId, type AgentSession } from '../services/agent-sessions.js';
 import { markdownToSlack, safePost, safeUpdate, createTracker } from '../utils/message.js';
 import { log, saveConversationLog } from '../utils/logger.js';
 import { getConfig } from '../config/index.js';
 
-const SESSION_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
-const KNOWN_SESSIONS_PATH = 'data/known-sessions.json';
 const activeSessions = new Map<string, AbortController>();
-const knownSessions = new Set<string>();
+const sessions = new AgentSessions();
 
 export async function loadKnownSessions(): Promise<void> {
-  try {
-    const raw = await readFile(KNOWN_SESSIONS_PATH, 'utf-8');
-    const parsed = JSON.parse(raw) as string[];
-    if (Array.isArray(parsed)) {
-      for (const id of parsed) knownSessions.add(id);
-    }
-    log.info(`Loaded ${knownSessions.size} known sessions`);
-  } catch {
-    // 文件不存在或损坏，从空 Set 开始
-  }
-}
-
-async function saveKnownSessions(): Promise<void> {
-  await mkdir('data', { recursive: true });
-  await writeFile(KNOWN_SESSIONS_PATH, JSON.stringify([...knownSessions]));
+  await sessions.load();
 }
 
 interface SlackFile {
@@ -93,10 +77,6 @@ function toPrompt(text: string): string {
   return text.startsWith('/') ? ` ${text}` : text;
 }
 
-function threadToSessionId(threadTs: string): string {
-  return uuidv5(threadTs, SESSION_NAMESPACE);
-}
-
 async function downloadSlackImages(files: SlackFile[], token: string): Promise<ClaudeImage[]> {
   const results: ClaudeImage[] = [];
   for (const file of files) {
@@ -127,21 +107,10 @@ async function downloadSlackImages(files: SlackFile[], token: string): Promise<C
   return results;
 }
 
-async function handleClaude({ text, channel, threadTs, client, files, userId }: CommandContext) {
-  const prompt = toPrompt(text);
-
-  let images: ClaudeImage[] = [];
-  if (files?.length) {
-    images = await downloadSlackImages(files, getConfig().slack.botToken);
-  }
-  const finalText = images.length && !prompt.trim() ? '请查看图片' : prompt;
-
-  const startTime = Date.now();
-  log.claudeStart(finalText.length);
-  if (images.length) {
-    log.info(`Sending ${images.length} image(s) to Claude (multimodal)`);
-  }
-  const sessionId = threadToSessionId(threadTs);
+async function handleAgent({ text, channel, threadTs, client, files, userId }: CommandContext, session: AgentSession) {
+  const provider = session.provider === 'codex' ? 'Codex' : 'Claude';
+  const prompt = session.provider === 'codex' ? codexPrompt(text) : toPrompt(text);
+  const sessionId = `${channel}:${threadTs}`;
 
   if (activeSessions.has(sessionId)) {
     await client.chat.postMessage({
@@ -154,110 +123,121 @@ async function handleClaude({ text, channel, threadTs, client, files, userId }: 
 
   const controller = new AbortController();
   activeSessions.set(sessionId, controller);
-  const initial = await client.chat.postMessage({
-    channel,
-    thread_ts: threadTs,
-    text: '思考中...',
-  });
-  const msgTs = initial.ts!;
-
-  let content = '';
-  let lastUpdate = 0;
-  const maxBlockText = getConfig().slack.maxBlockText;
-  const tracker = createTracker(msgTs, '思考中...');
-
-  const flush = async (final = false) => {
-    const now = Date.now();
-    if (!final && now - lastUpdate < THROTTLE_MS) return;
-    lastUpdate = now;
-    const text = final ? markdownToSlack(content) : content;
-    await safeUpdate(client, channel, text || '思考中...', threadTs, tracker, maxBlockText);
-  };
-
-  const reportStopped = async () => {
-    if (content) {
-      await flush(true);
-      await client.chat.postMessage({ channel, thread_ts: threadTs, text: STOPPED_TEXT });
-    } else {
-      await client.chat.update({ channel, ts: msgTs, text: STOPPED_TEXT });
-    }
-  };
-
   try {
-    const resume = knownSessions.has(sessionId);
-    for await (const chunk of askClaude(finalText, images, sessionId, resume, controller)) {
-      // abort 后 SDK 仍会继续吐缓冲内容数秒，主动 break 才能立即停止
-      if (controller.signal.aborted) break;
-      content += chunk;
-      await flush();
-    }
-    if (controller.signal.aborted) {
-      await reportStopped();
-      return;
-    }
-    await flush(true);
-    if (!content) {
-      await client.chat.update({ channel, ts: msgTs, text: 'Claude 未返回内容，请重试。' });
-    }
-    const durationMs = Date.now() - startTime;
-    log.claudeDone(durationMs, content.length);
-    const segments = tracker.segments.length;
-    log.reply(segments);
-    await saveConversationLog({
-      prompt: finalText,
-      reply: content,
-      durationMs,
-      sessionId,
-      resume,
-      segments,
-      imageCount: images.length,
+    const images = files?.length ? await downloadSlackImages(files, getConfig().slack.botToken) : [];
+    const finalText = images.length && !prompt.trim() ? '请查看图片' : prompt;
+    const startTime = Date.now();
+    log.agentStart(provider, finalText.length);
+    const initial = await client.chat.postMessage({
+      channel,
+      thread_ts: threadTs,
+      text: '思考中...',
     });
-    if (userId) {
-      try {
-        await client.chat.postMessage({
-          channel,
-          thread_ts: threadTs,
-          text: `<@${userId}> ✅`,
-        });
-      } catch (notifyErr) {
-        log.warn(`mention sender (success) failed: ${notifyErr instanceof Error ? notifyErr.message : String(notifyErr)}`);
+    const msgTs = initial.ts!;
+
+    let content = '';
+    let lastUpdate = 0;
+    const maxBlockText = getConfig().slack.maxBlockText;
+    const tracker = createTracker(msgTs, '思考中...');
+
+    const flush = async (final = false) => {
+      const now = Date.now();
+      if (!final && now - lastUpdate < THROTTLE_MS) return;
+      lastUpdate = now;
+      const text = final ? markdownToSlack(content) : content;
+      await safeUpdate(client, channel, text || '思考中...', threadTs, tracker, maxBlockText);
+    };
+
+    const reportStopped = async () => {
+      if (content) {
+        await flush(true);
+        await client.chat.postMessage({ channel, thread_ts: threadTs, text: STOPPED_TEXT });
+      } else {
+        await client.chat.update({ channel, ts: msgTs, text: STOPPED_TEXT });
       }
-    }
-  } catch (err) {
-    if (controller.signal.aborted) {
-      await reportStopped();
-      return;
-    }
-    const errMsg = err instanceof Error ? err.message : String(err);
-    if (!content) {
-      await client.chat.update({ channel, ts: msgTs, text: `出错: ${errMsg}` });
-    } else {
-      await safePost(client, channel, `_（出错: ${errMsg}）_`, threadTs, getConfig().slack.maxBlockText);
-    }
-    if (userId) {
-      try {
-        await client.chat.postMessage({
-          channel,
-          thread_ts: threadTs,
-          text: `<@${userId}> ❌`,
-        });
-      } catch (notifyErr) {
-        log.warn(`mention sender (error) failed: ${notifyErr instanceof Error ? notifyErr.message : String(notifyErr)}`);
+    };
+
+    try {
+      controller.signal.throwIfAborted();
+      const resume = Boolean(session.sessionId);
+      const onSession = async (id: string) => {
+        session.sessionId = id;
+        await sessions.save();
+      };
+      const response = session.provider === 'codex'
+        ? askCodex(finalText, images, session.sessionId, controller, onSession)
+        : askClaude(finalText, images, session.sessionId ?? claudeSessionId(threadTs), resume, controller, onSession);
+      for await (const chunk of response) {
+        // abort 后 SDK 仍会继续吐缓冲内容数秒，主动 break 才能立即停止
+        if (controller.signal.aborted) break;
+        content += chunk;
+        await flush();
+      }
+      if (controller.signal.aborted) {
+        await reportStopped();
+        return;
+      }
+      await flush(true);
+      if (!content) {
+        await client.chat.update({ channel, ts: msgTs, text: `${provider} 未返回内容，请重试。` });
+      }
+      const durationMs = Date.now() - startTime;
+      log.agentDone(provider, durationMs, content.length);
+      const segments = tracker.segments.length;
+      log.reply(segments);
+      await saveConversationLog({
+        prompt: finalText,
+        reply: content,
+        durationMs,
+        provider,
+        sessionId: session.sessionId ?? sessionId,
+        resume,
+        segments,
+        imageCount: images.length,
+      });
+      if (userId) {
+        try {
+          await client.chat.postMessage({
+            channel,
+            thread_ts: threadTs,
+            text: `<@${userId}> ✅`,
+          });
+        } catch (notifyErr) {
+          log.warn(`mention sender (success) failed: ${notifyErr instanceof Error ? notifyErr.message : String(notifyErr)}`);
+        }
+      }
+    } catch (err) {
+      if (controller.signal.aborted) {
+        await reportStopped();
+        return;
+      }
+      const errMsg = err instanceof Error ? err.message : String(err);
+      if (!content) {
+        await client.chat.update({ channel, ts: msgTs, text: `出错: ${errMsg}` });
+      } else {
+        await safePost(client, channel, `_（出错: ${errMsg}）_`, threadTs, getConfig().slack.maxBlockText);
+      }
+      if (userId) {
+        try {
+          await client.chat.postMessage({
+            channel,
+            thread_ts: threadTs,
+            text: `<@${userId}> ❌`,
+          });
+        } catch (notifyErr) {
+          log.warn(`mention sender (error) failed: ${notifyErr instanceof Error ? notifyErr.message : String(notifyErr)}`);
+        }
       }
     }
   } finally {
-    if (!knownSessions.has(sessionId)) {
-      knownSessions.add(sessionId);
-      saveKnownSessions().catch(err => log.error(`saveKnownSessions failed: ${err}`));
-    }
     activeSessions.delete(sessionId);
   }
 }
 
 async function handleStop({ channel, threadTs, client }: CommandContext) {
-  const controller = activeSessions.get(threadToSessionId(threadTs));
+  const controller = activeSessions.get(`${channel}:${threadTs}`);
   if (!controller) {
-    await client.chat.postMessage({ channel, thread_ts: threadTs, text: '当前 thread 没有正在运行的 Claude 任务。' });
+    await client.chat.postMessage({ channel, thread_ts: threadTs, text: '当前 thread 没有正在运行的 AI 任务。' });
     return;
   }
   controller.abort();
@@ -265,14 +245,17 @@ async function handleStop({ channel, threadTs, client }: CommandContext) {
 
 export function registerCommands(app: App) {
   app.event('app_mention', async ({ event, say, client }) => {
-    const text = resolveAlias(event.text.replace(/<@[A-Z0-9]+>\s*/g, '').trim());
+    const input = event.text.replace(/<@[A-Z0-9]+>\s*/g, '').trim();
     const threadTs = event.thread_ts ?? event.ts;
-    log.incoming(event.user ?? 'unknown', text);
+    log.incoming(event.user ?? 'unknown', input);
+    const { session, text: routedText } = sessions.select(event.channel, threadTs, input);
+    const text = resolveAlias(routedText);
 
     const files = (event as any).files as SlackFile[] | undefined;
     const ctx: CommandContext = { text, channel: event.channel, threadTs, say, client, files, userId: event.user };
 
     try {
+      await sessions.save();
       if (/^help$/i.test(text)) {
         log.help();
         await handleHelp(ctx);
@@ -307,7 +290,7 @@ export function registerCommands(app: App) {
           await handleGemini(ctx);
         }
       } else {
-        await handleClaude(ctx);
+        await handleAgent(ctx, session);
       }
     } catch (err) {
       log.error(err instanceof Error ? err.message : String(err));

@@ -36,6 +36,7 @@ export async function* askClaude(
   sessionId?: string,
   resume = false,
   abortController?: AbortController,
+  onSession?: (id: string) => Promise<void>,
 ): AsyncGenerator<string> {
   const cfg = getConfig().claude;
   const env: Record<string, string | undefined> = { ...process.env };
@@ -86,6 +87,9 @@ export async function* askClaude(
 
   try {
     for await (const message of conversation) {
+      if (message.type === 'system' && message.subtype === 'init') {
+        await onSession?.(message.session_id);
+      }
       if (message.type === 'stream_event' && message.event.type === 'content_block_delta') {
         const delta = message.event.delta;
         if (delta.type === 'text_delta') {
