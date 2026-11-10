@@ -1,13 +1,38 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { access, readFile } from 'node:fs/promises';
-import { Codex, type Thread, type ThreadEvent, type UserInput } from '@openai/codex-sdk';
+import { Codex, type Thread, type ThreadEvent, type ThreadOptions, type UserInput } from '@openai/codex-sdk';
 import { askCodex, codexPrompt } from '../src/services/codex.js';
 import { loadConfig } from '../src/config/index.js';
 
 process.env.SLACK_BOT_TOKEN = 'xoxb-test-token';
 process.env.SLACK_APP_TOKEN = 'xapp-test-token';
 loadConfig();
+
+test('Codex skips Git repository checks for new and resumed Slack sessions', async () => {
+  const checkOptions = (options?: ThreadOptions) => {
+    assert.equal(options?.skipGitRepoCheck, true, 'Slack working directories may be outside a Git repository');
+    return {
+      async runStreamed() {
+        return { events: (async function* (): AsyncGenerator<ThreadEvent> {
+          yield { type: 'item.completed', item: { id: 'a', type: 'agent_message', text: 'ok' } };
+        })() };
+      },
+    } as Thread;
+  };
+  const start = mock.method(Codex.prototype, 'startThread', checkOptions);
+  const resume = mock.method(Codex.prototype, 'resumeThread', (_id: string, options?: ThreadOptions) => checkOptions(options));
+  try {
+    for (const sessionId of [undefined, 'existing-session']) {
+      let reply = '';
+      for await (const chunk of askCodex('hello', [], sessionId, new AbortController(), async () => {})) reply += chunk;
+      assert.equal(reply, 'ok');
+    }
+  } finally {
+    start.mock.restore();
+    resume.mock.restore();
+  }
+});
 
 test('Codex shortcuts use skills rather than Claude slash commands', () => {
   assert.equal(codexPrompt('头脑风暴 plan'), '$grilling plan');

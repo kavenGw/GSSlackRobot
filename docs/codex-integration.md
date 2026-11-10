@@ -8,7 +8,7 @@
 
 通过 `@openai/codex-sdk` 启动本地 Codex，使用运行机器人的系统用户已有登录与 Codex 配置。首次部署先以该用户运行 `codex login`。SDK 不显式设置 API key 或模型。工作目录沿用 `CLAUDE_PROJECT_DIR`，未设置时使用机器人工作目录。
 
-Codex 保留本机 sandbox 配置，approval policy 设置为 `never`，因为 Slack 没有交互审批界面。`CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS` 仅控制 Claude，不覆盖 Codex 权限。
+Codex 保留本机 sandbox 配置，approval policy 设置为 `never`，因为 Slack 没有交互审批界面。新建及恢复会话均设置 `skipGitRepoCheck: true`，允许在非 Git 工作目录中执行头脑风暴等请求，避免启动时出现 `Not inside a trusted directory`。`CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS` 仅控制 Claude，不覆盖 Codex 权限。
 
 会话平台和 SDK 会话 ID 存在 `data/agent-sessions.json`，按频道和 Slack thread 区分。写入排队并通过临时文件替换，避免同时写入破坏内容；读取损坏文件会阻止启动，避免丢失绑定后换错平台。旧 `data/known-sessions.json` 作为 Claude 迁移来源保留读取。重启后还需要保留本机 Codex 会话目录，才能继续上下文。
 

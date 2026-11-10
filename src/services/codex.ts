@@ -26,7 +26,11 @@ export async function* askCodex(
   onSession: (id: string) => Promise<void>,
 ): AsyncGenerator<string> {
   const codex = new Codex();
-  const options = { workingDirectory: getConfig().claude.projectDir, approvalPolicy: 'never' as const };
+  const options = {
+    workingDirectory: getConfig().claude.projectDir,
+    approvalPolicy: 'never' as const,
+    skipGitRepoCheck: true,
+  };
   const thread = sessionId ? codex.resumeThread(sessionId, options) : codex.startThread(options);
   let imageDir: string | undefined;
   try {
