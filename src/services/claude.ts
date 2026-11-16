@@ -30,13 +30,18 @@ async function* buildMultimodalPrompt(
   };
 }
 
+export interface ClaudeSessionMeta {
+  model: string;
+  effort: string;
+}
+
 export async function* askClaude(
   text: string,
   images: ClaudeImage[] = [],
   sessionId?: string,
   resume = false,
   abortController?: AbortController,
-  onSession?: (id: string) => Promise<void>,
+  onSession?: (id: string, meta: ClaudeSessionMeta) => Promise<void>,
 ): AsyncGenerator<string> {
   const cfg = getConfig().claude;
   const env: Record<string, string | undefined> = { ...process.env };
@@ -88,7 +93,10 @@ export async function* askClaude(
   try {
     for await (const message of conversation) {
       if (message.type === 'system' && message.subtype === 'init') {
-        await onSession?.(message.session_id);
+        await onSession?.(message.session_id, {
+          model: message.model,
+          effort: message.effort ?? process.env.CLAUDE_CODE_EFFORT_LEVEL ?? '默认',
+        });
       }
       if (message.type === 'stream_event' && message.event.type === 'content_block_delta') {
         const delta = message.event.delta;

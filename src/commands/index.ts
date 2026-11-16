@@ -9,7 +9,7 @@ import { handleCreateMilestone } from './create-milestone.js';
 import { handleDailyReport, handleResetDailyReport } from './daily-report.js';
 import { handleGemini } from './gemini.js';
 import { handleGeminiDraw } from './gemini-draw.js';
-import { askClaude, type ClaudeImage } from '../services/claude.js';
+import { askClaude, type ClaudeImage, type ClaudeSessionMeta } from '../services/claude.js';
 import { askCodex, codexPrompt } from '../services/codex.js';
 import { AgentSessions, claudeSessionId, type AgentSession } from '../services/agent-sessions.js';
 import { markdownToSlack, safePost, safeUpdate, createTracker } from '../utils/message.js';
@@ -136,6 +136,7 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
     const msgTs = initial.ts!;
 
     let content = '';
+    let header = '';
     let lastUpdate = 0;
     const maxBlockText = getConfig().slack.maxBlockText;
     const tracker = createTracker(msgTs, '思考中...');
@@ -145,7 +146,7 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
       if (!final && now - lastUpdate < THROTTLE_MS) return;
       lastUpdate = now;
       const text = final ? markdownToSlack(content) : content;
-      await safeUpdate(client, channel, text || '思考中...', threadTs, tracker, maxBlockText);
+      await safeUpdate(client, channel, header + (text || '思考中...'), threadTs, tracker, maxBlockText);
     };
 
     const reportStopped = async () => {
@@ -160,7 +161,11 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
     try {
       controller.signal.throwIfAborted();
       const resume = Boolean(session.sessionId);
-      const onSession = async (id: string) => {
+      const onSession = async (id: string, meta?: ClaudeSessionMeta) => {
+        // 新会话首条回复标注模型与 effort
+        if (meta && !resume) header = `_模型: ${meta.model} · effort: ${meta.effort}_
+
+`;
         session.sessionId = id;
         await sessions.save();
       };
