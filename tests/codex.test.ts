@@ -38,6 +38,7 @@ test('Codex shortcuts use skills rather than Claude slash commands', () => {
   assert.equal(codexPrompt('头脑风暴 plan'), '$grilling plan');
   assert.equal(codexPrompt('bug修复'), '$diagnosing-bugs');
   assert.equal(codexPrompt('归纳总结 rules'), '$distill-rules rules');
+  assert.equal(codexPrompt('收尾'), '$finish-task');
   assert.ok(!codexPrompt('压缩').includes('/compact'));
   assert.equal(codexPrompt('normal prompt'), 'normal prompt');
 });
