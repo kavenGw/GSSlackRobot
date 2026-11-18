@@ -15,7 +15,7 @@
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
-| `SLACK_MAX_BLOCK_TEXT` | 流式消息单段最大字符数（100..4000）。Slack `chat.update` 在含中文/emoji 时实测对 ~3000+ 字符段会返回 `msg_too_long`，下调到 2000 留余地。 | `2000` |
+| `SLACK_MAX_BLOCK_TEXT` | 流式消息单段最大字符数（100..4000）。Slack `chat.update` 在含中文/emoji 时实测对 ~3000+ 字符段会返回 `msg_too_long`，下调到 2000 留余地。另有固定的单段 3500 UTF-8 字节上限（`chat.update` 按字节计长），中文为主时每段约 1100 字。 | `2000` |
 
 ## GitLab 配置
 

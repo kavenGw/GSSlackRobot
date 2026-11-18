@@ -98,16 +98,34 @@ export function markdownToSlack(text: string): string {
   return result;
 }
 
+// chat.update 按 UTF-8 字节计长（约 4000 字节即 msg_too_long），中文 3 字节/字，仅按字符数分段会超限
+const SLACK_MAX_SEGMENT_BYTES = 3500;
+
+function fitLength(text: string, maxLen: number, maxBytes: number): number {
+  let bytes = 0;
+  let i = 0;
+  while (i < text.length && i < maxLen) {
+    const cp = text.codePointAt(i)!;
+    const units = cp > 0xFFFF ? 2 : 1;
+    const size = cp < 0x80 ? 1 : cp < 0x800 ? 2 : cp > 0xFFFF ? 4 : 3;
+    if (bytes + size > maxBytes || i + units > maxLen) break;
+    bytes += size;
+    i += units;
+  }
+  return i;
+}
+
 function splitToBlocks(text: string, maxLen: number): string[] {
   const chunks: string[] = [];
   let remaining = text;
   while (remaining.length > 0) {
-    if (remaining.length <= maxLen) {
+    const limit = fitLength(remaining, maxLen, SLACK_MAX_SEGMENT_BYTES);
+    if (limit >= remaining.length) {
       chunks.push(remaining);
       break;
     }
-    let splitAt = remaining.lastIndexOf('\n', maxLen);
-    if (splitAt < maxLen * 0.5) splitAt = maxLen;
+    let splitAt = remaining.lastIndexOf('\n', limit);
+    if (splitAt < limit * 0.5) splitAt = limit;
     chunks.push(remaining.slice(0, splitAt));
     remaining = remaining.slice(splitAt);
   }
