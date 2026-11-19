@@ -84,6 +84,10 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
 - `归纳总结 <任意说明>`：以 `/claude-md-management:claude-md-improver` 进入归纳总结流程，更新 CLAUDE.md（@bot 透传 Claude）
 
+### 规划
+
+- `规划 <大型需求>`：以 `/mattpocock-skills:wayfinder` 把超出单次会话的大需求在 issue tracker 上拆成决策 ticket 地图并逐个推进（@bot 透传 Claude）
+
 ### 收尾
 
 - `收尾 [说明]`：以 `/finish-task` 触发 `CLAUDE_PROJECT_DIR` 项目内 `.claude/skills/finish-task`，清理当前任务的 plan/design 并沉淀规则（项目未提供该 skill 时返回 `Unknown skill`）

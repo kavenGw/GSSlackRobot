@@ -10,6 +10,7 @@ export function codexPrompt(text: string): string {
     ['头脑风暴', '$grilling'],
     ['bug修复', '$diagnosing-bugs'],
     ['归纳总结', '$distill-rules'],
+    ['规划', '$wayfinder'],
     ['收尾', '$finish-task'],
     ['压缩', '请总结当前会话的目标、已完成工作、关键决策和待办，作为后续工作的简明上下文。'],
   ];

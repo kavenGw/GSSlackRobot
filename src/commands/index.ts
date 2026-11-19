@@ -66,6 +66,7 @@ const SKILL_PREFIXES: ReadonlyArray<readonly [string, string]> = [
   ['头脑风暴', '/mattpocock-skills:grilling'],
   ['bug修复', '/mattpocock-skills:diagnosing-bugs'],
   ['归纳总结', '/claude-md-management:claude-md-improver'],
+  ['规划', '/mattpocock-skills:wayfinder'],
   ['收尾', '/finish-task'],
   ['压缩', '/compact'],
 ];
