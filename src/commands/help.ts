@@ -14,13 +14,15 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`头脑风暴 <任意问题>\` — 让 Claude 追问拷打你的方案（mattpocock grilling）
 • \`bug修复 <问题描述>\` — 与 Claude 系统化调试（mattpocock-skills:diagnosing-bugs）
 • \`归纳总结 <任意说明>\` — 让 Claude 归纳总结并更新 CLAUDE.md（claude-md-management:claude-md-improver）
+• \`规划 <大型需求>\` — 把超出单次会话的大需求拆成 issue 决策地图逐个推进（mattpocock-skills:wayfinder）
+• \`收尾 [说明]\` — 清理当前任务的 plan/design 并沉淀规则（项目 skill finish-task）
 • \`压缩 [说明]\` — 压缩当前 thread 的 Claude 会话上下文（/compact）
 • \`codex <任意问题>\` — 首次 @bot 时选择 Codex，后续消息无需前缀
 • \`终止\` — 终止当前 thread 正在运行的 AI 任务
 • \`<任意问题>\` — 默认与 Claude AI 对话
 
 平台由 thread 第一次 @bot 决定，之后不能切换。内置命令保持不变。
-Codex 线程也支持头脑风暴、bug修复、归纳总结；压缩会生成上下文摘要。`;
+Codex 线程也支持头脑风暴、bug修复、归纳总结、规划、收尾；压缩会生成上下文摘要。`;
 
 export async function handleHelp({ say, threadTs }: CommandContext) {
   await say({ text: HELP_TEXT, thread_ts: threadTs });

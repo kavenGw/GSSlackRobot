@@ -19,6 +19,7 @@ Codex 保留本机 sandbox 配置，approval policy 设置为 `never`，因为 S
 | 头脑风暴 | `$grilling` |
 | bug修复 | `$diagnosing-bugs` |
 | 归纳总结 | `$distill-rules` |
+| 收尾 | `$finish-task` |
 | 压缩 | 请求总结目标、进展、决策和待办 |
 
 对应技能需安装在 Codex 可发现的位置。`压缩` 是生成摘要，不执行 Claude `/compact` 或强制裁剪 Codex 的会话历史。
