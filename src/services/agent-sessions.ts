@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { v5 as uuidv5 } from 'uuid';
@@ -56,6 +57,12 @@ export class AgentSessions {
     }
     this.sessions.set(key, session);
     return { session, text: session.provider === 'codex' ? text.replace(/^codex(?:\s+|$)/i, '') : text };
+  }
+
+  reset(channel: string, threadTs: string): AgentSession {
+    const session: AgentSession = { provider: 'claude', sessionId: randomUUID() };
+    this.sessions.set(`${channel}:${threadTs}`, session);
+    return session;
   }
 
   save(): Promise<void> {

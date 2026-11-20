@@ -87,6 +87,7 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 ### 规划
 
 - `规划 <大型需求>`：以 `/mattpocock-skills:wayfinder` 把超出单次会话的大需求在 issue tracker 上拆成决策 ticket 地图并逐个推进（@bot 透传 Claude）
+- `继续规划 <地图名>`：先清空当前 thread 的会话上下文（换新 Claude 会话，Codex thread 也会切为 Claude），再以 `/mattpocock-skills:wayfinder GSCodeRestaurant/docs/wayfinder/<地图名>/map.md` 继续该地图；地图名须与 `CLAUDE_PROJECT_DIR` 下 `GSCodeRestaurant/docs/wayfinder/` 的子目录名精确匹配，不匹配或不带地图名时回复可用地图列表，不清空上下文
 
 ### 收尾
 
