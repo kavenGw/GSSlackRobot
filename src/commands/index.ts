@@ -1,5 +1,7 @@
 import type { App, SayFn } from '@slack/bolt';
 import type { WebClient } from '@slack/web-api';
+import { readdir } from 'node:fs/promises';
+import { join } from 'node:path';
 import sharp from 'sharp';
 import { handleHelp } from './help.js';
 import { handleCommands } from './commands.js';
@@ -109,9 +111,14 @@ async function downloadSlackImages(files: SlackFile[], token: string): Promise<C
   return results;
 }
 
-async function handleAgent({ text, channel, threadTs, client, files, userId }: CommandContext, session: AgentSession) {
+interface FreshStart {
+  prompt: string;
+  notice: string;
+}
+
+async function handleAgent({ text, channel, threadTs, client, files, userId }: CommandContext, session: AgentSession, fresh?: FreshStart) {
   const provider = session.provider === 'codex' ? 'Codex' : 'Claude';
-  const prompt = session.provider === 'codex' ? codexPrompt(text) : toPrompt(text);
+  const prompt = fresh?.prompt ?? (session.provider === 'codex' ? codexPrompt(text) : toPrompt(text));
   const sessionId = `${channel}:${threadTs}`;
 
   if (activeSessions.has(sessionId)) {
@@ -138,7 +145,7 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
     const msgTs = initial.ts!;
 
     let content = '';
-    let header = '';
+    let header = fresh?.notice ?? '';
     let lastUpdate = 0;
     const maxBlockText = getConfig().slack.maxBlockText;
     const tracker = createTracker(msgTs, '思考中...');
@@ -162,10 +169,10 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
 
     try {
       controller.signal.throwIfAborted();
-      const resume = Boolean(session.sessionId);
+      const resume = !fresh && Boolean(session.sessionId);
       const onSession = async (id: string, meta?: ClaudeSessionMeta) => {
         // 新会话首条回复标注模型与 effort
-        if (meta && !resume) header = `_模型: ${meta.model} · effort: ${meta.effort}_
+        if (meta && !resume) header = `${fresh?.notice ?? ''}_模型: ${meta.model} · effort: ${meta.effort}_
 
 `;
         session.sessionId = id;
@@ -241,6 +248,52 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
   }
 }
 
+const WAYFINDER_DIR = 'GSCodeRestaurant/docs/wayfinder';
+
+async function listWayfinderMaps(projectDir: string): Promise<string[]> {
+  try {
+    const entries = await readdir(join(projectDir, WAYFINDER_DIR), { withFileTypes: true });
+    return entries.filter(e => e.isDirectory()).map(e => e.name);
+  } catch {
+    return [];
+  }
+}
+
+// 继续规划 XXX：清空 thread 上下文后以新会话调用 wayfinder
+async function handleContinuePlan(ctx: CommandContext) {
+  const { text, channel, threadTs, client } = ctx;
+  const reply = (msg: string) => client.chat.postMessage({ channel, thread_ts: threadTs, text: msg });
+  const projectDir = getConfig().claude.projectDir;
+  if (!projectDir) {
+    await reply('未配置 CLAUDE_PROJECT_DIR，无法继续规划。');
+    return;
+  }
+  const name = text.slice('继续规划'.length).trim();
+  const maps = await listWayfinderMaps(projectDir);
+  const available = maps.length ? maps.map(m => `\`${m}\``).join('、') : '（无）';
+  if (!name) {
+    await reply(`用法：\`继续规划 <地图名>\`
+可用地图：${available}`);
+    return;
+  }
+  if (!maps.includes(name)) {
+    await reply(`未找到地图 \`${name}\`
+可用地图：${available}`);
+    return;
+  }
+  if (activeSessions.has(`${channel}:${threadTs}`)) {
+    await reply('上一条消息还在处理中，请稍后再试。');
+    return;
+  }
+  const session = sessions.reset(channel, threadTs);
+  await sessions.save();
+  await handleAgent(ctx, session, {
+    prompt: `/mattpocock-skills:wayfinder ${WAYFINDER_DIR}/${name}/map.md`,
+    notice: `🧹 已清空上下文，继续规划 ${name}
+`,
+  });
+}
+
 async function handleStop({ channel, threadTs, client }: CommandContext) {
   const controller = activeSessions.get(`${channel}:${threadTs}`);
   if (!controller) {
@@ -270,6 +323,8 @@ export function registerCommands(app: App) {
         await handleCommands(ctx);
       } else if (text === '终止') {
         await handleStop(ctx);
+      } else if (/^继续规划(?:\s|$)/.test(text)) {
+        await handleContinuePlan(ctx);
       } else if (/^(list-milestones|list-issues|daily-report|reset-daily-report|create-milestone)\b/i.test(text)) {
         if (!getConfig().gitlab) {
           await say({ text: 'GitLab 未配置，请设置 GITLAB_API_URL、GITLAB_TOKEN、GITLAB_PROJECT_ID 环境变量', thread_ts: threadTs });
