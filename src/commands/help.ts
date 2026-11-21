@@ -19,6 +19,7 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`收尾 [说明]\` — 清理当前任务的 plan/design 并沉淀规则（项目 skill finish-task）
 • \`压缩 [说明]\` — 压缩当前 thread 的 Claude 会话上下文（/compact）
 • \`codex <任意问题>\` — 首次 @bot 时选择 Codex，后续消息无需前缀
+• \`clear\` / \`清空\` — 清空当前 thread 的会话上下文，下条消息开启新会话（保留 Claude/Codex 平台）
 • \`终止\` — 终止当前 thread 正在运行的 AI 任务
 • \`<任意问题>\` — 默认与 Claude AI 对话
 

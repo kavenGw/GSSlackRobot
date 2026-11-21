@@ -169,13 +169,14 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
 
     try {
       controller.signal.throwIfAborted();
-      const resume = !fresh && Boolean(session.sessionId);
+      const resume = !fresh && !session.fresh && Boolean(session.sessionId);
       const onSession = async (id: string, meta?: ClaudeSessionMeta) => {
         // 新会话首条回复标注模型与 effort
         if (meta && !resume) header = `${fresh?.notice ?? ''}_模型: ${meta.model} · effort: ${meta.effort}_
 
 `;
         session.sessionId = id;
+        delete session.fresh;
         await sessions.save();
       };
       const response = session.provider === 'codex'
@@ -294,6 +295,17 @@ async function handleContinuePlan(ctx: CommandContext) {
   });
 }
 
+async function handleClear({ channel, threadTs, client }: CommandContext, session: AgentSession) {
+  const reply = (msg: string) => client.chat.postMessage({ channel, thread_ts: threadTs, text: msg });
+  if (activeSessions.has(`${channel}:${threadTs}`)) {
+    await reply('上一条消息还在处理中，请稍后再试。');
+    return;
+  }
+  sessions.clear(channel, threadTs, session.provider);
+  await sessions.save();
+  await reply('🧹 已清空上下文，下条消息开启新会话');
+}
+
 async function handleStop({ channel, threadTs, client }: CommandContext) {
   const controller = activeSessions.get(`${channel}:${threadTs}`);
   if (!controller) {
@@ -323,6 +335,8 @@ export function registerCommands(app: App) {
         await handleCommands(ctx);
       } else if (text === '终止') {
         await handleStop(ctx);
+      } else if (/^clear$/i.test(text) || text === '清空') {
+        await handleClear(ctx, session);
       } else if (/^继续规划(?:\s|$)/.test(text)) {
         await handleContinuePlan(ctx);
       } else if (/^(list-milestones|list-issues|daily-report|reset-daily-report|create-milestone)\b/i.test(text)) {

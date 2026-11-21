@@ -7,6 +7,7 @@ export type AgentProvider = 'claude' | 'codex';
 export interface AgentSession {
   provider: AgentProvider;
   sessionId?: string;
+  fresh?: boolean;
 }
 
 export function claudeSessionId(threadTs: string): string {
@@ -26,7 +27,8 @@ export class AgentSessions {
       if (!Array.isArray(entries) || !entries.every(entry =>
         Array.isArray(entry) && typeof entry[0] === 'string' &&
         (entry[1]?.provider === 'claude' || entry[1]?.provider === 'codex') &&
-        (entry[1].sessionId === undefined || typeof entry[1].sessionId === 'string'))) {
+        (entry[1].sessionId === undefined || typeof entry[1].sessionId === 'string') &&
+        (entry[1].fresh === undefined || typeof entry[1].fresh === 'boolean'))) {
         throw new Error('Invalid agent sessions file');
       }
       this.sessions = new Map(entries);
@@ -63,6 +65,13 @@ export class AgentSessions {
     const session: AgentSession = { provider: 'claude', sessionId: randomUUID() };
     this.sessions.set(`${channel}:${threadTs}`, session);
     return session;
+  }
+
+  // 清空上下文但保留 provider；Claude 需新随机 id 避免与派生 id 冲突，fresh 标记下次不 resume
+  clear(channel: string, threadTs: string, provider: AgentProvider): void {
+    this.sessions.set(`${channel}:${threadTs}`, provider === 'claude'
+      ? { provider, sessionId: randomUUID(), fresh: true }
+      : { provider });
   }
 
   save(): Promise<void> {

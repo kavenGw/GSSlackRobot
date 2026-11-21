@@ -97,6 +97,10 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
 - `压缩 [说明]`：以 `/compact` 压缩当前 thread 的 Claude 会话上下文（可省略说明）
 
+### 清空上下文
+
+- `clear` / `清空`：清空当前 thread 的会话上下文，下条消息开启新会话（保留当前 Claude/Codex 平台）；任务运行中时拒绝，需先 `终止`
+
 ### 终止任务
 
 - `终止`：终止当前 thread 正在运行的 Claude 任务，已输出的内容保留；需在该任务所在 thread 内 @bot 发送
