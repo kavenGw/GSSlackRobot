@@ -46,19 +46,24 @@ export class AgentSessions {
     }
   }
 
-  select(channel: string, threadTs: string, input: string): { session: AgentSession; text: string } {
+  // 新 thread 不立即写入，由调用方放行后 adopt，避免被拦截的首条消息占用 thread
+  select(channel: string, threadTs: string, input: string): { session: AgentSession; text: string; isNew: boolean } {
     const key = `${channel}:${threadTs}`;
     const text = input.trim();
     let session = this.sessions.get(key);
-    if (session) return { session, text };
+    if (session) return { session, text, isNew: false };
     const legacyId = claudeSessionId(threadTs);
     if (this.legacy.has(legacyId)) {
       session = { provider: 'claude', sessionId: legacyId };
-    } else {
-      session = { provider: /^codex(?:\s|$)/i.test(text) ? 'codex' : 'claude' };
+      this.sessions.set(key, session);
+      return { session, text, isNew: false };
     }
-    this.sessions.set(key, session);
-    return { session, text: session.provider === 'codex' ? text.replace(/^codex(?:\s+|$)/i, '') : text };
+    session = { provider: /^codex(?:\s|$)/i.test(text) ? 'codex' : 'claude' };
+    return { session, text: session.provider === 'codex' ? text.replace(/^codex(?:\s+|$)/i, '') : text, isNew: true };
+  }
+
+  adopt(channel: string, threadTs: string, session: AgentSession): void {
+    this.sessions.set(`${channel}:${threadTs}`, session);
   }
 
   reset(channel: string, threadTs: string): AgentSession {

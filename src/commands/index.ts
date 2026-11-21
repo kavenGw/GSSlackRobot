@@ -81,6 +81,23 @@ function toPrompt(text: string): string {
   return text.startsWith('/') ? ` ${text}` : text;
 }
 
+const DIRECT_PREFIX = '直接';
+
+const hasSkillPrefix = (text: string) =>
+  SKILL_PREFIXES.some(([trigger]) => text === trigger || text.startsWith(trigger + ' '));
+
+// 新 thread 首条必须带 skill 前缀或「直接」；返回 null 表示拦截
+function firstMessageText(text: string): string | null {
+  if (hasSkillPrefix(text)) return text;
+  if (text === DIRECT_PREFIX) return '';
+  if (text.startsWith(DIRECT_PREFIX + ' ')) return text.slice(DIRECT_PREFIX.length).trim();
+  return null;
+}
+
+const DIRECT_HINT = `⚠️ 未指定 skill。可用：${SKILL_PREFIXES.map(([trigger]) => trigger).join(' / ')}
+如果不使用任何 skill，请以「${DIRECT_PREFIX}」开头，例如：${DIRECT_PREFIX} 帮我看下这个报错
+（Codex：codex ${DIRECT_PREFIX} …）`;
+
 async function downloadSlackImages(files: SlackFile[], token: string): Promise<ClaudeImage[]> {
   const results: ClaudeImage[] = [];
   for (const file of files) {
@@ -320,14 +337,13 @@ export function registerCommands(app: App) {
     const input = event.text.replace(/<@[A-Z0-9]+>\s*/g, '').trim();
     const threadTs = event.thread_ts ?? event.ts;
     log.incoming(event.user ?? 'unknown', input);
-    const { session, text: routedText } = sessions.select(event.channel, threadTs, input);
+    const { session, text: routedText, isNew } = sessions.select(event.channel, threadTs, input);
     const text = resolveAlias(routedText);
 
     const files = (event as any).files as SlackFile[] | undefined;
     const ctx: CommandContext = { text, channel: event.channel, threadTs, say, client, files, userId: event.user };
 
     try {
-      await sessions.save();
       if (/^help$/i.test(text)) {
         log.help();
         await handleHelp(ctx);
@@ -365,8 +381,17 @@ export function registerCommands(app: App) {
         } else {
           await handleGemini(ctx);
         }
-      } else {
+      } else if (!isNew) {
         await handleAgent(ctx, session);
+      } else {
+        const firstText = firstMessageText(text);
+        if (firstText === null) {
+          await client.chat.postMessage({ channel: event.channel, thread_ts: threadTs, text: DIRECT_HINT });
+          return;
+        }
+        sessions.adopt(event.channel, threadTs, session);
+        await sessions.save();
+        await handleAgent({ ...ctx, text: firstText }, session);
       }
     } catch (err) {
       log.error(err instanceof Error ? err.message : String(err));

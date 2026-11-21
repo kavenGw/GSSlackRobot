@@ -18,11 +18,12 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`继续规划 <地图名>\` — 清空当前 thread 上下文，继续 GSCodeRestaurant/docs/wayfinder/<地图名> 的规划（不带地图名列出可用地图）
 • \`收尾 [说明]\` — 清理当前任务的 plan/design 并沉淀规则（项目 skill finish-task）
 • \`压缩 [说明]\` — 压缩当前 thread 的 Claude 会话上下文（/compact）
-• \`codex <任意问题>\` — 首次 @bot 时选择 Codex，后续消息无需前缀
+• \`直接 <任意问题>\` — 不使用 skill，直接与 Claude AI 对话
+• \`codex <skill 或 直接> <任意问题>\` — 首次 @bot 时选择 Codex，后续消息无需前缀
 • \`clear\` / \`清空\` — 清空当前 thread 的会话上下文，下条消息开启新会话（保留 Claude/Codex 平台）
 • \`终止\` — 终止当前 thread 正在运行的 AI 任务
-• \`<任意问题>\` — 默认与 Claude AI 对话
 
+新 thread 第一条 AI 消息必须以 skill 快捷词或 \`直接\` 开头，否则只回复提示不发送；之后的消息无需前缀。
 平台由 thread 第一次 @bot 决定，之后不能切换（继续规划会强制切为 Claude 新会话）。内置命令保持不变。
 Codex 线程也支持头脑风暴、bug修复、归纳总结、规划、收尾；压缩会生成上下文摘要。`;
 

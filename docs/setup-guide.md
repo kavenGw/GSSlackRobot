@@ -72,6 +72,11 @@
 
 API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 
+### 直接对话
+
+- `直接 <任意问题>`：不使用任何 skill，直接与 Claude 对话（Codex 写作 `codex 直接 <任意问题>`）
+- 新 thread 的第一条 AI 消息必须以 skill 快捷词（头脑风暴 / bug修复 / 归纳总结 / 规划 / 收尾 / 压缩）或 `直接` 开头，否则 bot 只回复提示、不发送给 AI，也不占用该 thread，可在同一 thread 重新发送；thread 开始后的后续消息无需前缀
+
 ### 头脑风暴
 
 - `头脑风暴 <任意问题>`：以 `/mattpocock-skills:grilling` 进入追问拷打流程（@bot 透传 Claude）
