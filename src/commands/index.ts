@@ -71,6 +71,8 @@ const SKILL_PREFIXES: ReadonlyArray<readonly [string, string]> = [
   ['规划', '/mattpocock-skills:wayfinder'],
   ['收尾', '/finish-task'],
   ['压缩', '/compact'],
+  ['ask-matt', '/mattpocock-skills:ask-matt'],
+  ['to-tickets', '/mattpocock-skills:to-tickets'],
 ];
 
 function toPrompt(text: string): string {

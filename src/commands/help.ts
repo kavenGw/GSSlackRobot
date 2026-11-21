@@ -18,6 +18,8 @@ const HELP_TEXT = `*GSSlackRobot 可用指令:*
 • \`继续规划 <地图名>\` — 清空当前 thread 上下文，继续 GSCodeRestaurant/docs/wayfinder/<地图名> 的规划（不带地图名列出可用地图）
 • \`收尾 [说明]\` — 清理当前任务的 plan/design 并沉淀规则（项目 skill finish-task）
 • \`压缩 [说明]\` — 压缩当前 thread 的 Claude 会话上下文（/compact）
+• \`ask-matt <你的情况>\` — 让 Claude 推荐该用哪个 skill/流程（mattpocock-skills:ask-matt，仅 Claude）
+• \`to-tickets [说明]\` — 把当前 thread 的计划/spec 拆成带阻塞关系的 tracer-bullet tickets（mattpocock-skills:to-tickets，仅 Claude）
 • \`直接 <任意问题>\` — 不使用 skill，直接与 Claude AI 对话
 • \`codex <skill 或 直接> <任意问题>\` — 首次 @bot 时选择 Codex，后续消息无需前缀
 • \`clear\` / \`清空\` — 清空当前 thread 的会话上下文，下条消息开启新会话（保留 Claude/Codex 平台）

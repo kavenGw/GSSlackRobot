@@ -75,7 +75,7 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 ### 直接对话
 
 - `直接 <任意问题>`：不使用任何 skill，直接与 Claude 对话（Codex 写作 `codex 直接 <任意问题>`）
-- 新 thread 的第一条 AI 消息必须以 skill 快捷词（头脑风暴 / bug修复 / 归纳总结 / 规划 / 收尾 / 压缩）或 `直接` 开头，否则 bot 只回复提示、不发送给 AI，也不占用该 thread，可在同一 thread 重新发送；thread 开始后的后续消息无需前缀
+- 新 thread 的第一条 AI 消息必须以 skill 快捷词（头脑风暴 / bug修复 / 归纳总结 / 规划 / 收尾 / 压缩 / ask-matt / to-tickets）或 `直接` 开头，否则 bot 只回复提示、不发送给 AI，也不占用该 thread，可在同一 thread 重新发送；thread 开始后的后续消息无需前缀
 
 ### 头脑风暴
 
@@ -101,6 +101,14 @@ API Key 设置后启用 `gemini` 和 `gemini-draw` 命令。
 ### 压缩上下文
 
 - `压缩 [说明]`：以 `/compact` 压缩当前 thread 的 Claude 会话上下文（可省略说明）
+
+### ask-matt
+
+- `ask-matt <你的情况>`：以 `/mattpocock-skills:ask-matt` 让 Claude 根据你的情况推荐该用哪个 skill/流程（@bot 透传 Claude；Codex 线程不支持）
+
+### to-tickets
+
+- `to-tickets [说明]`：以 `/mattpocock-skills:to-tickets` 把当前 thread 的计划/spec 拆成带阻塞关系的 tracer-bullet tickets（@bot 透传 Claude；Codex 线程不支持）
 
 ### 清空上下文
 
