@@ -16,7 +16,7 @@ GSSlackRobot 是一个中文 Slack Bot 个人助手，本机常驻运行，集�
 - **Slack 交互**: 所有回复必须包含 `thread_ts` 以保持线程
 - **消息限制**: 单段最大字符数由 `SLACK_MAX_BLOCK_TEXT` 控制（默认 2000），同时受固定的单段 3500 UTF-8 字节上限约束（`chat.update` 按字节计长，约 4000 字节即 `msg_too_long`，中文 3 字节/字），任一超出由 `splitToBlocks()` 分段发送；流式 `safeUpdate` 使用 `SegmentTracker` 跟踪每段 ts/lastContent，所有 Slack API 调用经 `safeChat` 兜底，`msg_too_long` 仅记 warn 不中断
 - **消息发送函数选择**: 普通文本回复用 `safePost(client, channel, text, threadTs, maxBlockText)`；流式增量更新用 `safeUpdate(..., tracker, maxBlockText)`；Block Kit 结构化消息（每日简报）用 `postBlocks(client, channel, blocks, threadTs)`；短固定文本通知（如 `<@user> ✅` 这类不会超长的提示）直接用 `client.chat.postMessage`，无需分段（`chat.update` 推送不可靠，分段对短文本是多余的）
-- **节流更新**: 流式输出场景下，`chat.update()` 最小间隔 500ms
+- **节流更新**: 流式输出场景下，`chat.update()` 最小间隔 500ms，被节流跳过的尾部内容由定时器补推（不能依赖下一个 chunk 或循环结束，否则 SDK 卡住时 Slack 会停在半句）
 
 ## 环境变量
 
@@ -27,7 +27,7 @@ GSSlackRobot 是一个中文 Slack Bot 个人助手，本机常驻运行，集�
 - **配置统一使用 env**: 所有配置通过环境变量加载，不使用配置文件，通过 `getConfig()` 获取单例
 - **命令路由**: `help` 显示帮助，`commands` 列出 Claude Commands，`clear`/`清空` 清空当前 thread 上下文（`AgentSessions.clear` 保留 provider；Claude 换随机 sessionId 并打 `fresh` 标记，下条消息 `resume=false`，SDK 回调到达后删除标记；运行中拒绝），`终止` 终止当前 thread 正在运行的 Claude 任务（SDK `abortController`，保留已输出内容，不发 `✅|❌` 通知），`继续规划 <地图名>` 清空当前 thread 上下文（`AgentSessions.reset` 换随机 sessionId、强制 Claude、`resume=false`）后调用 `/mattpocock-skills:wayfinder GSCodeRestaurant/docs/wayfinder/<地图名>/map.md`（相对 `CLAUDE_PROJECT_DIR`，地图名须精确匹配子目录名，否则只回复可用列表），`list-milestones`/`list-issues`/`daily-report`/`reset-daily-report`/`create-milestone <版本号> [结束日期]` 为 GitLab 命令（需配置），`gemini <问题>` 和 `gemini-draw <描述>` 为 Gemini 命令（需配置），其余输入透传 Claude/Codex
 - **首条消息前缀校验**: 新 thread（`AgentSessions.select` 返回 `isNew`）的首条 AI 消息必须命中 `SKILL_PREFIXES` 触发词或以 `直接` 开头（`直接` 前缀会被剥离），否则只回复 `DIRECT_HINT` 不透传；新 thread 的 session 仅在放行后 `adopt` 写入，被拦截的消息不占用 thread（避免 `codex xxx` 被拦后仍绑定 Codex）；thread 已存在后的消息不校验
-- **Claude SDK 集成**: 通过 Claude Agent SDK 的 `query()` 流式调用，`includePartialMessages` 增量输出；不显式指定 model/effort，跟随本机 Claude Code 默认配置；新 thread 首条回复开头标注 SDK `init` 消息中的 `model` 与 `effort`（缺失时回退 `CLAUDE_CODE_EFFORT_LEVEL`，再缺失显示“默认”），resume 的后续消息不再显示
+- **Claude SDK 集成**: 通过 Claude Agent SDK 的 `query()` 流式调用，`includePartialMessages` 增量输出；不显式指定 model/effort，跟随本机 Claude Code 默认配置；新 thread 首条回复开头标注 SDK `init` 消息中的 `model` 与 `effort`（缺失时回退 `CLAUDE_CODE_EFFORT_LEVEL`，再缺失显示“默认”），resume 的后续消息不再显示；SDK 在 headless 下会等后台任务（如超时转后台的 Bash）结束才发 `result`，因此 `askClaude` 在主会话 assistant `end_turn` 后只等 30 秒宽限期，超时即 `close()` 并追加「后台任务未结束，已终止」按成功收尾；另有 `AGENT_IDLE_TIMEOUT_MIN`（默认 30）空闲看门狗，Claude/Codex 均适用。多个 text block 之间插入空行分段
 - **Slack 图片附件**: `app_mention` 事件的 `files` 字段未在 Bolt 类型中定义，需用 `(event as any).files` 访问；图片通过 bot token + `url_private_download` 下载到内存，**不落临时文件**。bot token 必须有 `files:read` scope，否则 Slack 返回 200 OK + `text/html` 登录页（非 401）——`downloadSlackImages` 会校验 `content-type` 并 warn 提示
 - **Slack 图片预处理与多模态透传**: 下载图片后用 `sharp` 归一化（最大 1568px、转 PNG），转 base64 后通过 `askClaude(text, images, ...)` 以 Claude Agent SDK 的多模态 `content block`（`{type:'image', source:{type:'base64', ...}}`）发给 Claude，让模型真正"看到"图片，不依赖 Read 工具
 - **GitLab Webhook**: 设置 `GITLAB_NOTIFY_CHANNEL` 后自动启动 Express HTTP 服务器，接收 GitLab 事件推送并转发到 Slack 频道

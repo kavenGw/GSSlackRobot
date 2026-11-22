@@ -1,5 +1,8 @@
-import { query, type Options, type SDKUserMessage } from '@anthropic-ai/claude-agent-sdk';
+import { query, type Options, type SDKMessage, type SDKUserMessage } from '@anthropic-ai/claude-agent-sdk';
 import { getConfig } from '../config/index.js';
+import { nextWithTimeout, TIMEOUT } from '../utils/async.js';
+
+const END_TURN_GRACE_MS = 30_000;
 
 export type ClaudeImageMediaType = 'image/png' | 'image/jpeg' | 'image/gif' | 'image/webp';
 
@@ -88,22 +91,41 @@ export async function* askClaude(
       : text;
 
   const conversation = query({ prompt, options });
+  const iterator: AsyncIterator<SDKMessage> = conversation[Symbol.asyncIterator]();
+  const idleMs = cfg.idleTimeoutMin * 60_000;
   let hasContent = false;
+  let turnEnded = false;
 
   try {
-    for await (const message of conversation) {
+    while (true) {
+      // end_turn 后 SDK 会等后台任务（如超时转后台的 Bash）结束才发 result，宽限期后主动关闭
+      const next: IteratorResult<SDKMessage> | typeof TIMEOUT = await nextWithTimeout(iterator, turnEnded ? END_TURN_GRACE_MS : idleMs);
+      if (next === TIMEOUT) {
+        if (turnEnded) {
+          yield '\n\n_（后台任务未结束，已终止）_';
+          return;
+        }
+        throw new Error(`Claude ${cfg.idleTimeoutMin} 分钟无响应，已终止`);
+      }
+      if (next.done) break;
+      const message: SDKMessage = next.value;
       if (message.type === 'system' && message.subtype === 'init') {
         await onSession?.(message.session_id, {
           model: message.model,
           effort: message.effort ?? process.env.CLAUDE_CODE_EFFORT_LEVEL ?? '默认',
         });
       }
-      if (message.type === 'stream_event' && message.event.type === 'content_block_delta') {
-        const delta = message.event.delta;
-        if (delta.type === 'text_delta') {
+      if (message.type === 'stream_event') {
+        turnEnded = false;
+        const event = message.event;
+        if (event.type === 'content_block_start' && event.content_block.type === 'text' && hasContent) {
+          yield '\n\n';
+        } else if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
           hasContent = true;
-          yield delta.text;
+          yield event.delta.text;
         }
+      } else if (message.type === 'assistant' && message.parent_tool_use_id === null) {
+        turnEnded = message.message.stop_reason === 'end_turn';
       } else if (message.type === 'result') {
         if (message.subtype === 'success') {
           if (!hasContent) {

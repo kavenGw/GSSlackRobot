@@ -16,6 +16,7 @@
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
 | `SLACK_MAX_BLOCK_TEXT` | 流式消息单段最大字符数（100..4000）。Slack `chat.update` 在含中文/emoji 时实测对 ~3000+ 字符段会返回 `msg_too_long`，下调到 2000 留余地。另有固定的单段 3500 UTF-8 字节上限（`chat.update` 按字节计长），中文为主时每段约 1100 字。 | `2000` |
+| `AGENT_IDLE_TIMEOUT_MIN` | Claude/Codex 连续无任何 SDK 消息超过该分钟数即中断，按 ❌ 收尾；0 关闭。Claude 回复结束（`end_turn`）后若 30 秒内未收到 `result`（通常是有后台任务未结束），会自动关闭会话并按 ✅ 收尾 | `30` |
 
 ## GitLab 配置
 

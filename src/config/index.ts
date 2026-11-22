@@ -45,6 +45,7 @@ export function loadConfig(): AppConfig {
       dangerouslySkipPermissions: optionalBool('CLAUDE_DANGEROUSLY_SKIP_PERMISSIONS', true),
       httpProxy: process.env.CLAUDE_HTTP_PROXY,
       httpsProxy: process.env.CLAUDE_HTTPS_PROXY,
+      idleTimeoutMin: optionalInt('AGENT_IDLE_TIMEOUT_MIN', 30),
     },
     gitlabNotify: process.env.GITLAB_NOTIFY_CHANNEL ? {
       port: optionalInt('GITLAB_WEBHOOK_PORT', 3000),

@@ -151,6 +151,7 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
 
   const controller = new AbortController();
   activeSessions.set(sessionId, controller);
+  let tailTimer: NodeJS.Timeout | undefined;
   try {
     const images = files?.length ? await downloadSlackImages(files, getConfig().slack.botToken) : [];
     const finalText = images.length && !prompt.trim() ? '请查看图片' : prompt;
@@ -169,12 +170,25 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
     const maxBlockText = getConfig().slack.maxBlockText;
     const tracker = createTracker(msgTs, '思考中...');
 
-    const flush = async (final = false) => {
+    // 串行化 Slack 更新；被节流跳过的内容由尾部定时器补推，不依赖下一个 chunk 到来
+    let updating: Promise<void> = Promise.resolve();
+    const flush = (final = false): Promise<void> => {
       const now = Date.now();
-      if (!final && now - lastUpdate < THROTTLE_MS) return;
+      if (!final && now - lastUpdate < THROTTLE_MS) {
+        tailTimer ??= setTimeout(() => {
+          tailTimer = undefined;
+          flush().catch(err => log.warn(`tail flush failed: ${err instanceof Error ? err.message : String(err)}`));
+        }, THROTTLE_MS - (now - lastUpdate));
+        return Promise.resolve();
+      }
+      clearTimeout(tailTimer);
+      tailTimer = undefined;
       lastUpdate = now;
-      const text = final ? markdownToSlack(content) : content;
-      await safeUpdate(client, channel, header + (text || '思考中...'), threadTs, tracker, maxBlockText);
+      updating = updating.catch(() => {}).then(() => {
+        const text = final ? markdownToSlack(content) : content;
+        return safeUpdate(client, channel, header + (text || '思考中...'), threadTs, tracker, maxBlockText);
+      });
+      return updating;
     };
 
     const reportStopped = async () => {
@@ -264,6 +278,7 @@ async function handleAgent({ text, channel, threadTs, client, files, userId }: C
       }
     }
   } finally {
+    clearTimeout(tailTimer);
     activeSessions.delete(sessionId);
   }
 }

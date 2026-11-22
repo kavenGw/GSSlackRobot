@@ -3,6 +3,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { getConfig } from '../config/index.js';
+import { nextWithTimeout, TIMEOUT } from '../utils/async.js';
 import type { ClaudeImage } from './claude.js';
 
 export function codexPrompt(text: string): string {
@@ -35,6 +36,11 @@ export async function* askCodex(
   };
   const thread = sessionId ? codex.resumeThread(sessionId, options) : codex.startThread(options);
   let imageDir: string | undefined;
+  // 独立 controller：空闲超时中断 Codex 时不误判为用户「终止」
+  const run = new AbortController();
+  const onAbort = () => run.abort();
+  controller.signal.addEventListener('abort', onAbort);
+  const { idleTimeoutMin } = getConfig().claude;
   try {
     controller.signal.throwIfAborted();
     const input: UserInput[] = [{ type: 'text', text }];
@@ -46,9 +52,14 @@ export async function* askCodex(
         input.push({ type: 'local_image', path });
       }
     }
-    const { events } = await thread.runStreamed(input, { signal: controller.signal });
+    const { events } = await thread.runStreamed(input, { signal: run.signal });
+    const iterator = events[Symbol.asyncIterator]();
     let hasMessage = false;
-    for await (const event of events) {
+    while (true) {
+      const next = await nextWithTimeout(iterator, idleTimeoutMin * 60_000);
+      if (next === TIMEOUT) throw new Error(`Codex ${idleTimeoutMin} 分钟无响应，已终止`);
+      if (next.done) break;
+      const event = next.value;
       if (event.type === 'thread.started') await onSession(event.thread_id);
       if (event.type === 'turn.failed') throw new Error(event.error.message);
       if (event.type === 'error') throw new Error(event.message);
@@ -58,6 +69,8 @@ export async function* askCodex(
       }
     }
   } finally {
+    controller.signal.removeEventListener('abort', onAbort);
+    run.abort();
     if (imageDir) await rm(imageDir, { recursive: true, force: true });
   }
 }

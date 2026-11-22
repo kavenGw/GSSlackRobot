@@ -11,6 +11,7 @@ export interface ClaudeConfig {
   dangerouslySkipPermissions?: boolean;
   httpProxy?: string;
   httpsProxy?: string;
+  idleTimeoutMin: number;
 }
 
 export interface GitLabNotifyConfig {
